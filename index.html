@@ -99,6 +99,7 @@
       </span>
     </a>
     <div class="tocify-wrapper">
+      <img src="images/logo.png" alt="Logo" />
         <div class="lang-selector">
               <a href="#" data-language-name="php">php</a>
         </div>
@@ -280,29 +281,204 @@
 <li>Checkout replies with the status</li>
 </ol>
 
-<h1 id="field-format-descriptions">Field format descriptions</h1>
+<h1 id="tokenization-api">Tokenization API</h1>
 
-<ul>
-<li>The number at the end of the format field tells the length of the field (max)</li>
-<li>N = numeric</li>
-<li><p>AN = Alphanumeric</p></li>
-<li><p>Examples</p>
+<h2 id="card-addition-tokenization">Card addition (tokenization)</h2>
 
-<ul>
-<li>N 40 = numeric, 40 digits max.</li>
-<li>AN 20 = alphanumeric, 20 characters max.</li>
-</ul></li>
-</ul>
+<p>Will get the form (iframe) for entering credit card information.</p>
 
-<h1 id="payment">Payment</h1>
+<h3 id="http-request">HTTP Request</h3>
 
-<h2 id="url">URL</h2>
+<p><code class="prettyprint">GET form/add_card</code></p>
+
+<table><thead>
+<tr>
+<th>Body field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>merchantId</td>
+<td>N</td>
+<td>Merchant ID given by Checkout</td>
+</tr>
+</tbody></table>
+
+<h3 id="http-response">HTTP Response</h3>
+
+<p>On successful credit card information input:</p>
+
+<table><thead>
+<tr>
+<th>Body field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>token</td>
+<td>UUID4</td>
+<td>Checkout-card-token which can be used for making payments on the card.</td>
+</tr>
+<tr>
+<td>statusCode</td>
+<td>SCODE</td>
+<td>200 if card addition successful</td>
+</tr>
+<tr>
+<td>statusText</td>
+<td>AN</td>
+<td>status message, e.g. &lsquo;card added&rsquo;</td>
+</tr>
+</tbody></table>
+
+<h2 id="token-migration">Token migration</h2>
+
+<p>Will convert a external token (previous foreign customers&rsquo; token who is coming to Finland) to a Checkout-token, which can then be used for making payments in Finland.</p>
+
+<h3 id="http-request">HTTP Request</h3>
+
+<p><code class="prettyprint">POST /tokenization/migrate</code></p>
+
+<table><thead>
+<tr>
+<th>Body field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>externalToken</td>
+<td>UUID4</td>
+<td>External-token</td>
+</tr>
+<tr>
+<td>merchantId</td>
+<td>N</td>
+<td>Merchant ID given by Checkout</td>
+</tr>
+</tbody></table>
+
+<h3 id="http-response">HTTP Response</h3>
+
+<table><thead>
+<tr>
+<th>Body field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>token</td>
+<td>UUID4</td>
+<td>Checkout-token</td>
+</tr>
+<tr>
+<td>statusCode</td>
+<td>SCODE</td>
+<td>200 if migration successful</td>
+</tr>
+<tr>
+<td>statusText</td>
+<td>AN</td>
+<td>status message, e.g. &#39;token migrated&rsquo;</td>
+</tr>
+</tbody></table>
+
+<h2 id="token-removal">Token removal</h2>
+
+<p>Will remove a card tokenization from Checkouts system.</p>
+
+<h3 id="http-request">HTTP Request</h3>
+
+<p><code class="prettyprint">DELETE /tokenization/&lt;token&gt;</code></p>
+
+<p>where <code class="prettyprint">&lt;token&gt;</code> is Checkout-card-token</p>
+
+<h3 id="http-response">HTTP Response</h3>
+
+<table><thead>
+<tr>
+<th>Body field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>statusCode</td>
+<td>SCODE</td>
+<td>200 if card removed</td>
+</tr>
+<tr>
+<td>statusText</td>
+<td>AN</td>
+<td>status message, e.g. &#39;card removed&rsquo;</td>
+</tr>
+</tbody></table>
+
+<h2 id="tokenized-card-info-fetch">Tokenized card info fetch</h2>
+
+<p>Will return info about the credit card if token is valid.</p>
+
+<h3 id="http-request">HTTP Request</h3>
+
+<p><code class="prettyprint">GET /tokenization/&lt;token&gt;</code></p>
+
+<p>where <code class="prettyprint">&lt;token&gt;</code> is Checkout-card-token</p>
+
+<h3 id="http-response">HTTP Response</h3>
+
+<table><thead>
+<tr>
+<th>Body field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>card.type</td>
+<td>AN</td>
+<td>credit card type, e.g. &ldquo;Visa&rdquo;,</td>
+</tr>
+<tr>
+<td>card.partialPan</td>
+<td>AN</td>
+<td>last 4 digits of credit card, e.g. &ldquo;0024&rdquo;,</td>
+</tr>
+<tr>
+<td>card.expireYear</td>
+<td>AN</td>
+<td>credit card expiration year, e.g. &ldquo;2017&rdquo;,</td>
+</tr>
+<tr>
+<td>card.expireMonth</td>
+<td>AN</td>
+<td>credit card expiration month, e.g. &ldquo;03&rdquo;</td>
+</tr>
+<tr>
+<td>statusCode</td>
+<td>SCODE</td>
+<td>200 if card exists and info is fetched, 404 if card token not found</td>
+</tr>
+<tr>
+<td>statusText</td>
+<td>AN</td>
+<td>status message, e.g. &#39;card info fetced&rsquo;</td>
+</tr>
+</tbody></table>
+
+<h1 id="payment-apis">Payment APIs</h1>
+
+<h2 id="payment">Payment</h2>
+
+<h3 id="url">URL</h3>
 
 <ul>
 <li><code class="prettyprint">POST</code>: https://payment.checkout.fi</li>
 </ul>
 
-<h2 id="field-descriptions">Field descriptions</h2>
+<h3 id="field-descriptions">Field descriptions</h3>
 
 <blockquote>
 <p>Example uses the earlier created class (in testing stage)</p>
@@ -557,7 +733,7 @@ $xml = simplexml_load_string($response);
 
 <p><em>Field 18</em>: Best estimate of the delivery date of the product. If no date is known, use the latest possible date. Products that require loan are sent to the buyer by the delivery date.</p>
 
-<h2 id="calculating-the-checksum">Calculating the checksum</h2>
+<h3 id="calculating-the-checksum">Calculating the checksum</h3>
 
 <p>When calculating the checksum use the fields 1 to 23 and the security key as the last field. The fields are separated from each other with <code class="prettyprint">+</code> -sign. If a field is empty, use empty string in the calculation. The calculated checksum needs to be transferred in capitalized characters. Check is done with the method defined in field 17.</p>
 
@@ -572,7 +748,7 @@ $xml = simplexml_load_string($response);
   FAMILYNAME+ADDRESS+POSTCODE+POSTOFFICE+SECRET_KEY
 )
 </code></pre>
-<h2 id="response">Response</h2>
+<h3 id="response">Response</h3>
 
 <p>The response will arrive with the users browser, if the user returns to the service. If the for some reason this does not happen, Checkout will send a HTTP GET -request to the same address the browser was supposed to be redirected to, the service has to accept the incoming HTTP GET from Checkout even though it might lack cookies or a session. The message will be checked with MAC -check.</p>
 
@@ -641,7 +817,7 @@ $xml = simplexml_load_string($response);
 </blockquote>
 <pre class="highlight php"><code>$generatedMac=strtoupper(hash_hmac("sha256","{$data['VERSION']}<span class="ni">&amp;{$data['STAMP']}&amp;{$data['REFERENCE']}&amp;{$data['PAYMENT']}&amp;{$data['STATUS']}&amp;{$data['ALGORITHM']}",$this-&gt;password));</span>
 </code></pre>
-<h2 id="payment-statuses">Payment Statuses</h2>
+<h3 id="payment-statuses">Payment Statuses</h3>
 
 <table><thead>
 <tr>
@@ -715,6 +891,569 @@ $xml = simplexml_load_string($response);
 <li>Payment has been charged or is approved when the payment is in statuses: 2, 4, 5, 6, 7, 8, 9, 10.</li>
 <li>Retailer or a merchant can approve the order when the status is 2, 5, 6, 7, 8, 9 or 10.</li>
 </ul>
+
+<h2 id="shop-in-shop-payment">Shop-in-shop payment</h2>
+
+<p>Payments for shop-in-shop customers. Includes &ldquo;aggregate merchant&rdquo; (master merchant) and items with submerchants.
+Making SiS-payments with single items/submerchants is ok.</p>
+
+<p>If credit card token is sent to PaymentAPI, the API will use tokenized card for payment. If no token is sent, the user will be guided to credit card information input (payment).</p>
+
+<p>Commit can be used with token-payments. If commit is true, the tokenized credit card will be charged. If commit is false, it will make a payment reservation (authorization hold) on the card. This authorization hold will be committed or retracted later through the &#39;commit payment&rsquo; or &#39;retract payment&rsquo; API&rsquo;s.</p>
+<pre class="highlight xml"><code><span class="cp">&lt;?xml version="1.0"?&gt;</span>
+<span class="c">&lt;!--
+
+    Example of xml used in shop-in-shop payment creation, allthough some elements are marked as not required
+    dont just delete them but leave them empty if you dont want to use them.
+
+      List of different kinds of merchant identifications:
+        aggregator  = aggregator account used to create merchants and payments
+        merchant    = merchant ID, unique for each vendor created by the aggrecator account
+        m           = merchant ID, that will receive the commission from the payment
+
+    &lt;control&gt;
+        Holds a list of JSON objects that define the commission:
+            &lt;control&gt;[{"a":146,"m”:"12345","d":"commission”}]&lt;/control&gt;
+                a = sum of commission in cents
+                m = merchant ID, that will receive the commission from the payment
+                d = message/description of payment
+
+
+
+ --&gt;</span>
+<span class="nt">&lt;checkout</span> <span class="na">xmlns=</span><span class="s">"http://checkout.fi/request"</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;request</span> <span class="na">type=</span><span class="s">"aggregator"</span> <span class="na">test=</span><span class="s">"false"</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;aggregator&gt;</span>375917<span class="nt">&lt;/aggregator&gt;</span> <span class="c">&lt;!-- shop-in-shop aggregate merchant id  --&gt;</span>
+      <span class="nt">&lt;version&gt;</span>0002<span class="nt">&lt;/version&gt;</span>
+      <span class="nt">&lt;stamp&gt;</span>75646368746654321<span class="nt">&lt;/stamp&gt;</span> <span class="c">&lt;!-- unique identifier the payment --&gt;</span>
+      <span class="nt">&lt;reference&gt;</span>12344<span class="nt">&lt;/reference&gt;</span>
+      <span class="nt">&lt;description&gt;</span>...<span class="nt">&lt;/description&gt;</span>
+      <span class="nt">&lt;device&gt;</span>10<span class="nt">&lt;/device&gt;</span>
+      <span class="nt">&lt;content&gt;</span>1<span class="nt">&lt;/content&gt;</span>
+      <span class="nt">&lt;type&gt;</span>0<span class="nt">&lt;/type&gt;</span>
+      <span class="nt">&lt;algorithm&gt;</span>3<span class="nt">&lt;/algorithm&gt;</span>
+      <span class="nt">&lt;currency&gt;</span>EUR<span class="nt">&lt;/currency&gt;</span> <span class="c">&lt;!-- EUR is the only supported currency at the moment --&gt;</span>
+      <span class="nt">&lt;items&gt;</span>
+          <span class="nt">&lt;item&gt;</span>
+              <span class="nt">&lt;code&gt;</span>1112233an<span class="nt">&lt;/code&gt;</span> <span class="c">&lt;!-- product id/sku/code, not required --&gt;</span>
+              <span class="nt">&lt;stamp&gt;</span>98765323776<span class="nt">&lt;/stamp&gt;</span>
+              <span class="nt">&lt;description&gt;</span>product 1<span class="nt">&lt;/description&gt;</span> <span class="c">&lt;!-- required --&gt;</span>
+              <span class="nt">&lt;price</span> <span class="na">currency=</span><span class="s">"EUR"</span> <span class="na">vat=</span><span class="s">"23"</span><span class="nt">&gt;</span>100<span class="nt">&lt;/price&gt;</span> <span class="c">&lt;!-- vat attribute is not required. Price in cents. --&gt;</span>
+              <span class="nt">&lt;merchant&gt;</span>375917<span class="nt">&lt;/merchant&gt;</span> <span class="c">&lt;!-- this is the merchant id of the shop selling this item, required --&gt;</span>
+              <span class="nt">&lt;control&gt;</span>[{"a":12, "m":"375917", "d":"reward x"},{"a":146,"m”:"375917","d":"commission”}]<span class="nt">&lt;/control&gt;</span> <span class="c">&lt;!-- example of two commissions being deducted from the price of one item in the purchase  --&gt;</span>
+          <span class="nt">&lt;/item&gt;</span>
+          <span class="nt">&lt;item&gt;</span>
+              <span class="nt">&lt;code&gt;&lt;/code&gt;</span> <span class="c">&lt;!-- product id/sku/code --&gt;</span>
+              <span class="nt">&lt;description&gt;</span>product 2<span class="nt">&lt;/description&gt;</span>
+              <span class="nt">&lt;reference&gt;</span>987654321<span class="nt">&lt;/reference&gt;</span>
+              <span class="nt">&lt;price</span> <span class="na">currency=</span><span class="s">"EUR"</span><span class="nt">&gt;</span>100<span class="nt">&lt;/price&gt;</span>
+              <span class="nt">&lt;merchant&gt;</span>375917<span class="nt">&lt;/merchant&gt;</span>
+              <span class="nt">&lt;control</span> <span class="nt">/&gt;</span><span class="c">&lt;!-- When control field is empty no provision is collected from this item --&gt;</span>
+          <span class="nt">&lt;/item&gt;</span>
+          <span class="nt">&lt;item&gt;</span>
+              <span class="nt">&lt;code&gt;&lt;/code&gt;</span> <span class="c">&lt;!-- product id/sku/code --&gt;</span>
+              <span class="nt">&lt;description&gt;&lt;/description&gt;</span>
+              <span class="nt">&lt;price</span> <span class="na">currency=</span><span class="s">"EUR"</span> <span class="na">vat=</span><span class="s">"23"</span><span class="nt">&gt;</span>100<span class="nt">&lt;/price&gt;</span>
+              <span class="nt">&lt;merchant&gt;</span>375917<span class="nt">&lt;/merchant&gt;</span>
+              <span class="nt">&lt;control&gt;</span>[{"a":146,"m”:"375917","d":"commission”}]<span class="nt">&lt;/control&gt;</span><span class="c">&lt;!-- only a singe commission is deducted from this merchant --&gt;</span>
+          <span class="nt">&lt;/item&gt;</span>
+          <span class="nt">&lt;amount</span> <span class="na">currency=</span><span class="s">"EUR"</span><span class="nt">&gt;</span>300<span class="nt">&lt;/amount&gt;</span> <span class="c">&lt;!-- has to be exact total from sum of the items prices, in cents --&gt;</span>
+      <span class="nt">&lt;/items&gt;</span>
+      <span class="nt">&lt;buyer&gt;</span>
+          <span class="nt">&lt;company</span> <span class="na">vatid=</span><span class="s">""</span><span class="nt">&gt;&lt;/company&gt;</span> <span class="c">&lt;!-- not required --&gt;</span>
+          <span class="nt">&lt;firstname&gt;&lt;/firstname&gt;</span> <span class="c">&lt;!-- not required --&gt;</span>
+          <span class="nt">&lt;familyname&gt;&lt;/familyname&gt;</span> <span class="c">&lt;!-- not required --&gt;</span>
+          <span class="nt">&lt;address&gt;</span><span class="cp">&lt;![CDATA[ ]]&gt;</span><span class="nt">&lt;/address&gt;</span> <span class="c">&lt;!-- not required --&gt;</span>
+          <span class="nt">&lt;postalcode&gt;&lt;/postalcode&gt;</span> <span class="c">&lt;!-- not required --&gt;</span>
+          <span class="nt">&lt;postaloffice&gt;&lt;/postaloffice&gt;</span> <span class="c">&lt;!-- not required --&gt;</span>
+          <span class="nt">&lt;country&gt;</span>FIN<span class="nt">&lt;/country&gt;</span>
+          <span class="nt">&lt;email&gt;&lt;/email&gt;</span> <span class="c">&lt;!-- not required --&gt;</span>
+          <span class="nt">&lt;gsm&gt;&lt;/gsm&gt;</span> <span class="c">&lt;!-- not required --&gt;</span>
+          <span class="nt">&lt;language&gt;</span>FI<span class="nt">&lt;/language&gt;</span>
+      <span class="nt">&lt;/buyer&gt;</span>
+      <span class="nt">&lt;delivery&gt;</span>
+          <span class="nt">&lt;date&gt;</span>20110303<span class="nt">&lt;/date&gt;</span>
+          <span class="nt">&lt;company</span> <span class="na">vatid=</span><span class="s">""</span><span class="nt">&gt;&lt;/company&gt;</span>
+          <span class="nt">&lt;firstname&gt;&lt;/firstname&gt;</span>
+          <span class="nt">&lt;familyname&gt;&lt;/familyname&gt;</span>
+          <span class="nt">&lt;address&gt;</span><span class="cp">&lt;![CDATA[ ]]&gt;</span><span class="nt">&lt;/address&gt;</span>
+          <span class="nt">&lt;postalcode&gt;&lt;/postalcode&gt;</span>
+          <span class="nt">&lt;postaloffice&gt;&lt;/postaloffice&gt;</span>
+          <span class="nt">&lt;country&gt;&lt;/country&gt;</span>
+          <span class="nt">&lt;email&gt;&lt;/email&gt;</span>
+          <span class="nt">&lt;gsm&gt;&lt;/gsm&gt;</span>
+          <span class="nt">&lt;language&gt;&lt;/language&gt;</span>
+      <span class="nt">&lt;/delivery&gt;</span>
+      <span class="nt">&lt;control</span> <span class="na">type=</span><span class="s">"default"</span><span class="nt">&gt;</span>
+          <span class="nt">&lt;return&gt;</span>return.php<span class="nt">&lt;/return&gt;</span>
+          <span class="nt">&lt;reject&gt;</span>return.php<span class="nt">&lt;/reject&gt;</span>
+          <span class="nt">&lt;cancel&gt;</span>return.php<span class="nt">&lt;/cancel&gt;</span>
+      <span class="nt">&lt;/control&gt;</span>
+  <span class="nt">&lt;/request&gt;</span>
+<span class="nt">&lt;/checkout&gt;</span>
+
+</code></pre>
+<h3 id="http-request">HTTP Request</h3>
+
+<ul>
+<li><code class="prettyprint">POST</code>: https://payment.checkout.fi</li>
+</ul>
+
+<table><thead>
+<tr>
+<th>#</th>
+<th>Description</th>
+<th>Name</th>
+<th>Value</th>
+<th>Format</th>
+<th>Required</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>1</td>
+<td>Payment version. Always &ldquo;0002&rdquo;.</td>
+<td>VERSION</td>
+<td>&ldquo;0002&rdquo;</td>
+<td>AN 4</td>
+<td>Yes </td>
+</tr>
+<tr>
+<td>2</td>
+<td>Unique identifier for the payment in the context of the merchant. Has to be unique.</td>
+<td>STAMP</td>
+<td>unique_id</td>
+<td>AN 20</td>
+<td>Yes </td>
+</tr>
+<tr>
+<td>3</td>
+<td>Amount in cents. Has to be exact total from sum of the items prices</td>
+<td> AMOUNT</td>
+<td>1000</td>
+<td>N</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Payment reference number for the payment from the merchant.</td>
+<td>REFERENCE</td>
+<td>standard_reference</td>
+<td>AN 20</td>
+<td>Yes </td>
+</tr>
+<tr>
+<td>5</td>
+<td>Description of payment/purchase</td>
+<td>DESCRIPTION</td>
+<td>&ldquo;Item 1#, Item #2&hellip;&rdquo;</td>
+<td>AN 1000</td>
+<td>No</td>
+</tr>
+<tr>
+<td>6</td>
+<td>Payment language. Options currently are: &ldquo;FI&rdquo;, &ldquo;EN&rdquo;, &ldquo;SE&rdquo;.</td>
+<td>LANGUAGE</td>
+<td>&ldquo;FI&rdquo;</td>
+<td>AN 2</td>
+<td>No</td>
+</tr>
+<tr>
+<td>7</td>
+<td>Merchant Id of aggregate merchant. Given identifier for the merchant (you get this from Checkout Finland), for testing: 375917</td>
+<td>AGGREGATE</td>
+<td>375917</td>
+<td>AN 20</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>8</td>
+<td>Return callback. Called when the payment is successfully paid.</td>
+<td>RETURN</td>
+<td></td>
+<td>AN 300</td>
+<td>Yes*</td>
+</tr>
+<tr>
+<td>9</td>
+<td>Cancel callback. Called when the payment is cancelled for some reason.</td>
+<td>CANCEL</td>
+<td></td>
+<td>AN 300</td>
+<td>Yes*</td>
+</tr>
+<tr>
+<td>10</td>
+<td>Reject callback. Called when the payment is rejected. If not defined, on reject the cancel will be called.</td>
+<td>REJECT</td>
+<td></td>
+<td>AN 300</td>
+<td>No</td>
+</tr>
+<tr>
+<td>11</td>
+<td>Delayed callback. Called if the payment is delayed.</td>
+<td>DELAYED</td>
+<td></td>
+<td>AN 300</td>
+<td>No</td>
+</tr>
+<tr>
+<td>12</td>
+<td>Country, ISO-3166-1 alpha-3.</td>
+<td>COUNTRY</td>
+<td>&ldquo;FIN&rdquo;</td>
+<td>AN 3</td>
+<td>No</td>
+</tr>
+<tr>
+<td>13</td>
+<td>Currency. Currently always EUR.</td>
+<td>CURRENCY</td>
+<td>&ldquo;EUR&rdquo;</td>
+<td>AN 3</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>14</td>
+<td>Device type. <code class="prettyprint">1 = HTML</code>, <code class="prettyprint">10 = XML</code>.</td>
+<td>DEVICE</td>
+<td>1</td>
+<td>N 2</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>15</td>
+<td>Content of the purchase. <code class="prettyprint">1 = Normal</code>, <code class="prettyprint">2 = adult industry</code></td>
+<td>CONTENT</td>
+<td>1</td>
+<td>N 2</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>16</td>
+<td>Payment types.</td>
+<td>TYPE</td>
+<td>0</td>
+<td>N 1</td>
+<td>Yes*</td>
+</tr>
+<tr>
+<td>17</td>
+<td>Checksum calculation algorithm. Use 3 commonly.</td>
+<td>ALGORITHM</td>
+<td>3</td>
+<td>N 1</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>18</td>
+<td>Delivery date. Format: YYYYMMDD.</td>
+<td>DELIVERY_DATE</td>
+<td>20171231</td>
+<td>N 8</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>19</td>
+<td>Required when using loaning services. First name of the buyer.</td>
+<td>FIRSTNAME</td>
+<td>&ldquo;Matti&rdquo;</td>
+<td>AN 40</td>
+<td>No</td>
+</tr>
+<tr>
+<td>20</td>
+<td>Required when using loaning services. Last name of the buyer.</td>
+<td>FAMILYNAME</td>
+<td>&ldquo;Meikäläinen&rdquo;</td>
+<td>AN 40</td>
+<td>No</td>
+</tr>
+<tr>
+<td>21</td>
+<td>Required when using loaning services. Delivery address.</td>
+<td>ADDRESS</td>
+<td>&ldquo;Maantie 123&rdquo;</td>
+<td>AN 40</td>
+<td>No</td>
+</tr>
+<tr>
+<td>22</td>
+<td>Required when using loaning services. Delivery post number.</td>
+<td>POSTCODE</td>
+<td>&ldquo;12345&rdquo;</td>
+<td>AN 14</td>
+<td>No</td>
+</tr>
+<tr>
+<td>23</td>
+<td>Required when using loaning services. Delivery postal office.</td>
+<td>POSTOFFICE</td>
+<td>&ldquo;&rdquo;</td>
+<td>AN 18</td>
+<td>No</td>
+</tr>
+<tr>
+<td>24</td>
+<td>Checksum is calculated by combining fields 1-23 and the secret key, separating them with a <code class="prettyprint">+</code>-sign</td>
+<td>MAC</td>
+<td></td>
+<td>AN 32</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>25</td>
+<td>SiS-items of purchase</td>
+<td>ITEMS</td>
+<td></td>
+<td></td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>26</td>
+<td>Product id/sku/code</td>
+<td>ITEM.CODE</td>
+<td></td>
+<td>AN</td>
+<td>No</td>
+</tr>
+<tr>
+<td>27</td>
+<td>Description of payment/purchase</td>
+<td>ITEM.DESCRIPTION</td>
+<td>&ldquo;Product #1&rdquo;</td>
+<td>AN</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>28</td>
+<td>Price of item in cents</td>
+<td>ITEM.PRICE</td>
+<td>50</td>
+<td>N</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>29</td>
+<td>Merchant id of the shop selling the item (SiS-shop)</td>
+<td>ITEM.MERCHANT</td>
+<td>585858</td>
+<td>N</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>30</td>
+<td>Holds a list of JSON objects that define the commission which SiS-merchant will receive. Not required if no commission given to SiS-merchant</td>
+<td>ITEM.CONTROL</td>
+<td></td>
+<td>[]</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>31</td>
+<td>Sum of commission in cents</td>
+<td>ITEM.CONTROL.a</td>
+<td>48</td>
+<td>N</td>
+<td>No</td>
+</tr>
+<tr>
+<td>32</td>
+<td>Merchant ID, that will receive the commission from the payment (usually same as ITEM.MERCHANT)</td>
+<td>ITEM.CONTROL.m</td>
+<td>585858</td>
+<td>N</td>
+<td>No</td>
+</tr>
+<tr>
+<td>33</td>
+<td>Message/description of payment</td>
+<td>ITEM.CONTROL.d</td>
+<td>&ldquo;commission for item #1&rdquo;</td>
+<td>AN</td>
+<td>No</td>
+</tr>
+<tr>
+<td>34</td>
+<td>Token of credit card</td>
+<td>TOKEN</td>
+<td>&ldquo;f47ac10b-58cc-4372-a567-0e02b2c3d479&rdquo;</td>
+<td>UUID4</td>
+<td>No</td>
+</tr>
+<tr>
+<td>35</td>
+<td>Commit token payment (if false, makes a reservation)</td>
+<td>COMMIT</td>
+<td>true/false</td>
+<td>BOOL</td>
+<td>No</td>
+</tr>
+<tr>
+<td>36</td>
+<td>Buyer email</td>
+<td>EMAIL</td>
+<td></td>
+<td>AN 200</td>
+<td>No</td>
+</tr>
+<tr>
+<td>37</td>
+<td>Buyer phone number</td>
+<td>PHONE</td>
+<td></td>
+<td>AN 30</td>
+<td>No</td>
+</tr>
+</tbody></table>
+
+<p><em>Fields 8, 9, 14, 16</em>: These are required only with non-token -payments.</p>
+
+<p><em>Field 24</em>: For calculating checksum, check above on Payment-API.</p>
+
+<h3 id="http-response">HTTP Response</h3>
+
+<table><thead>
+<tr>
+<th>#</th>
+<th>Description</th>
+<th>Name</th>
+<th>Format</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>1 </td>
+<td>HTTP Status code (200 if payment/reservation successful)</td>
+<td>statusCode</td>
+<td>SCODE</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Status text (e.g. &#39;payment done&rsquo;)</td>
+<td>statusText</td>
+<td>AN</td>
+</tr>
+</tbody></table>
+
+<h2 id="revert">Revert</h2>
+
+<p>Reverts an existing debit-reservation or committed payment. If this is done for a reservation, the reservation is simply removed or lowered. If this is done for a committed payment, it will create a recompensation to the original payer.</p>
+
+<h3 id="http-request">HTTP Request</h3>
+
+<p><code class="prettyprint">POST /payment/&lt;transactionStamp&gt;/retract</code></p>
+
+<table><thead>
+<tr>
+<th>#</th>
+<th>Description</th>
+<th>Name</th>
+<th>Value</th>
+<th>Format</th>
+<th>Required</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>1</td>
+<td>Amount of payment reservation to be retracted in cents</td>
+<td>AMOUNT</td>
+<td></td>
+<td>N</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Merchant id of which the initial reservation was done with</td>
+<td>MERCHANT</td>
+<td></td>
+<td>N</td>
+<td>Yes</td>
+</tr>
+</tbody></table>
+
+<h3 id="http-response">HTTP Response</h3>
+
+<table><thead>
+<tr>
+<th>#</th>
+<th>Description</th>
+<th>Name</th>
+<th>Format</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>1 </td>
+<td>HTTP Status code (200 if retract successful, 404 if payment not found)</td>
+<td>statusCode</td>
+<td>SCODE</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Status text (e.g. &#39;payment retracted&rsquo;)</td>
+<td>statusText</td>
+<td>AN</td>
+</tr>
+</tbody></table>
+
+<h2 id="commit-payment">Commit payment</h2>
+
+<p>Commits an existing credit card reservation.</p>
+
+<h3 id="http-request">HTTP Request</h3>
+
+<p><code class="prettyprint">POST /payment/&lt;transactionStamp&gt;/commit</code></p>
+
+<table><thead>
+<tr>
+<th>#</th>
+<th>Description</th>
+<th>Name</th>
+<th>Value</th>
+<th>Format</th>
+<th>Required</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>1</td>
+<td>Amount of payment reservation to be committed</td>
+<td>AMOUNT</td>
+<td></td>
+<td>N</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Merchant id of which the initial reservation was done with</td>
+<td>MERCHANT</td>
+<td></td>
+<td>N</td>
+<td>Yes</td>
+</tr>
+</tbody></table>
+
+<h3 id="http-response">HTTP Response</h3>
+
+<table><thead>
+<tr>
+<th>#</th>
+<th>Description</th>
+<th>Name</th>
+<th>Format</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>1 </td>
+<td>HTTP Status code (200 if commit successful, 404 if payment not found)</td>
+<td>statusCode</td>
+<td>SCODE</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Status text (e.g. &#39;payment committed&rsquo;)</td>
+<td>statusText</td>
+<td>AN</td>
+</tr>
+</tbody></table>
 
 <h1 id="polling">Polling</h1>
 
@@ -959,6 +1698,52 @@ $xml = simplexml_load_string($response);
  <span class="nt">&lt;/response&gt;</span>
 <span class="nt">&lt;/checkout&gt;</span>";
 </code></pre>
+<h1 id="data-types">Data types</h1>
+
+<table><thead>
+<tr>
+<th>Type</th>
+<th>Format (regex)</th>
+<th>Example</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>N</td>
+<td>^[0-9]+$</td>
+<td>505050</td>
+</tr>
+<tr>
+<td>AN</td>
+<td>^[.,’-=/\w;\s]{0,1023}$</td>
+<td>Alph4num3r1c</td>
+</tr>
+<tr>
+<td>BOOL</td>
+<td>true/false</td>
+<td>true</td>
+</tr>
+<tr>
+<td>AMOUNT</td>
+<td>^\d{1,12}$</td>
+<td>9000</td>
+</tr>
+<tr>
+<td>CURRENCY</td>
+<td>^(EUR)$</td>
+<td>EUR</td>
+</tr>
+<tr>
+<td>UUID4</td>
+<td>^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$</td>
+<td>f47ac10b-58cc-4372-a567-0e02b2c3d479</td>
+</tr>
+<tr>
+<td>SCODE</td>
+<td>^\d{1,6}$</td>
+<td>404</td>
+</tr>
+</tbody></table>
+
       </div>
       <div class="dark-box">
           <div class="lang-selector">
