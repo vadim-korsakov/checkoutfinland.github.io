@@ -162,7 +162,9 @@ The whole test code is available at: [http://demo1.checkout.fi/xml2.txt](http://
 
 # General flow
 
-## Payment process
+## Examples
+
+### Payment process
 
 The following illustrates how the user moves in the payment process.
 
@@ -182,25 +184,9 @@ The following illustrates how the user moves in the payment process.
 
 ## Card addition (tokenization)
 
-Will get the form (iframe) for entering credit card information.
-
-### HTTP Request
-
-`GET form/add_card`
-
-Body field | Type | Description
--------------- | -------------- | --------------
-merchantId | N | Merchant ID given by Checkout
-
-### HTTP Response
-
-On successful credit card information input:
-
-Body field | Type | Description
--------------- | -------------- | --------------
-token | UUID4 | Checkout-card-token which can be used for making payments on the card.
-statusCode | SCODE | 200 if card addition successful
-statusText | AN | status message, e.g. 'card added'
+1. Use the Solinor card-addition described in the [Solinor "STORE A CARD" example](https://paymenthighway.fi/dev/#examples) to fetch the Solinor-`card_token`.
+2. Migrate the Solinor-`card_token` to a Checkout-`card_token` using the [Token migration API](http://localhost:4567/#token-migration) described below.
+3. Use the Checkout-`card_token` for making payments.
 
 ## Token migration
 
