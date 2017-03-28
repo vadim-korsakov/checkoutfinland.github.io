@@ -263,7 +263,9 @@
 
 <h1 id="general-flow">General flow</h1>
 
-<h2 id="payment-process">Payment process</h2>
+<h2 id="examples">Examples</h2>
+
+<h3 id="payment-process">Payment process</h3>
 
 <p>The following illustrates how the user moves in the payment process.</p>
 
@@ -285,53 +287,11 @@
 
 <h2 id="card-addition-tokenization">Card addition (tokenization)</h2>
 
-<p>Will get the form (iframe) for entering credit card information.</p>
-
-<h3 id="http-request">HTTP Request</h3>
-
-<p><code class="prettyprint">GET form/add_card</code></p>
-
-<table><thead>
-<tr>
-<th>Body field</th>
-<th>Type</th>
-<th>Description</th>
-</tr>
-</thead><tbody>
-<tr>
-<td>merchantId</td>
-<td>N</td>
-<td>Merchant ID given by Checkout</td>
-</tr>
-</tbody></table>
-
-<h3 id="http-response">HTTP Response</h3>
-
-<p>On successful credit card information input:</p>
-
-<table><thead>
-<tr>
-<th>Body field</th>
-<th>Type</th>
-<th>Description</th>
-</tr>
-</thead><tbody>
-<tr>
-<td>token</td>
-<td>UUID4</td>
-<td>Checkout-card-token which can be used for making payments on the card.</td>
-</tr>
-<tr>
-<td>statusCode</td>
-<td>SCODE</td>
-<td>200 if card addition successful</td>
-</tr>
-<tr>
-<td>statusText</td>
-<td>AN</td>
-<td>status message, e.g. &lsquo;card added&rsquo;</td>
-</tr>
-</tbody></table>
+<ol>
+<li>Use the Solinor card-addition described in the <a href="https://paymenthighway.fi/dev/#examples">Solinor &ldquo;STORE A CARD&rdquo; example</a> to fetch the Solinor-<code class="prettyprint">card_token</code>.</li>
+<li>Migrate the Solinor-<code class="prettyprint">card_token</code> to a Checkout-<code class="prettyprint">card_token</code> using the <a href="http://localhost:4567/#token-migration">Token migration API</a> described below.</li>
+<li>Use the Checkout-<code class="prettyprint">card_token</code> for making payments.</li>
+</ol>
 
 <h2 id="token-migration">Token migration</h2>
 
@@ -382,7 +342,7 @@
 <tr>
 <td>statusText</td>
 <td>AN</td>
-<td>status message, e.g. &#39;token migrated&rsquo;</td>
+<td>status message, e.g. &lsquo;token migrated&rsquo;</td>
 </tr>
 </tbody></table>
 
