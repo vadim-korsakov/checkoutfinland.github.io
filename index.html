@@ -91,7 +91,7 @@
       <script src="javascripts/all.js"></script>
   </head>
 
-  <body class="index" data-languages="[&quot;php&quot;]">
+  <body class="index" data-languages="[&quot;code&quot;]">
     <a href="#" id="nav-button">
       <span>
         NAV
@@ -101,7 +101,7 @@
     <div class="tocify-wrapper">
       <img src="images/logo.png" alt="Logo" />
         <div class="lang-selector">
-              <a href="#" data-language-name="php">php</a>
+              <a href="#" data-language-name="code">code</a>
         </div>
         <div class="search">
           <input type="text" class="search" id="input-search" placeholder="Search">
@@ -295,11 +295,19 @@
 
 <h2 id="token-migration">Token migration</h2>
 
-<p>Will convert a external token (previous foreign customers&rsquo; token who is coming to Finland) to a Checkout-token, which can then be used for making payments in Finland.</p>
+<p>Will convert an external token (for example Solinor token) to a Checkout-token, which can then be used for making payments in Checkout Finland Payment API.</p>
 
+<p>If token has already been migrated earlier, statusText will be &lsquo;TOKEN &rsquo;</p>
+<pre class="highlight plaintext"><code>POST /token/migrate HTTP/1.1
+Host: payment.checkout.fi
+Content-Type: application/x-www-form-urlencoded
+Cache-Control: no-cache
+
+merchant=375917&amp;provider_token=1296b3bc-407b-439b-9afd-c138e3ababa3
+</code></pre>
 <h3 id="http-request">HTTP Request</h3>
 
-<p><code class="prettyprint">POST /tokenization/migrate</code></p>
+<p><code class="prettyprint">POST https://payment.checkout.fi/token/migrate</code></p>
 
 <table><thead>
 <tr>
@@ -309,17 +317,23 @@
 </tr>
 </thead><tbody>
 <tr>
-<td>externalToken</td>
+<td>provider_token</td>
 <td>UUID4</td>
-<td>External-token</td>
+<td>External (e.g. Solinor) token</td>
 </tr>
 <tr>
-<td>merchantId</td>
+<td>merchant</td>
 <td>N</td>
 <td>Merchant ID given by Checkout</td>
 </tr>
 </tbody></table>
-
+<pre class="highlight xml"><code><span class="cp">&lt;?xml version="1.0" encoding="utf-8"?&gt;</span>
+<span class="nt">&lt;response&gt;</span>
+    <span class="nt">&lt;statusCode&gt;</span>200<span class="nt">&lt;/statusCode&gt;</span>
+    <span class="nt">&lt;statusText&gt;</span>TOKEN MIGRATE OK<span class="nt">&lt;/statusText&gt;</span>
+    <span class="nt">&lt;token&gt;</span>4c9705fd-c31d-4d2f-accf-f07b63eb80fe<span class="nt">&lt;/token&gt;</span>
+<span class="nt">&lt;/response&gt;</span>
+</code></pre>
 <h3 id="http-response">HTTP Response</h3>
 
 <table><thead>
@@ -337,12 +351,38 @@
 <tr>
 <td>statusCode</td>
 <td>SCODE</td>
-<td>200 if migration successful</td>
+<td>Checkout status code, described in table below</td>
 </tr>
 <tr>
 <td>statusText</td>
 <td>AN</td>
-<td>status message, e.g. &lsquo;token migrated&rsquo;</td>
+<td>status message, e.g. &#39;TOKEN MIGRATE OK&rsquo;, &#39;TOKEN ALREADY MIGRATED&rsquo;</td>
+</tr>
+</tbody></table>
+
+<h4 id="status-codes">Status codes</h4>
+
+<table><thead>
+<tr>
+<th>Status Code</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>200</td>
+<td>Token was migrated successfully</td>
+</tr>
+<tr>
+<td>201</td>
+<td>Token has already been migrated, will return existing checkout-token</td>
+</tr>
+<tr>
+<td>400</td>
+<td>Merchant with given ID not found</td>
+</tr>
+<tr>
+<td>500</td>
+<td>General internal server error</td>
 </tr>
 </tbody></table>
 
@@ -1700,14 +1740,14 @@ Making SiS-payments with single items/submerchants is ok.</p>
 <tr>
 <td>SCODE</td>
 <td>^\d{1,6}$</td>
-<td>404</td>
+<td>9001</td>
 </tr>
 </tbody></table>
 
       </div>
       <div class="dark-box">
           <div class="lang-selector">
-                <a href="#" data-language-name="php">php</a>
+                <a href="#" data-language-name="code">code</a>
           </div>
       </div>
     </div>

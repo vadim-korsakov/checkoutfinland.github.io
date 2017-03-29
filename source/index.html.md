@@ -2,7 +2,7 @@
 title: Checkout API Reference
 
 language_tabs:
-  - php
+  - code
 
 toc_footers:
 #  - <a href='#'>Sign Up for a Developer Key</a>
@@ -190,24 +190,53 @@ The following illustrates how the user moves in the payment process.
 
 ## Token migration
 
-Will convert a external token (previous foreign customers' token who is coming to Finland) to a Checkout-token, which can then be used for making payments in Finland.
+Will convert an external token (for example Solinor token) to a Checkout-token, which can then be used for making payments in Checkout Finland Payment API.
+
+If token has already been migrated earlier, statusText will be 'TOKEN '
+
+```req
+POST /token/migrate HTTP/1.1
+Host: payment.checkout.fi
+Content-Type: application/x-www-form-urlencoded
+Cache-Control: no-cache
+
+merchant=375917&provider_token=1296b3bc-407b-439b-9afd-c138e3ababa3
+```
 
 ### HTTP Request
 
-`POST /tokenization/migrate`
+`POST https://payment.checkout.fi/token/migrate`
 
 Body field | Type | Description
 -------------- | -------------- | --------------
-externalToken | UUID4 | External-token
-merchantId | N | Merchant ID given by Checkout
+provider_token | UUID4 | External (e.g. Solinor) token
+merchant | N | Merchant ID given by Checkout
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<response>
+    <statusCode>200</statusCode>
+    <statusText>TOKEN MIGRATE OK</statusText>
+    <token>4c9705fd-c31d-4d2f-accf-f07b63eb80fe</token>
+</response>
+```
 
 ### HTTP Response
 
 Body field | Type | Description
 -------------- | -------------- | --------------
 token | UUID4 | Checkout-token
-statusCode | SCODE | 200 if migration successful
-statusText | AN | status message, e.g. 'token migrated'
+statusCode | SCODE | Checkout status code, described in table below
+statusText | AN | status message, e.g. 'TOKEN MIGRATE OK', 'TOKEN ALREADY MIGRATED'
+
+#### Status codes
+
+Status Code | Description
+---- | -----------
+200 | Token was migrated successfully
+201 | Token has already been migrated, will return existing checkout-token
+400 | Merchant with given ID not found
+500 | General internal server error
 
 ## Token removal
 
@@ -751,4 +780,4 @@ BOOL | true/false | true
 AMOUNT | ^\d{1,12}$ | 9000
 CURRENCY | ^(EUR)$ | EUR
 UUID4 | ^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$ | f47ac10b-58cc-4372-a567-0e02b2c3d479
-SCODE | ^\d{1,6}$ | 404
+SCODE | ^\d{1,6}$ | 9001
