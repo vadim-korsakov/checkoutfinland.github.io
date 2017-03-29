@@ -192,7 +192,7 @@ The following illustrates how the user moves in the payment process.
 
 Will convert an external token (for example Solinor token) to a Checkout-token, which can then be used for making payments in Checkout Finland Payment API.
 
-If token has already been migrated earlier, statusText will be 'TOKEN '
+If token has already been migrated earlier, statusText will be 'TOKEN ALREADY MIGRATED' and Checkout-token will be returned.
 
 ```req
 POST /token/migrate HTTP/1.1
