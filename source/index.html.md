@@ -192,7 +192,7 @@ The following illustrates how the user moves in the payment process.
 
 Will convert an external token (for example Solinor token) to a Checkout-token, which can then be used for making payments in Checkout Finland Payment API.
 
-If token has already been migrated earlier, statusText will be 'TOKEN ALREADY MIGRATED' and Checkout-token will be returned.
+If token has already been migrated earlier, statusCode '201' and Checkout-token will be returned.
 
 ```req
 POST /token/migrate HTTP/1.1
@@ -216,22 +216,22 @@ merchant | N | Merchant ID given by Checkout
 <?xml version="1.0" encoding="utf-8"?>
 <response>
     <statusCode>200</statusCode>
-    <statusText>TOKEN MIGRATE OK</statusText>
+    <statusText>Token was migrated successfully</statusText>
     <token>4c9705fd-c31d-4d2f-accf-f07b63eb80fe</token>
 </response>
 ```
 
-### HTTP Response
+### HTTP Response (HTTP 200)
 
 Body field | Type | Description
 -------------- | -------------- | --------------
 token | UUID4 | Checkout-token
 statusCode | SCODE | Checkout status code, described in table below
-statusText | AN | status message, e.g. 'TOKEN MIGRATE OK', 'TOKEN ALREADY MIGRATED'
+statusText | AN | status message, e.g. 'Token has already been migrated...'
 
-#### Status codes
+#### Status codes & -texts
 
-Status Code | Description
+Status Code | Status Text
 ---- | -----------
 200 | Token was migrated successfully
 201 | Token has already been migrated, will return existing checkout-token

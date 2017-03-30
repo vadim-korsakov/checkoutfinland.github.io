@@ -297,7 +297,7 @@
 
 <p>Will convert an external token (for example Solinor token) to a Checkout-token, which can then be used for making payments in Checkout Finland Payment API.</p>
 
-<p>If token has already been migrated earlier, statusText will be &lsquo;TOKEN &rsquo;</p>
+<p>If token has already been migrated earlier, statusCode &lsquo;201&rsquo; and Checkout-token will be returned.</p>
 <pre class="highlight plaintext"><code>POST /token/migrate HTTP/1.1
 Host: payment.checkout.fi
 Content-Type: application/x-www-form-urlencoded
@@ -330,11 +330,11 @@ merchant=375917&amp;provider_token=1296b3bc-407b-439b-9afd-c138e3ababa3
 <pre class="highlight xml"><code><span class="cp">&lt;?xml version="1.0" encoding="utf-8"?&gt;</span>
 <span class="nt">&lt;response&gt;</span>
     <span class="nt">&lt;statusCode&gt;</span>200<span class="nt">&lt;/statusCode&gt;</span>
-    <span class="nt">&lt;statusText&gt;</span>TOKEN MIGRATE OK<span class="nt">&lt;/statusText&gt;</span>
+    <span class="nt">&lt;statusText&gt;</span>Token was migrated successfully<span class="nt">&lt;/statusText&gt;</span>
     <span class="nt">&lt;token&gt;</span>4c9705fd-c31d-4d2f-accf-f07b63eb80fe<span class="nt">&lt;/token&gt;</span>
 <span class="nt">&lt;/response&gt;</span>
 </code></pre>
-<h3 id="http-response">HTTP Response</h3>
+<h3 id="http-response-http-200">HTTP Response (HTTP 200)</h3>
 
 <table><thead>
 <tr>
@@ -356,16 +356,16 @@ merchant=375917&amp;provider_token=1296b3bc-407b-439b-9afd-c138e3ababa3
 <tr>
 <td>statusText</td>
 <td>AN</td>
-<td>status message, e.g. &#39;TOKEN MIGRATE OK&rsquo;, &#39;TOKEN ALREADY MIGRATED&rsquo;</td>
+<td>status message, e.g. &#39;Token has already been migrated&hellip;&rsquo;</td>
 </tr>
 </tbody></table>
 
-<h4 id="status-codes">Status codes</h4>
+<h4 id="status-codes-amp-texts">Status codes &amp; -texts</h4>
 
 <table><thead>
 <tr>
 <th>Status Code</th>
-<th>Description</th>
+<th>Status Text</th>
 </tr>
 </thead><tbody>
 <tr>
