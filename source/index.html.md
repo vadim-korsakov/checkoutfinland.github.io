@@ -427,80 +427,78 @@ If credit card token is sent to PaymentAPI, the API will use tokenized card for 
 
 Commit can be used with token-payments. If commit is true, the tokenized credit card will be charged. If commit is false, it will make a payment reservation (authorization hold) on the card. This authorization hold will be committed or retracted later through the 'commit payment' or 'retract payment' API's.
 
+Actual HTTP request is made using two name/value pairs containing 
+
+>HTTP-request
+
+```req
+POST / HTTP/1.1
+Host: payment.checkout.fi
+Content-Type: application/x-www-form-urlencoded
+Cache-Control: no-cache
+
+CHECKOUT_XML=<base64 encoded xml string>&CHECKOUT_MAC=<string>
+```
+
+### HTTP Request
+
+* `POST`: https://payment.checkout.fi
+
+
+
+| Name | Description |
+|------|-------------|
+| CHECKOUT_MAC | MD5 hash calculated from sent values |
+| CHECKOUT_XML | Base64 encoded representation of the XML string. XML explained below |
+
+Calculating MD5 hash for CHECKOUT_MAC field: 
+
+md5( &lt;xml_string&gt; + '+' + &lt;aggregator_merchant_secret&gt; )
+
+! Note the plus sign between strings is part of a string not concatenating operator etc.
+
+>Create SiS payment XML format
+
 ```xml
 <?xml version="1.0"?>
-<!--
-
-    Example of xml used in shop-in-shop payment creation, allthough some elements are marked as not required
-    dont just delete them but leave them empty if you dont want to use them.
-
-	  List of different kinds of merchant identifications:
-		aggregator 	= aggregator account used to create merchants and payments
-		merchant  	= merchant ID, unique for each vendor created by the aggrecator account
-		m 			= merchant ID, that will receive the commission from the payment
-
-	<control>
-		Holds a list of JSON objects that define the commission:
-			<control>[{"a":146,"m”:"12345","d":"commission”}]</control>
-				a = sum of commission in cents
-				m = merchant ID, that will receive the commission from the payment
-				d = message/description of payment
-
-
-
- -->
 <checkout xmlns="http://checkout.fi/request">
   <request type="aggregator" test="false">
-      <aggregator>375917</aggregator> <!-- shop-in-shop aggregate merchant id  -->
-      <version>0002</version>
-      <stamp>75646368746654321</stamp> <!-- unique identifier the payment -->
-      <reference>12344</reference>
-      <description>...</description>
-      <device>10</device>
-      <content>1</content>
-      <type>0</type>
-      <algorithm>3</algorithm>
-      <currency>EUR</currency> <!-- EUR is the only supported currency at the moment -->
+      <aggregator></aggregator>
+      <version></version>
+      <stamp></stamp>
+      <reference></reference>
+      <description></description>
+      <device></device>
+      <content></content>
+      <type></type>
+      <algorithm></algorithm>
+      <currency></currency>
+      <token></token>
       <items>
           <item>
-              <code>1112233an</code> <!-- product id/sku/code, not required -->
-              <stamp>98765323776</stamp>
-              <description>product 1</description> <!-- required -->
-              <price currency="EUR" vat="23">100</price> <!-- vat attribute is not required. Price in cents. -->
-              <merchant>375917</merchant> <!-- this is the merchant id of the shop selling this item, required -->
-              <control>[{"a":12, "m":"375917", "d":"reward x"},{"a":146,"m”:"375917","d":"commission”}]</control> <!-- example of two commissions being deducted from the price of one item in the purchase  -->
-          </item>
-          <item>
-              <code></code> <!-- product id/sku/code -->
-              <description>product 2</description>
-              <reference>987654321</reference>
-              <price currency="EUR">100</price>
-              <merchant>375917</merchant>
-              <control /><!-- When control field is empty no provision is collected from this item -->
-          </item>
-          <item>
-              <code></code> <!-- product id/sku/code -->
+              <code></code>
+              <stamp></stamp>
               <description></description>
-              <price currency="EUR" vat="23">100</price>
-              <merchant>375917</merchant>
-              <control>[{"a":146,"m”:"375917","d":"commission”}]</control><!-- only a singe commission is deducted from this merchant -->
+              <price currency="EUR" vat="23"></price>
+              <merchant></merchant>
+              <control></control>
           </item>
-          <amount currency="EUR">300</amount> <!-- has to be exact total from sum of the items prices, in cents -->
+          <amount currency="EUR"></amount>
       </items>
       <buyer>
-          <company vatid=""></company> <!-- not required -->
-          <firstname></firstname> <!-- not required -->
-          <familyname></familyname> <!-- not required -->
-          <address><![CDATA[ ]]></address> <!-- not required -->
-          <postalcode></postalcode> <!-- not required -->
-          <postaloffice></postaloffice> <!-- not required -->
-          <country>FIN</country>
-          <email></email> <!-- not required -->
-          <gsm></gsm> <!-- not required -->
-          <language>FI</language>
+          <company vatid=""></company>
+          <firstname></firstname>
+          <familyname></familyname>
+          <address><![CDATA[ ]]></address>
+          <postalcode></postalcode>
+          <postaloffice></postaloffice>
+          <country></country>
+          <email></email>
+          <gsm></gsm>
+          <language></language>
       </buyer>
       <delivery>
-          <date>20110303</date>
+          <date></date>
           <company vatid=""></company>
           <firstname></firstname>
           <familyname></familyname>
@@ -513,67 +511,123 @@ Commit can be used with token-payments. If commit is true, the tokenized credit 
           <language></language>
       </delivery>
       <control type="default">
-          <return>return.php</return>
-          <reject>return.php</reject>
-          <cancel>return.php</cancel>
+          <return></return>
+          <reject></reject>
+          <cancel></cancel>
       </control>
   </request>
 </checkout>
-
 ```
 
-### HTTP Request
 
-* `POST`: https://payment.checkout.fi
 
-| #  | Description | Name | Value | Format | Required |
-|----|-------------|------|-------|--------|----------|
-| 1 | Payment version. Always "0002". | VERSION | "0002" | AN 4 | Yes |
-| 2 | Unique identifier for the payment in the context of the merchant. Has to be unique. | STAMP | unique_id | AN 20 | Yes |
-| 3 | Amount in cents. Has to be exact total from sum of the items prices | AMOUNT | 1000 | N | Yes |
-| 4 | Payment reference number for the payment from the merchant. | REFERENCE | standard_reference | AN 20 | Yes |
-| 5 | Description of payment/purchase | DESCRIPTION | "Item 1#, Item #2..." | AN 1000 | No |
-| 6 | Payment language. Options currently are: "FI", "EN", "SE". | LANGUAGE | "FI" | AN 2 | No |
-| 7 | Merchant Id of aggregate merchant. Given identifier for the merchant (you get this from Checkout Finland), for testing: 375917 | AGGREGATE | 375917 | AN 20 | Yes |
-| 8 | Return callback. Called when the payment is successfully paid. | RETURN | | AN 300 | Yes* |
-| 9 | Cancel callback. Called when the payment is cancelled for some reason. | CANCEL | | AN 300 | Yes* |
-| 10 | Reject callback. Called when the payment is rejected. If not defined, on reject the cancel will be called. | REJECT | | AN 300 | No |
-| 11 | Delayed callback. Called if the payment is delayed. | DELAYED | | AN 300 | No |
-| 12 | Country, ISO-3166-1 alpha-3. | COUNTRY | "FIN" | AN 3 | No |
-| 13 | Currency. Currently always EUR. | CURRENCY | "EUR" | AN 3 | Yes |
-| 14 | Device type. `1 = HTML`, `10 = XML`. | DEVICE | 1 | N 2 | Yes |
-| 15 | Content of the purchase. `1 = Normal`, `2 = adult industry` | CONTENT | 1 | N 2 | Yes |
-| 16 | Payment types. | TYPE | 0 | N 1 | Yes* |
-| 17 | Checksum calculation algorithm. Use 3 commonly. | ALGORITHM | 3 | N 1 | Yes |
-| 18 | Delivery date. Format: YYYYMMDD.  | DELIVERY_DATE | 20171231 | N 8 | Yes |
-| 19 | Required when using loaning services. First name of the buyer. | FIRSTNAME | "Matti" | AN 40 | No |
-| 20 | Required when using loaning services. Last name of the buyer. | FAMILYNAME | "Meikäläinen" | AN 40 | No |
-| 21 | Required when using loaning services. Delivery address. | ADDRESS | "Maantie 123" | AN 40 | No |
-| 22 | Required when using loaning services. Delivery post number. | POSTCODE | "12345" | AN 14 | No |
-| 23 | Required when using loaning services. Delivery postal office. | POSTOFFICE | "" | AN 18 | No |
-| 24 | Checksum is calculated by combining fields 1-23 and the secret key, separating them with a `+`-sign  | MAC |  | AN 32 | Yes |
-| 25 | SiS-items of purchase | ITEMS | | | Yes
-| 26 | Product id/sku/code | ITEM.CODE |  | AN | No
-| 27 | Description of payment/purchase | ITEM.DESCRIPTION | "Product #1" | AN | Yes
-| 28 | Price of item in cents | ITEM.PRICE | 50 | N | Yes
-| 29 | Merchant id of the shop selling the item (SiS-shop) | ITEM.MERCHANT | 585858 | N | Yes
-| 30 | Holds a list of JSON objects that define the commission which SiS-merchant will receive. Not required if no commission given to SiS-merchant | ITEM.CONTROL | | [] | Yes
-| 31 | Sum of commission in cents | ITEM.CONTROL.a | 48 | N | No
-| 32 | Merchant ID, that will receive the commission from the payment (usually same as ITEM.MERCHANT) | ITEM.CONTROL.m | 585858 | N | No
-| 33 | Message/description of payment | ITEM.CONTROL.d | "commission for item #1" | AN | No
-| 34 | Token of credit card | TOKEN | "f47ac10b-58cc-4372-a567-0e02b2c3d479" | UUID4 | No
-| 35 | Commit token payment (if false, makes a reservation) | COMMIT | true/false | BOOL | No
-| 36 | Buyer email | EMAIL | | AN 200 | No |
-| 37 | Buyer phone number | PHONE | | AN 30 | No |
+### XML data
 
-*Fields 8, 9, 14, 16*: These are required only with non-token -payments.
+| Name        | Description  | Value | Format | Required | Notes |
+|-------------|------|-------|--------|----------|-------|
+| AGGREGATOR  | Merchant Id of aggregate merchant. Given identifier for the merchant (you get this from Checkout Finland), for testing: 375917 | 375917 | AN 20 | &cross; | |
+| VERSION     | Payment version.<br />`Always "0002"` |  "0002" | AN 4 | &cross; | |
+| STAMP       | Unique identifier for the payment in the context of the merchant. Has to be unique. | unique_id | AN 20 | &cross; | |
+| REFERENCE   | Payment reference number for the payment from the merchant. |  standard_reference | AN 20 | &cross; | |
+| DESCRIPTION | Description of payment/purchase |  "Item 1#, Item #2..." | AN 1000 |  | |
+| DEVICE      | Device type<br />`1 = HTML`, `10 = XML` |  1 | N 2 | &cross; | |
+| CONTENT     | Content of the purchase.<br />`1 = Normal`, `2 = adult industry` |  1 | N 2 | (&cross;) | 1 |
+| TYPE        | Payment types. |  0 | N 1 | (&cross;) | 1 |
+| ALGORITHM   | Checksum calculation algorithm. Use 3 commonly. |  3 | N 1 | &cross; | |
+| CURRENCY    | Currency. Currently always EUR. | "EUR" | AN 3 | &cross; | |
+| TOKEN       | Token of credit card used on tokenized payments | "f47ac10b-58cc-4372-a567-0e02b2c3d479" | UUID4 | (&cross;) |  2 |
+| COMMIT      | Commit token payment (if false, makes a reservation). Field is ignored if not tokenized payment. Default value is TRUE. | true/false | BOOL | (&cross;) |  2 |
+| ITEMS       | `Items` XML element | XML | XML | &cross;  | |
+| BUYER       | `Buyer` XML element | XML | XML | &cross;  | |
+| DELIVERY    | `Delivery` XML element | XML | XML | &cross;  | |
+| CONTROL     | `Control` XML element | XML | XML | &cross;  | |
 
-*Field 24*: For calculating checksum, check above on Payment-API.
+<!-- 
+Are these relevat to this API???
+| Delayed callback. Called if the payment is delayed. | DELAYED | | AN 300 | | |
+| Checksum is calculated by combining fields 1-23 and the secret key, separating them with a `+`-sign  | MAC |  | AN 32 | &cross; | 2 |
+-->
+
+*Note 1.)* Required only with non-token -payments.
+
+*Note 2.)* Required only on tokenized payments
+
+*Note 3.)* For calculating checksum, check above on Payment-API.
+
+### XML-element : Items
+
+| Name   | Description  | Value | Format | Required | Notes |
+|--------|------|-------|--------|----------|-------|
+| ITEM   | 1 to n `Item` XML elements | XML | XML | &cross;  | |
+| AMOUNT | Amount in cents. Has to be exact total from sum of the items prices | 1000 | N | &cross; | |
+
+### XML-element : Item
+
+| Name        | Description  | Value | Format | Required | Notes |
+|-------------|------|-------|--------|----------|-------|
+| DESCRIPTION | Description of payment/purchase | "Product #1" | AN | &cross; | |
+| PRICE       | Price of item in cents |  50 | N | &cross; | |
+| MERCHANT    | Merchant id of the shop selling the item (SiS-shop) |  585858 | N | &cross; | |
+| CONTROL     | Holds a list of JSON objects that define the commission which SiS-merchant will receive. Not required if no commission given to SiS-merchant |  | JSON | (&cross;) | 1 |
+| CODE        | Product id/sku/code |  | AN |  | |
+
+*Note 1.)* Required if commissions are to be deducted
+
+### JSON object in Item.control field
+
+>JSON data in ITEMS.ITEM.CONTROL field
+
+```JSON
+[{a:<amountm in euro cents>,m:<merchant id>,d:<description>}]
+```
+
+| Name| Description  | Value | Format | Required | Notes |
+|-------------|------|-------|--------|----------|-------|
+|   a | Amount of commission in cents | 48 | N | | |
+|   m | Merchant ID, that will receive the commission from the payment (usually same as ITEM.MERCHANT) | 585858 | N | | |
+|   d | Message/description of payment | "commission for item #1" | AN | | |
+
+### XML-element : Buyer
+
+| Name       | Description | Value | Format | Required | Notes |
+|------------|------|-------|--------|----------|-------|
+| FIRSTNAME  | Required when using loaning services. First name of the buyer. |  "Matti" | AN 40 |  | |
+| FAMILYNAME | Required when using loaning services. Last name of the buyer. |  "Meikäläinen" | AN 40 |  | |
+| ADDRESS    | Required when using loaning services. Delivery address. |  "Maantie 123" | AN 40 |  | |
+| POSTCODE   | Required when using loaning services. Delivery post number. | "12345" | AN 14 |  | |
+| POSTOFFICE | Required when using loaning services. Delivery postal office. |  "" | AN 18 |  | |
+| COUNTRY    | Country, ISO-3166-1 alpha-3. | "FIN" | AN 3 | No | |
+| EMAIL      | Buyer email |  | AN 200 | No | |
+| PHONE      | Buyer phone number |  | AN 30 | No | |
+| LANGUAGE   | Payment language. Options currently are: "FI", "EN", "SE". | "FI" | AN 2 |  | |
+
+### XML-element : Delivery
+
+| Name        | Description  | Value | Format | Required | Notes |
+|-------------|------|-------|--------|----------|-------|
+| DATE        | Delivery date. Format: YYYYMMDD.  |  20171231 | N 8 | &cross; | |
+| FIRSTNAME   | Required when using loaning services. First name of the buyer. |  "Matti" | AN 40 |  | |
+| FAMILYNAME  | Required when using loaning services. Last name of the buyer. |  "Meikäläinen" | AN 40 |  | |
+| ADDRESS     | Required when using loaning services. Delivery address. |  "Maantie 123" | AN 40 |  | |
+| POSTCODE    | Required when using loaning services. Delivery post number. | "12345" | AN 14 |  | |
+| POSTOFFICE  | Required when using loaning services. Delivery postal office. |  "" | AN 18 |  | |
+| COUNTRY     | Country, ISO-3166-1 alpha-3. | "FIN" | AN 3 | No | |
+| EMAIL       | Buyer email |  | AN 200 | No | |
+| PHONE       | Buyer phone number |  | AN 30 | No | |
+| LANGUAGE    | Payment language. Options currently are: "FI", "EN", "SE". | "FI" | AN 2 |  | |   
+
+### XML-element : Control
+
+| Name   | Description  | Value | Format | Required | Notes |
+|--------|------|-------|--------|----------|-------|
+| RETURN | Return callback. Called when the payment is successfully paid. |  | AN 300 | &cross; * | 1 |
+| CANCEL | Cancel callback. Called when the payment is cancelled for some reason. |  | AN 300 | &cross; * | 1 |
+| REJECT | Reject callback. Called when the payment is rejected. If not defined, on reject the cancel will be called. |  | AN 300 |  | |
 
 ### HTTP Response
 
-| #  | Description | Name | Format |
-|----|-------------|------|--------|
+| # | Description | Name | Format |
+|---|-------------|------|--------|
 | 1 | HTTP Status code (200 if payment/reservation successful) | statusCode | SCODE |
 | 2 | Status text (e.g. 'payment done') | statusText | AN |
 
@@ -585,8 +639,8 @@ Reverts an existing debit-reservation or committed payment. If this is done for 
 
 `POST /payment/<transactionStamp>/retract`
 
-| #  | Description | Name | Value | Format | Required |
-|----|-------------|------|-------|--------|----------|
+| # | Description | Name | Value | Format | Required |
+|---|-------------|------|-------|--------|----------|
 | 1 | Amount of payment reservation to be retracted in cents | AMOUNT | | N | Yes
 | 2 | Merchant id of which the initial reservation was done with | MERCHANT | | N | Yes
 
@@ -606,15 +660,15 @@ Commits an existing credit card reservation.
 
 `POST /payment/<transactionStamp>/commit`
 
-| #  | Description | Name | Value | Format | Required |
-|----|-------------|------|-------|--------|----------|
+| # | Description | Name | Value | Format | Required |
+|---|-------------|------|-------|--------|----------|
 | 1 | Amount of payment reservation to be committed | AMOUNT | | N | Yes
 | 2 | Merchant id of which the initial reservation was done with | MERCHANT | | N | Yes
 
 ### HTTP Response
 
-| #  | Description | Name | Format |
-|----|-------------|------|--------|
+| # | Description | Name | Format |
+|---|-------------|------|--------|
 | 1 | HTTP Status code (200 if commit successful, 404 if payment not found) | statusCode | SCODE |
 | 2 | Status text (e.g. 'payment committed') | statusText | AN |
 
@@ -781,3 +835,11 @@ AMOUNT | ^\d{1,12}$ | 9000
 CURRENCY | ^(EUR)$ | EUR
 UUID4 | ^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$ | f47ac10b-58cc-4372-a567-0e02b2c3d479
 SCODE | ^\d{1,6}$ | 9001
+JSON | | [{a:1,b:2},{data:'some text'}]
+XML | | &lt;data&gt;Some data&lt;/data&gt;
+
+# Example data and requests
+
+## Card tokenize
+## SiS Payment XML (tokenized)
+## SiS Payment HTTP request (tokenized)
