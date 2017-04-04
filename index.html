@@ -900,79 +900,89 @@ Making SiS-payments with single items/submerchants is ok.</p>
 <p>If credit card token is sent to PaymentAPI, the API will use tokenized card for payment. If no token is sent, the user will be guided to credit card information input (payment).</p>
 
 <p>Commit can be used with token-payments. If commit is true, the tokenized credit card will be charged. If commit is false, it will make a payment reservation (authorization hold) on the card. This authorization hold will be committed or retracted later through the &#39;commit payment&rsquo; or &#39;retract payment&rsquo; API&rsquo;s.</p>
+
+<p>Actual HTTP request is made using two name/value pairs containing </p>
+
+<blockquote>
+<p>HTTP-request</p>
+</blockquote>
+<pre class="highlight plaintext"><code>POST / HTTP/1.1
+Host: payment.checkout.fi
+Content-Type: application/x-www-form-urlencoded
+Cache-Control: no-cache
+
+CHECKOUT_XML=&lt;base64 encoded xml string&gt;&amp;CHECKOUT_MAC=&lt;string&gt;
+</code></pre>
+<h3 id="http-request">HTTP Request</h3>
+
+<ul>
+<li><code class="prettyprint">POST</code>: https://payment.checkout.fi</li>
+</ul>
+
+<table><thead>
+<tr>
+<th>Name</th>
+<th> Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>CHECKOUT_MAC</td>
+<td>MD5 hash calculated from sent values</td>
+</tr>
+<tr>
+<td>CHECKOUT_XML</td>
+<td>Base64 encoded representation of the XML string. XML explained below</td>
+</tr>
+</tbody></table>
+
+<p>Calculating MD5 hash for CHECKOUT_MAC field: </p>
+
+<p>md5( &lt;xml_string&gt; + &rsquo;+&rsquo; + &lt;aggregator_merchant_secret&gt; )</p>
+
+<p>! Note the plus sign between strings is part of a string not concatenating operator etc.</p>
+
+<blockquote>
+<p>Create SiS payment XML format</p>
+</blockquote>
 <pre class="highlight xml"><code><span class="cp">&lt;?xml version="1.0"?&gt;</span>
-<span class="c">&lt;!--
-
-    Example of xml used in shop-in-shop payment creation, allthough some elements are marked as not required
-    dont just delete them but leave them empty if you dont want to use them.
-
-      List of different kinds of merchant identifications:
-        aggregator  = aggregator account used to create merchants and payments
-        merchant    = merchant ID, unique for each vendor created by the aggrecator account
-        m           = merchant ID, that will receive the commission from the payment
-
-    &lt;control&gt;
-        Holds a list of JSON objects that define the commission:
-            &lt;control&gt;[{"a":146,"m”:"12345","d":"commission”}]&lt;/control&gt;
-                a = sum of commission in cents
-                m = merchant ID, that will receive the commission from the payment
-                d = message/description of payment
-
-
-
- --&gt;</span>
 <span class="nt">&lt;checkout</span> <span class="na">xmlns=</span><span class="s">"http://checkout.fi/request"</span><span class="nt">&gt;</span>
   <span class="nt">&lt;request</span> <span class="na">type=</span><span class="s">"aggregator"</span> <span class="na">test=</span><span class="s">"false"</span><span class="nt">&gt;</span>
-      <span class="nt">&lt;aggregator&gt;</span>375917<span class="nt">&lt;/aggregator&gt;</span> <span class="c">&lt;!-- shop-in-shop aggregate merchant id  --&gt;</span>
-      <span class="nt">&lt;version&gt;</span>0002<span class="nt">&lt;/version&gt;</span>
-      <span class="nt">&lt;stamp&gt;</span>75646368746654321<span class="nt">&lt;/stamp&gt;</span> <span class="c">&lt;!-- unique identifier the payment --&gt;</span>
-      <span class="nt">&lt;reference&gt;</span>12344<span class="nt">&lt;/reference&gt;</span>
-      <span class="nt">&lt;description&gt;</span>...<span class="nt">&lt;/description&gt;</span>
-      <span class="nt">&lt;device&gt;</span>10<span class="nt">&lt;/device&gt;</span>
-      <span class="nt">&lt;content&gt;</span>1<span class="nt">&lt;/content&gt;</span>
-      <span class="nt">&lt;type&gt;</span>0<span class="nt">&lt;/type&gt;</span>
-      <span class="nt">&lt;algorithm&gt;</span>3<span class="nt">&lt;/algorithm&gt;</span>
-      <span class="nt">&lt;currency&gt;</span>EUR<span class="nt">&lt;/currency&gt;</span> <span class="c">&lt;!-- EUR is the only supported currency at the moment --&gt;</span>
+      <span class="nt">&lt;aggregator&gt;&lt;/aggregator&gt;</span>
+      <span class="nt">&lt;version&gt;&lt;/version&gt;</span>
+      <span class="nt">&lt;stamp&gt;&lt;/stamp&gt;</span>
+      <span class="nt">&lt;reference&gt;&lt;/reference&gt;</span>
+      <span class="nt">&lt;description&gt;&lt;/description&gt;</span>
+      <span class="nt">&lt;device&gt;&lt;/device&gt;</span>
+      <span class="nt">&lt;content&gt;&lt;/content&gt;</span>
+      <span class="nt">&lt;type&gt;&lt;/type&gt;</span>
+      <span class="nt">&lt;algorithm&gt;&lt;/algorithm&gt;</span>
+      <span class="nt">&lt;currency&gt;&lt;/currency&gt;</span>
+      <span class="nt">&lt;token&gt;&lt;/token&gt;</span>
       <span class="nt">&lt;items&gt;</span>
           <span class="nt">&lt;item&gt;</span>
-              <span class="nt">&lt;code&gt;</span>1112233an<span class="nt">&lt;/code&gt;</span> <span class="c">&lt;!-- product id/sku/code, not required --&gt;</span>
-              <span class="nt">&lt;stamp&gt;</span>98765323776<span class="nt">&lt;/stamp&gt;</span>
-              <span class="nt">&lt;description&gt;</span>product 1<span class="nt">&lt;/description&gt;</span> <span class="c">&lt;!-- required --&gt;</span>
-              <span class="nt">&lt;price</span> <span class="na">currency=</span><span class="s">"EUR"</span> <span class="na">vat=</span><span class="s">"23"</span><span class="nt">&gt;</span>100<span class="nt">&lt;/price&gt;</span> <span class="c">&lt;!-- vat attribute is not required. Price in cents. --&gt;</span>
-              <span class="nt">&lt;merchant&gt;</span>375917<span class="nt">&lt;/merchant&gt;</span> <span class="c">&lt;!-- this is the merchant id of the shop selling this item, required --&gt;</span>
-              <span class="nt">&lt;control&gt;</span>[{"a":12, "m":"375917", "d":"reward x"},{"a":146,"m”:"375917","d":"commission”}]<span class="nt">&lt;/control&gt;</span> <span class="c">&lt;!-- example of two commissions being deducted from the price of one item in the purchase  --&gt;</span>
-          <span class="nt">&lt;/item&gt;</span>
-          <span class="nt">&lt;item&gt;</span>
-              <span class="nt">&lt;code&gt;&lt;/code&gt;</span> <span class="c">&lt;!-- product id/sku/code --&gt;</span>
-              <span class="nt">&lt;description&gt;</span>product 2<span class="nt">&lt;/description&gt;</span>
-              <span class="nt">&lt;reference&gt;</span>987654321<span class="nt">&lt;/reference&gt;</span>
-              <span class="nt">&lt;price</span> <span class="na">currency=</span><span class="s">"EUR"</span><span class="nt">&gt;</span>100<span class="nt">&lt;/price&gt;</span>
-              <span class="nt">&lt;merchant&gt;</span>375917<span class="nt">&lt;/merchant&gt;</span>
-              <span class="nt">&lt;control</span> <span class="nt">/&gt;</span><span class="c">&lt;!-- When control field is empty no provision is collected from this item --&gt;</span>
-          <span class="nt">&lt;/item&gt;</span>
-          <span class="nt">&lt;item&gt;</span>
-              <span class="nt">&lt;code&gt;&lt;/code&gt;</span> <span class="c">&lt;!-- product id/sku/code --&gt;</span>
+              <span class="nt">&lt;code&gt;&lt;/code&gt;</span>
+              <span class="nt">&lt;stamp&gt;&lt;/stamp&gt;</span>
               <span class="nt">&lt;description&gt;&lt;/description&gt;</span>
-              <span class="nt">&lt;price</span> <span class="na">currency=</span><span class="s">"EUR"</span> <span class="na">vat=</span><span class="s">"23"</span><span class="nt">&gt;</span>100<span class="nt">&lt;/price&gt;</span>
-              <span class="nt">&lt;merchant&gt;</span>375917<span class="nt">&lt;/merchant&gt;</span>
-              <span class="nt">&lt;control&gt;</span>[{"a":146,"m”:"375917","d":"commission”}]<span class="nt">&lt;/control&gt;</span><span class="c">&lt;!-- only a singe commission is deducted from this merchant --&gt;</span>
+              <span class="nt">&lt;price</span> <span class="na">currency=</span><span class="s">"EUR"</span> <span class="na">vat=</span><span class="s">"23"</span><span class="nt">&gt;&lt;/price&gt;</span>
+              <span class="nt">&lt;merchant&gt;&lt;/merchant&gt;</span>
+              <span class="nt">&lt;control&gt;&lt;/control&gt;</span>
           <span class="nt">&lt;/item&gt;</span>
-          <span class="nt">&lt;amount</span> <span class="na">currency=</span><span class="s">"EUR"</span><span class="nt">&gt;</span>300<span class="nt">&lt;/amount&gt;</span> <span class="c">&lt;!-- has to be exact total from sum of the items prices, in cents --&gt;</span>
+          <span class="nt">&lt;amount</span> <span class="na">currency=</span><span class="s">"EUR"</span><span class="nt">&gt;&lt;/amount&gt;</span>
       <span class="nt">&lt;/items&gt;</span>
       <span class="nt">&lt;buyer&gt;</span>
-          <span class="nt">&lt;company</span> <span class="na">vatid=</span><span class="s">""</span><span class="nt">&gt;&lt;/company&gt;</span> <span class="c">&lt;!-- not required --&gt;</span>
-          <span class="nt">&lt;firstname&gt;&lt;/firstname&gt;</span> <span class="c">&lt;!-- not required --&gt;</span>
-          <span class="nt">&lt;familyname&gt;&lt;/familyname&gt;</span> <span class="c">&lt;!-- not required --&gt;</span>
-          <span class="nt">&lt;address&gt;</span><span class="cp">&lt;![CDATA[ ]]&gt;</span><span class="nt">&lt;/address&gt;</span> <span class="c">&lt;!-- not required --&gt;</span>
-          <span class="nt">&lt;postalcode&gt;&lt;/postalcode&gt;</span> <span class="c">&lt;!-- not required --&gt;</span>
-          <span class="nt">&lt;postaloffice&gt;&lt;/postaloffice&gt;</span> <span class="c">&lt;!-- not required --&gt;</span>
-          <span class="nt">&lt;country&gt;</span>FIN<span class="nt">&lt;/country&gt;</span>
-          <span class="nt">&lt;email&gt;&lt;/email&gt;</span> <span class="c">&lt;!-- not required --&gt;</span>
-          <span class="nt">&lt;gsm&gt;&lt;/gsm&gt;</span> <span class="c">&lt;!-- not required --&gt;</span>
-          <span class="nt">&lt;language&gt;</span>FI<span class="nt">&lt;/language&gt;</span>
+          <span class="nt">&lt;company</span> <span class="na">vatid=</span><span class="s">""</span><span class="nt">&gt;&lt;/company&gt;</span>
+          <span class="nt">&lt;firstname&gt;&lt;/firstname&gt;</span>
+          <span class="nt">&lt;familyname&gt;&lt;/familyname&gt;</span>
+          <span class="nt">&lt;address&gt;</span><span class="cp">&lt;![CDATA[ ]]&gt;</span><span class="nt">&lt;/address&gt;</span>
+          <span class="nt">&lt;postalcode&gt;&lt;/postalcode&gt;</span>
+          <span class="nt">&lt;postaloffice&gt;&lt;/postaloffice&gt;</span>
+          <span class="nt">&lt;country&gt;&lt;/country&gt;</span>
+          <span class="nt">&lt;email&gt;&lt;/email&gt;</span>
+          <span class="nt">&lt;gsm&gt;&lt;/gsm&gt;</span>
+          <span class="nt">&lt;language&gt;&lt;/language&gt;</span>
       <span class="nt">&lt;/buyer&gt;</span>
       <span class="nt">&lt;delivery&gt;</span>
-          <span class="nt">&lt;date&gt;</span>20110303<span class="nt">&lt;/date&gt;</span>
+          <span class="nt">&lt;date&gt;&lt;/date&gt;</span>
           <span class="nt">&lt;company</span> <span class="na">vatid=</span><span class="s">""</span><span class="nt">&gt;&lt;/company&gt;</span>
           <span class="nt">&lt;firstname&gt;&lt;/firstname&gt;</span>
           <span class="nt">&lt;familyname&gt;&lt;/familyname&gt;</span>
@@ -985,331 +995,513 @@ Making SiS-payments with single items/submerchants is ok.</p>
           <span class="nt">&lt;language&gt;&lt;/language&gt;</span>
       <span class="nt">&lt;/delivery&gt;</span>
       <span class="nt">&lt;control</span> <span class="na">type=</span><span class="s">"default"</span><span class="nt">&gt;</span>
-          <span class="nt">&lt;return&gt;</span>return.php<span class="nt">&lt;/return&gt;</span>
-          <span class="nt">&lt;reject&gt;</span>return.php<span class="nt">&lt;/reject&gt;</span>
-          <span class="nt">&lt;cancel&gt;</span>return.php<span class="nt">&lt;/cancel&gt;</span>
+          <span class="nt">&lt;return&gt;&lt;/return&gt;</span>
+          <span class="nt">&lt;reject&gt;&lt;/reject&gt;</span>
+          <span class="nt">&lt;cancel&gt;&lt;/cancel&gt;</span>
       <span class="nt">&lt;/control&gt;</span>
   <span class="nt">&lt;/request&gt;</span>
 <span class="nt">&lt;/checkout&gt;</span>
-
 </code></pre>
-<h3 id="http-request">HTTP Request</h3>
-
-<ul>
-<li><code class="prettyprint">POST</code>: https://payment.checkout.fi</li>
-</ul>
+<h3 id="xml-data">XML data</h3>
 
 <table><thead>
 <tr>
-<th>#</th>
-<th>Description</th>
 <th>Name</th>
+<th>Description</th>
 <th>Value</th>
 <th>Format</th>
 <th>Required</th>
+<th>Notes</th>
 </tr>
 </thead><tbody>
 <tr>
-<td>1</td>
-<td>Payment version. Always &ldquo;0002&rdquo;.</td>
-<td>VERSION</td>
-<td>&ldquo;0002&rdquo;</td>
-<td>AN 4</td>
-<td>Yes </td>
-</tr>
-<tr>
-<td>2</td>
-<td>Unique identifier for the payment in the context of the merchant. Has to be unique.</td>
-<td>STAMP</td>
-<td>unique_id</td>
-<td>AN 20</td>
-<td>Yes </td>
-</tr>
-<tr>
-<td>3</td>
-<td>Amount in cents. Has to be exact total from sum of the items prices</td>
-<td> AMOUNT</td>
-<td>1000</td>
-<td>N</td>
-<td>Yes</td>
-</tr>
-<tr>
-<td>4</td>
-<td>Payment reference number for the payment from the merchant.</td>
-<td>REFERENCE</td>
-<td>standard_reference</td>
-<td>AN 20</td>
-<td>Yes </td>
-</tr>
-<tr>
-<td>5</td>
-<td>Description of payment/purchase</td>
-<td>DESCRIPTION</td>
-<td>&ldquo;Item 1#, Item #2&hellip;&rdquo;</td>
-<td>AN 1000</td>
-<td>No</td>
-</tr>
-<tr>
-<td>6</td>
-<td>Payment language. Options currently are: &ldquo;FI&rdquo;, &ldquo;EN&rdquo;, &ldquo;SE&rdquo;.</td>
-<td>LANGUAGE</td>
-<td>&ldquo;FI&rdquo;</td>
-<td>AN 2</td>
-<td>No</td>
-</tr>
-<tr>
-<td>7</td>
+<td>AGGREGATOR</td>
 <td>Merchant Id of aggregate merchant. Given identifier for the merchant (you get this from Checkout Finland), for testing: 375917</td>
-<td>AGGREGATE</td>
 <td>375917</td>
 <td>AN 20</td>
-<td>Yes</td>
-</tr>
-<tr>
-<td>8</td>
-<td>Return callback. Called when the payment is successfully paid.</td>
-<td>RETURN</td>
+<td>&cross;</td>
 <td></td>
-<td>AN 300</td>
-<td>Yes*</td>
 </tr>
 <tr>
-<td>9</td>
-<td>Cancel callback. Called when the payment is cancelled for some reason.</td>
-<td>CANCEL</td>
+<td>VERSION</td>
+<td>Payment version.<br /><code class="prettyprint">Always &quot;0002&quot;</code></td>
+<td>&ldquo;0002&rdquo;</td>
+<td>AN 4</td>
+<td>&cross; </td>
 <td></td>
-<td>AN 300</td>
-<td>Yes*</td>
 </tr>
 <tr>
-<td>10</td>
-<td>Reject callback. Called when the payment is rejected. If not defined, on reject the cancel will be called.</td>
-<td>REJECT</td>
+<td>STAMP</td>
+<td>Unique identifier for the payment in the context of the merchant. Has to be unique.</td>
+<td>unique_id</td>
+<td>AN 20</td>
+<td>&cross; </td>
 <td></td>
-<td>AN 300</td>
-<td>No</td>
 </tr>
 <tr>
-<td>11</td>
-<td>Delayed callback. Called if the payment is delayed.</td>
-<td>DELAYED</td>
+<td>REFERENCE</td>
+<td>Payment reference number for the payment from the merchant.</td>
+<td>standard_reference</td>
+<td>AN 20</td>
+<td>&cross;</td>
 <td></td>
-<td>AN 300</td>
-<td>No</td>
 </tr>
 <tr>
-<td>12</td>
-<td>Country, ISO-3166-1 alpha-3.</td>
-<td>COUNTRY</td>
-<td>&ldquo;FIN&rdquo;</td>
-<td>AN 3</td>
-<td>No</td>
+<td>DESCRIPTION</td>
+<td>Description of payment/purchase</td>
+<td>&ldquo;Item 1#, Item #2&hellip;&rdquo;</td>
+<td>AN 1000</td>
+<td></td>
+<td></td>
 </tr>
 <tr>
-<td>13</td>
-<td>Currency. Currently always EUR.</td>
-<td>CURRENCY</td>
-<td>&ldquo;EUR&rdquo;</td>
-<td>AN 3</td>
-<td>Yes</td>
-</tr>
-<tr>
-<td>14</td>
-<td>Device type. <code class="prettyprint">1 = HTML</code>, <code class="prettyprint">10 = XML</code>.</td>
 <td>DEVICE</td>
+<td>Device type<br /><code class="prettyprint">1 = HTML</code>, <code class="prettyprint">10 = XML</code></td>
 <td>1</td>
 <td>N 2</td>
-<td>Yes</td>
+<td>&cross;</td>
+<td></td>
 </tr>
 <tr>
-<td>15</td>
-<td>Content of the purchase. <code class="prettyprint">1 = Normal</code>, <code class="prettyprint">2 = adult industry</code></td>
 <td>CONTENT</td>
+<td>Content of the purchase.<br /><code class="prettyprint">1 = Normal</code>, <code class="prettyprint">2 = adult industry</code></td>
 <td>1</td>
 <td>N 2</td>
-<td>Yes</td>
+<td>(&cross;)</td>
+<td>1</td>
 </tr>
 <tr>
-<td>16</td>
-<td>Payment types.</td>
 <td>TYPE</td>
+<td>Payment types.</td>
 <td>0</td>
 <td>N 1</td>
-<td>Yes*</td>
+<td>(&cross;)</td>
+<td>1</td>
 </tr>
 <tr>
-<td>17</td>
-<td>Checksum calculation algorithm. Use 3 commonly.</td>
 <td>ALGORITHM</td>
+<td>Checksum calculation algorithm. Use 3 commonly.</td>
 <td>3</td>
 <td>N 1</td>
-<td>Yes</td>
-</tr>
-<tr>
-<td>18</td>
-<td>Delivery date. Format: YYYYMMDD.</td>
-<td>DELIVERY_DATE</td>
-<td>20171231</td>
-<td>N 8</td>
-<td>Yes</td>
-</tr>
-<tr>
-<td>19</td>
-<td>Required when using loaning services. First name of the buyer.</td>
-<td>FIRSTNAME</td>
-<td>&ldquo;Matti&rdquo;</td>
-<td>AN 40</td>
-<td>No</td>
-</tr>
-<tr>
-<td>20</td>
-<td>Required when using loaning services. Last name of the buyer.</td>
-<td>FAMILYNAME</td>
-<td>&ldquo;Meikäläinen&rdquo;</td>
-<td>AN 40</td>
-<td>No</td>
-</tr>
-<tr>
-<td>21</td>
-<td>Required when using loaning services. Delivery address.</td>
-<td>ADDRESS</td>
-<td>&ldquo;Maantie 123&rdquo;</td>
-<td>AN 40</td>
-<td>No</td>
-</tr>
-<tr>
-<td>22</td>
-<td>Required when using loaning services. Delivery post number.</td>
-<td>POSTCODE</td>
-<td>&ldquo;12345&rdquo;</td>
-<td>AN 14</td>
-<td>No</td>
-</tr>
-<tr>
-<td>23</td>
-<td>Required when using loaning services. Delivery postal office.</td>
-<td>POSTOFFICE</td>
-<td>&ldquo;&rdquo;</td>
-<td>AN 18</td>
-<td>No</td>
-</tr>
-<tr>
-<td>24</td>
-<td>Checksum is calculated by combining fields 1-23 and the secret key, separating them with a <code class="prettyprint">+</code>-sign</td>
-<td>MAC</td>
+<td>&cross;</td>
 <td></td>
-<td>AN 32</td>
-<td>Yes</td>
 </tr>
 <tr>
-<td>25</td>
-<td>SiS-items of purchase</td>
-<td>ITEMS</td>
+<td>CURRENCY</td>
+<td>Currency. Currently always EUR.</td>
+<td>&ldquo;EUR&rdquo;</td>
+<td>AN 3</td>
+<td>&cross;</td>
 <td></td>
-<td></td>
-<td>Yes</td>
 </tr>
 <tr>
-<td>26</td>
-<td>Product id/sku/code</td>
-<td>ITEM.CODE</td>
-<td></td>
-<td>AN</td>
-<td>No</td>
-</tr>
-<tr>
-<td>27</td>
-<td>Description of payment/purchase</td>
-<td>ITEM.DESCRIPTION</td>
-<td>&ldquo;Product #1&rdquo;</td>
-<td>AN</td>
-<td>Yes</td>
-</tr>
-<tr>
-<td>28</td>
-<td>Price of item in cents</td>
-<td>ITEM.PRICE</td>
-<td>50</td>
-<td>N</td>
-<td>Yes</td>
-</tr>
-<tr>
-<td>29</td>
-<td>Merchant id of the shop selling the item (SiS-shop)</td>
-<td>ITEM.MERCHANT</td>
-<td>585858</td>
-<td>N</td>
-<td>Yes</td>
-</tr>
-<tr>
-<td>30</td>
-<td>Holds a list of JSON objects that define the commission which SiS-merchant will receive. Not required if no commission given to SiS-merchant</td>
-<td>ITEM.CONTROL</td>
-<td></td>
-<td>[]</td>
-<td>Yes</td>
-</tr>
-<tr>
-<td>31</td>
-<td>Sum of commission in cents</td>
-<td>ITEM.CONTROL.a</td>
-<td>48</td>
-<td>N</td>
-<td>No</td>
-</tr>
-<tr>
-<td>32</td>
-<td>Merchant ID, that will receive the commission from the payment (usually same as ITEM.MERCHANT)</td>
-<td>ITEM.CONTROL.m</td>
-<td>585858</td>
-<td>N</td>
-<td>No</td>
-</tr>
-<tr>
-<td>33</td>
-<td>Message/description of payment</td>
-<td>ITEM.CONTROL.d</td>
-<td>&ldquo;commission for item #1&rdquo;</td>
-<td>AN</td>
-<td>No</td>
-</tr>
-<tr>
-<td>34</td>
-<td>Token of credit card</td>
 <td>TOKEN</td>
+<td>Token of credit card used on tokenized payments</td>
 <td>&ldquo;f47ac10b-58cc-4372-a567-0e02b2c3d479&rdquo;</td>
 <td>UUID4</td>
-<td>No</td>
+<td>(&cross;)</td>
+<td>2</td>
 </tr>
 <tr>
-<td>35</td>
-<td>Commit token payment (if false, makes a reservation)</td>
 <td>COMMIT</td>
+<td>Commit token payment (if false, makes a reservation). Field is ignored if not tokenized payment. Default value is TRUE.</td>
 <td>true/false</td>
 <td>BOOL</td>
-<td>No</td>
+<td>(&cross;)</td>
+<td>2</td>
 </tr>
 <tr>
-<td>36</td>
-<td>Buyer email</td>
-<td>EMAIL</td>
+<td>ITEMS</td>
+<td><code class="prettyprint">Items</code> XML element</td>
+<td>XML</td>
+<td>XML</td>
+<td>&cross;</td>
 <td></td>
-<td>AN 200</td>
-<td>No</td>
 </tr>
 <tr>
-<td>37</td>
-<td>Buyer phone number</td>
-<td>PHONE</td>
+<td>BUYER</td>
+<td><code class="prettyprint">Buyer</code> XML element</td>
+<td>XML</td>
+<td>XML</td>
+<td>&cross;</td>
 <td></td>
-<td>AN 30</td>
-<td>No</td>
+</tr>
+<tr>
+<td>DELIVERY</td>
+<td><code class="prettyprint">Delivery</code> XML element</td>
+<td>XML</td>
+<td>XML</td>
+<td>&cross;</td>
+<td></td>
+</tr>
+<tr>
+<td>CONTROL</td>
+<td><code class="prettyprint">Control</code> XML element</td>
+<td>XML</td>
+<td>XML</td>
+<td>&cross;</td>
+<td></td>
 </tr>
 </tbody></table>
 
-<p><em>Fields 8, 9, 14, 16</em>: These are required only with non-token -payments.</p>
+<!-- 
+Are these relevat to this API???
+| Delayed callback. Called if the payment is delayed. | DELAYED | | AN 300 | | |
+| Checksum is calculated by combining fields 1-23 and the secret key, separating them with a `+`-sign  | MAC |  | AN 32 | &cross; | 2 |
+-->
 
-<p><em>Field 24</em>: For calculating checksum, check above on Payment-API.</p>
+<p><em>Note 1.)</em> Required only with non-token -payments.</p>
+
+<p><em>Note 2.)</em> Required only on tokenized payments</p>
+
+<p><em>Note 3.)</em> For calculating checksum, check above on Payment-API.</p>
+
+<h3 id="xml-element-items">XML-element : Items</h3>
+
+<table><thead>
+<tr>
+<th>Name</th>
+<th>Description</th>
+<th>Value</th>
+<th>Format</th>
+<th>Required</th>
+<th>Notes</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>ITEM</td>
+<td>1 to n <code class="prettyprint">Item</code> XML elements</td>
+<td>XML</td>
+<td>XML</td>
+<td>&cross;</td>
+<td></td>
+</tr>
+<tr>
+<td>AMOUNT</td>
+<td>Amount in cents. Has to be exact total from sum of the items prices</td>
+<td>1000</td>
+<td>N</td>
+<td>&cross;</td>
+<td></td>
+</tr>
+</tbody></table>
+
+<h3 id="xml-element-item">XML-element : Item</h3>
+
+<table><thead>
+<tr>
+<th>Name</th>
+<th>Description</th>
+<th>Value</th>
+<th>Format</th>
+<th>Required</th>
+<th>Notes</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>DESCRIPTION</td>
+<td>Description of payment/purchase</td>
+<td>&ldquo;Product #1&rdquo;</td>
+<td>AN</td>
+<td>&cross;</td>
+<td></td>
+</tr>
+<tr>
+<td>PRICE</td>
+<td>Price of item in cents</td>
+<td>50</td>
+<td>N</td>
+<td>&cross;</td>
+<td></td>
+</tr>
+<tr>
+<td>MERCHANT</td>
+<td>Merchant id of the shop selling the item (SiS-shop)</td>
+<td>585858</td>
+<td>N</td>
+<td>&cross;</td>
+<td></td>
+</tr>
+<tr>
+<td>CONTROL</td>
+<td>Holds a list of JSON objects that define the commission which SiS-merchant will receive. Not required if no commission given to SiS-merchant</td>
+<td></td>
+<td>JSON</td>
+<td>(&cross;)</td>
+<td>1</td>
+</tr>
+<tr>
+<td>CODE</td>
+<td>Product id/sku/code</td>
+<td></td>
+<td>AN</td>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
+
+<p><em>Note 1.)</em> Required if commissions are to be deducted</p>
+
+<h3 id="json-object-in-item-control-field">JSON object in Item.control field</h3>
+
+<blockquote>
+<p>JSON data in ITEMS.ITEM.CONTROL field</p>
+</blockquote>
+<pre class="highlight plaintext"><code>[{a:&lt;amountm in euro cents&gt;,m:&lt;merchant id&gt;,d:&lt;description&gt;}]
+</code></pre>
+<table><thead>
+<tr>
+<th>Name</th>
+<th>Description</th>
+<th>Value</th>
+<th>Format</th>
+<th>Required</th>
+<th>Notes</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>a</td>
+<td>Amount of commission in cents</td>
+<td>48</td>
+<td>N</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>m</td>
+<td>Merchant ID, that will receive the commission from the payment (usually same as ITEM.MERCHANT)</td>
+<td>585858</td>
+<td>N</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>d</td>
+<td>Message/description of payment</td>
+<td>&ldquo;commission for item #1&rdquo;</td>
+<td>AN</td>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
+
+<h3 id="xml-element-buyer">XML-element : Buyer</h3>
+
+<table><thead>
+<tr>
+<th>Name</th>
+<th>Description</th>
+<th>Value</th>
+<th>Format</th>
+<th>Required</th>
+<th>Notes</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>FIRSTNAME</td>
+<td>Required when using loaning services. First name of the buyer.</td>
+<td>&ldquo;Matti&rdquo;</td>
+<td>AN 40</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>FAMILYNAME</td>
+<td>Required when using loaning services. Last name of the buyer.</td>
+<td>&ldquo;Meikäläinen&rdquo;</td>
+<td>AN 40</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>ADDRESS</td>
+<td>Required when using loaning services. Delivery address.</td>
+<td>&ldquo;Maantie 123&rdquo;</td>
+<td>AN 40</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>POSTCODE</td>
+<td>Required when using loaning services. Delivery post number.</td>
+<td>&ldquo;12345&rdquo;</td>
+<td>AN 14</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>POSTOFFICE</td>
+<td>Required when using loaning services. Delivery postal office.</td>
+<td>&ldquo;&rdquo;</td>
+<td>AN 18</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>COUNTRY</td>
+<td>Country, ISO-3166-1 alpha-3.</td>
+<td>&ldquo;FIN&rdquo;</td>
+<td>AN 3</td>
+<td>No</td>
+<td></td>
+</tr>
+<tr>
+<td>EMAIL</td>
+<td>Buyer email</td>
+<td></td>
+<td>AN 200</td>
+<td>No</td>
+<td></td>
+</tr>
+<tr>
+<td>PHONE</td>
+<td>Buyer phone number</td>
+<td></td>
+<td>AN 30</td>
+<td>No</td>
+<td></td>
+</tr>
+<tr>
+<td>LANGUAGE</td>
+<td>Payment language. Options currently are: &ldquo;FI&rdquo;, &ldquo;EN&rdquo;, &ldquo;SE&rdquo;.</td>
+<td>&ldquo;FI&rdquo;</td>
+<td>AN 2</td>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
+
+<h3 id="xml-element-delivery">XML-element : Delivery</h3>
+
+<table><thead>
+<tr>
+<th>Name</th>
+<th>Description</th>
+<th>Value</th>
+<th>Format</th>
+<th>Required</th>
+<th>Notes</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>DATE</td>
+<td>Delivery date. Format: YYYYMMDD.</td>
+<td>20171231</td>
+<td>N 8</td>
+<td>&cross;</td>
+<td></td>
+</tr>
+<tr>
+<td>FIRSTNAME</td>
+<td>Required when using loaning services. First name of the buyer.</td>
+<td>&ldquo;Matti&rdquo;</td>
+<td>AN 40</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>FAMILYNAME</td>
+<td>Required when using loaning services. Last name of the buyer.</td>
+<td>&ldquo;Meikäläinen&rdquo;</td>
+<td>AN 40</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>ADDRESS</td>
+<td>Required when using loaning services. Delivery address.</td>
+<td>&ldquo;Maantie 123&rdquo;</td>
+<td>AN 40</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>POSTCODE</td>
+<td>Required when using loaning services. Delivery post number.</td>
+<td>&ldquo;12345&rdquo;</td>
+<td>AN 14</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>POSTOFFICE</td>
+<td>Required when using loaning services. Delivery postal office.</td>
+<td>&ldquo;&rdquo;</td>
+<td>AN 18</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>COUNTRY</td>
+<td>Country, ISO-3166-1 alpha-3.</td>
+<td>&ldquo;FIN&rdquo;</td>
+<td>AN 3</td>
+<td>No</td>
+<td></td>
+</tr>
+<tr>
+<td>EMAIL</td>
+<td>Buyer email</td>
+<td></td>
+<td>AN 200</td>
+<td>No</td>
+<td></td>
+</tr>
+<tr>
+<td>PHONE</td>
+<td>Buyer phone number</td>
+<td></td>
+<td>AN 30</td>
+<td>No</td>
+<td></td>
+</tr>
+<tr>
+<td>LANGUAGE</td>
+<td>Payment language. Options currently are: &ldquo;FI&rdquo;, &ldquo;EN&rdquo;, &ldquo;SE&rdquo;.</td>
+<td>&ldquo;FI&rdquo;</td>
+<td>AN 2</td>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
+
+<h3 id="xml-element-control">XML-element : Control</h3>
+
+<table><thead>
+<tr>
+<th>Name</th>
+<th>Description</th>
+<th>Value</th>
+<th>Format</th>
+<th>Required</th>
+<th>Notes</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>RETURN</td>
+<td>Return callback. Called when the payment is successfully paid.</td>
+<td></td>
+<td>AN 300</td>
+<td>&cross; *</td>
+<td>1</td>
+</tr>
+<tr>
+<td>CANCEL</td>
+<td>Cancel callback. Called when the payment is cancelled for some reason.</td>
+<td></td>
+<td>AN 300</td>
+<td>&cross; *</td>
+<td>1</td>
+</tr>
+<tr>
+<td>REJECT</td>
+<td>Reject callback. Called when the payment is rejected. If not defined, on reject the cancel will be called.</td>
+<td></td>
+<td>AN 300</td>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
 
 <h3 id="http-response">HTTP Response</h3>
 
@@ -1742,7 +1934,25 @@ Making SiS-payments with single items/submerchants is ok.</p>
 <td>^\d{1,6}$</td>
 <td>9001</td>
 </tr>
+<tr>
+<td>JSON</td>
+<td></td>
+<td>[{a:1,b:2},{data:&#39;some text&rsquo;}]</td>
+</tr>
+<tr>
+<td>XML</td>
+<td></td>
+<td>&lt;data&gt;Some data&lt;/data&gt;</td>
+</tr>
 </tbody></table>
+
+<h1 id="example-data-and-requests">Example data and requests</h1>
+
+<h2 id="card-tokenize">Card tokenize</h2>
+
+<h2 id="sis-payment-xml-tokenized">SiS Payment XML (tokenized)</h2>
+
+<h2 id="sis-payment-http-request-tokenized">SiS Payment HTTP request (tokenized)</h2>
 
       </div>
       <div class="dark-box">
