@@ -207,10 +207,12 @@ merchant=375917&provider_token=1296b3bc-407b-439b-9afd-c138e3ababa3
 
 `POST https://payment.checkout.fi/token/migrate`
 
-Body field | Type | Description
--------------- | -------------- | --------------
-provider_token | UUID4 | External (e.g. Solinor) token
-merchant | N | Merchant ID given by Checkout
+Body field     | Type  | Description                   | Notes
+---------------|-------|-------------------------------|-------
+provider_token | UUID4 | External (e.g. Solinor) token | 1
+merchant       | N     | Merchant ID given by Checkout |
+
+*Note 1.)* Must match ^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-(8|9|a|b)[a-f0-9]{3}-[a-f0-9]{12}$
 
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
@@ -535,7 +537,7 @@ md5( &lt;xml_string&gt; + '+' + &lt;aggregator_merchant_secret&gt; )
 | TYPE        | Payment types. |  0 | N 1 | (&cross;) | 1 |
 | ALGORITHM   | Checksum calculation algorithm. Use 3 commonly. |  3 | N 1 | &cross; | |
 | CURRENCY    | Currency. Currently always EUR. | "EUR" | AN 3 | &cross; | |
-| TOKEN       | Token of credit card used on tokenized payments | "f47ac10b-58cc-4372-a567-0e02b2c3d479" | UUID4 | (&cross;) |  2 |
+| TOKEN       | Token of credit card used on tokenized payments<br/>Must meet | "f47ac10b-58cc-4372-a567-0e02b2c3d479" | UUID4 | (&cross;) |  2,4 |
 | COMMIT      | Commit token payment (if false, makes a reservation). Field is ignored if not tokenized payment. Default value is TRUE. | true/false | BOOL | (&cross;) |  2 |
 | ITEMS       | `Items` XML element | XML | XML | &cross;  | |
 | BUYER       | `Buyer` XML element | XML | XML | &cross;  | |
@@ -553,6 +555,8 @@ Are these relevat to this API???
 *Note 2.)* Required only on tokenized payments
 
 *Note 3.)* For calculating checksum, check above on Payment-API.
+
+*Note 4.)* Must match ^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-(8|9|a|b)[a-f0-9]{3}-[a-f0-9]{12}$
 
 ### XML-element : Items
 
@@ -624,12 +628,31 @@ Are these relevat to this API???
 | CANCEL | Cancel callback. Called when the payment is cancelled for some reason. |  | AN 300 | &cross; * | 1 |
 | REJECT | Reject callback. Called when the payment is rejected. If not defined, on reject the cancel will be called. |  | AN 300 |  | |
 
-### HTTP Response
+>Response XML
 
-| # | Description | Name | Format |
-|---|-------------|------|--------|
-| 1 | HTTP Status code (200 if payment/reservation successful) | statusCode | SCODE |
-| 2 | Status text (e.g. 'payment done') | statusText | AN |
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<response>
+    <statusCode></statusCode>
+    <statusText></statusText>
+</response>
+```
+
+### Response body (XML)
+
+|  Name      | Description | Format |
+|------------|-------------|--------|
+| statusCode | HTTP Status code (200 if payment/reservation successful) | N |
+| statusText | Status text (e.g. 'payment done') |  AN |
+
+
+### Response status dodes  
+
+|  Code | Description | 
+|-------|-------------|
+|   200 | HTTP Status code (200 if payment/reservation successful) |
+|   400 | Error in query, missing parameters etc. Detailed information in statusText field |
+|   500 | Error proceccing the query. Detailed information in statusText field |
 
 ## Revert
 
@@ -840,6 +863,95 @@ XML | | &lt;data&gt;Some data&lt;/data&gt;
 
 # Example data and requests
 
-## Card tokenize
-## SiS Payment XML (tokenized)
-## SiS Payment HTTP request (tokenized)
+
+
+## Payment API, usage example in PHP
+
+* https://payment.checkout.fi
+
+>Sample 'payment.xml' file
+
+```xml
+<?xml version="1.0"?>
+<checkout xmlns="http://checkout.fi/request">
+    <request type="aggregator" test="false">
+        <aggregator>375917</aggregator>
+        <token>feeba684-f35a-4c98-a846-14d0b1a02024</token>
+        <version>0002</version>
+        <stamp>1491830939</stamp>
+        <reference>1123123</reference>
+        <device>10</device>
+        <content>1</content>
+        <type>0</type>
+        <algorithm>3</algorithm>
+        <currency>EUR</currency>
+        <items>
+            <item>
+                <description>product 1</description>
+                <price currency="EUR" vat="23">500</price>
+                <merchant>391830</merchant>
+            </item>
+            <amount currency="EUR">500</amount>
+        </items>
+        <buyer>
+            <country>FIN</country>
+            <language>FI</language>
+        </buyer>
+        <delivery>
+            <date>20110303</date>
+        </delivery>
+    </request>
+</checkout>
+```
+
+>PHP used to generate valid query from XML file (above)
+
+```php
+<?php
+$aggregator_merchant_secret = "SAIPPUAKAUPPIAS";
+
+$xml=simplexml_load_file("payment.xml");
+$xml = base64_encode($xml->asXML());
+$mac = strtoupper(md5("{$xml}+{$aggregator_merchant_secret}"));
+
+$context = stream_context_create(array(
+  'http' => array(
+    'method' => 'POST',
+    'header' => 'Content-Type: application/x-www-form-urlencoded',
+    'content' => http_build_query(array(
+        'CHECKOUT_XML' => $xml,
+        'CHECKOUT_MAC' => $mac
+      )
+    )
+  ),
+  "ssl" => array(
+      "verify_peer"=>false,
+      "verify_peer_name"=>false,
+  )
+));
+
+$response =  file_get_contents('https://payment.checkout.fi/', false, $context);
+```
+
+>Raw HTTP request sent to server
+
+```text
+Host: https://payment.checkout.fi/
+Connection: close
+Content-Length: 1343
+Content-Type: application/x-www-form-urlencoded
+CHECKOUT_XML=PD94bWwgdmVyc2lvbj0iMS4wIj8%2BCjxjaGVja291dCB4bWxucz0iaHR0cDovL2NoZWNrb3V0LmZpL3JlcXVlc3QiPgogICAgPHJlcXVlc3QgdHlwZT0iYWdncmVnYXRvciIgdGVzdD0iZmFsc2UiPgogICAgICAgIDxhZ2dyZWdhdG9yPjM3NTkxNzwvYWdncmVnYXRvcj4KICAgICAgICA8dG9rZW4%2BZmVlYmE2ODQtZjM1YS00Yzk4LWE4NDYtMTRkMGIxYTAyMDI0PC90b2tlbj4KICAgICAgICA8dmVyc2lvbj4wMDAyPC92ZXJzaW9uPgogICAgICAgIDxzdGFtcD4xNDkxODMwOTM5PC9zdGFtcD4KICAgICAgICA8cmVmZXJlbmNlPjExMjMxMjM8L3JlZmVyZW5jZT4KICAgICAgICA8ZGV2aWNlPjEwPC9kZXZpY2U%2BCiAgICAgICAgPGNvbnRlbnQ%2BMTwvY29udGVudD4KICAgICAgICA8dHlwZT4wPC90eXBlPgogICAgICAgIDxhbGdvcml0aG0%2BMzwvYWxnb3JpdGhtPgogICAgICAgIDxjdXJyZW5jeT5FVVI8L2N1cnJlbmN5PgogICAgICAgIDxpdGVtcz4KICAgICAgICAgICAgPGl0ZW0%2BCiAgICAgICAgICAgICAgICA8ZGVzY3JpcHRpb24%2BcHJvZHVjdCAxPC9kZXNjcmlwdGlvbj4KICAgICAgICAgICAgICAgIDxwcmljZSBjdXJyZW5jeT0iRVVSIiB2YXQ9IjIzIj41MDA8L3ByaWNlPgogICAgICAgICAgICAgICAgPG1lcmNoYW50PjM5MTgzMDwvbWVyY2hhbnQ%2BCiAgICAgICAgICAgIDwvaXRlbT4KICAgICAgICAgICAgPGFtb3VudCBjdXJyZW5jeT0iRVVSIj41MDA8L2Ftb3VudD4KICAgICAgICA8L2l0ZW1zPgogICAgICAgIDxidXllcj4KICAgICAgICAgICAgPGNvdW50cnk%2BRklOPC9jb3VudHJ5PgogICAgICAgICAgICA8bGFuZ3VhZ2U%2BRkk8L2xhbmd1YWdlPgogICAgICAgIDwvYnV5ZXI%2BCiAgICAgICAgPGRlbGl2ZXJ5PgogICAgICAgICAgICA8ZGF0ZT4yMDExMDMwMzwvZGF0ZT4KICAgICAgICA8L2RlbGl2ZXJ5PgogICAgPC9yZXF1ZXN0Pgo8L2NoZWNrb3V0Pgo%3D&CHECKOUT_MAC=964617C886D55816F6F1D0C91F46C513
+```
+
+> Respose XML
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<response>
+ <statusCode>200</statusCode>
+ <statusText>OK, payment committed</statusText>
+</response>
+```
+
+### Tokenized SiS payment using minimum required fields
+

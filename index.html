@@ -314,19 +314,24 @@ merchant=375917&amp;provider_token=1296b3bc-407b-439b-9afd-c138e3ababa3
 <th>Body field</th>
 <th>Type</th>
 <th>Description</th>
+<th>Notes</th>
 </tr>
 </thead><tbody>
 <tr>
 <td>provider_token</td>
 <td>UUID4</td>
 <td>External (e.g. Solinor) token</td>
+<td>1</td>
 </tr>
 <tr>
 <td>merchant</td>
 <td>N</td>
 <td>Merchant ID given by Checkout</td>
+<td></td>
 </tr>
 </tbody></table>
+
+<p><em>Note 1.)</em> Must match ^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-(8|9|a|b)[a-f0-9]{3}-[a-f0-9]{12}$</p>
 <pre class="highlight xml"><code><span class="cp">&lt;?xml version="1.0" encoding="utf-8"?&gt;</span>
 <span class="nt">&lt;response&gt;</span>
     <span class="nt">&lt;statusCode&gt;</span>200<span class="nt">&lt;/statusCode&gt;</span>
@@ -1096,11 +1101,11 @@ CHECKOUT_XML=&lt;base64 encoded xml string&gt;&amp;CHECKOUT_MAC=&lt;string&gt;
 </tr>
 <tr>
 <td>TOKEN</td>
-<td>Token of credit card used on tokenized payments</td>
+<td>Token of credit card used on tokenized payments<br/>Must meet</td>
 <td>&ldquo;f47ac10b-58cc-4372-a567-0e02b2c3d479&rdquo;</td>
 <td>UUID4</td>
 <td>(&cross;)</td>
-<td>2</td>
+<td>2,4</td>
 </tr>
 <tr>
 <td>COMMIT</td>
@@ -1155,6 +1160,8 @@ Are these relevat to this API???
 <p><em>Note 2.)</em> Required only on tokenized payments</p>
 
 <p><em>Note 3.)</em> For calculating checksum, check above on Payment-API.</p>
+
+<p><em>Note 4.)</em> Must match ^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-(8|9|a|b)[a-f0-9]{3}-[a-f0-9]{12}$</p>
 
 <h3 id="xml-element-items">XML-element : Items</h3>
 
@@ -1503,27 +1510,55 @@ Are these relevat to this API???
 </tr>
 </tbody></table>
 
-<h3 id="http-response">HTTP Response</h3>
+<blockquote>
+<p>Response XML</p>
+</blockquote>
+<pre class="highlight xml"><code><span class="cp">&lt;?xml version="1.0" encoding="utf-8"?&gt;</span>
+<span class="nt">&lt;response&gt;</span>
+    <span class="nt">&lt;statusCode&gt;&lt;/statusCode&gt;</span>
+    <span class="nt">&lt;statusText&gt;&lt;/statusText&gt;</span>
+<span class="nt">&lt;/response&gt;</span>
+</code></pre>
+<h3 id="response-body-xml">Response body (XML)</h3>
 
 <table><thead>
 <tr>
-<th>#</th>
-<th>Description</th>
 <th>Name</th>
+<th>Description</th>
 <th>Format</th>
 </tr>
 </thead><tbody>
 <tr>
-<td>1 </td>
-<td>HTTP Status code (200 if payment/reservation successful)</td>
 <td>statusCode</td>
-<td>SCODE</td>
+<td>HTTP Status code (200 if payment/reservation successful)</td>
+<td>N</td>
 </tr>
 <tr>
-<td>2</td>
-<td>Status text (e.g. &#39;payment done&rsquo;)</td>
 <td>statusText</td>
+<td>Status text (e.g. &#39;payment done&rsquo;)</td>
 <td>AN</td>
+</tr>
+</tbody></table>
+
+<h3 id="response-status-dodes">Response status dodes</h3>
+
+<table><thead>
+<tr>
+<th>Code</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>200</td>
+<td>HTTP Status code (200 if payment/reservation successful)</td>
+</tr>
+<tr>
+<td>400</td>
+<td>Error in query, missing parameters etc. Detailed information in statusText field</td>
+</tr>
+<tr>
+<td>500</td>
+<td>Error proceccing the query. Detailed information in statusText field</td>
 </tr>
 </tbody></table>
 
@@ -1948,11 +1983,93 @@ Are these relevat to this API???
 
 <h1 id="example-data-and-requests">Example data and requests</h1>
 
-<h2 id="card-tokenize">Card tokenize</h2>
+<h2 id="payment-api-usage-example-in-php">Payment API, usage example in PHP</h2>
 
-<h2 id="sis-payment-xml-tokenized">SiS Payment XML (tokenized)</h2>
+<ul>
+<li>https://payment.checkout.fi</li>
+</ul>
 
-<h2 id="sis-payment-http-request-tokenized">SiS Payment HTTP request (tokenized)</h2>
+<blockquote>
+<p>Sample &#39;payment.xml&rsquo; file</p>
+</blockquote>
+<pre class="highlight xml"><code><span class="cp">&lt;?xml version="1.0"?&gt;</span>
+<span class="nt">&lt;checkout</span> <span class="na">xmlns=</span><span class="s">"http://checkout.fi/request"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;request</span> <span class="na">type=</span><span class="s">"aggregator"</span> <span class="na">test=</span><span class="s">"false"</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;aggregator&gt;</span>375917<span class="nt">&lt;/aggregator&gt;</span>
+        <span class="nt">&lt;token&gt;</span>feeba684-f35a-4c98-a846-14d0b1a02024<span class="nt">&lt;/token&gt;</span>
+        <span class="nt">&lt;version&gt;</span>0002<span class="nt">&lt;/version&gt;</span>
+        <span class="nt">&lt;stamp&gt;</span>1491830939<span class="nt">&lt;/stamp&gt;</span>
+        <span class="nt">&lt;reference&gt;</span>1123123<span class="nt">&lt;/reference&gt;</span>
+        <span class="nt">&lt;device&gt;</span>10<span class="nt">&lt;/device&gt;</span>
+        <span class="nt">&lt;content&gt;</span>1<span class="nt">&lt;/content&gt;</span>
+        <span class="nt">&lt;type&gt;</span>0<span class="nt">&lt;/type&gt;</span>
+        <span class="nt">&lt;algorithm&gt;</span>3<span class="nt">&lt;/algorithm&gt;</span>
+        <span class="nt">&lt;currency&gt;</span>EUR<span class="nt">&lt;/currency&gt;</span>
+        <span class="nt">&lt;items&gt;</span>
+            <span class="nt">&lt;item&gt;</span>
+                <span class="nt">&lt;description&gt;</span>product 1<span class="nt">&lt;/description&gt;</span>
+                <span class="nt">&lt;price</span> <span class="na">currency=</span><span class="s">"EUR"</span> <span class="na">vat=</span><span class="s">"23"</span><span class="nt">&gt;</span>500<span class="nt">&lt;/price&gt;</span>
+                <span class="nt">&lt;merchant&gt;</span>391830<span class="nt">&lt;/merchant&gt;</span>
+            <span class="nt">&lt;/item&gt;</span>
+            <span class="nt">&lt;amount</span> <span class="na">currency=</span><span class="s">"EUR"</span><span class="nt">&gt;</span>500<span class="nt">&lt;/amount&gt;</span>
+        <span class="nt">&lt;/items&gt;</span>
+        <span class="nt">&lt;buyer&gt;</span>
+            <span class="nt">&lt;country&gt;</span>FIN<span class="nt">&lt;/country&gt;</span>
+            <span class="nt">&lt;language&gt;</span>FI<span class="nt">&lt;/language&gt;</span>
+        <span class="nt">&lt;/buyer&gt;</span>
+        <span class="nt">&lt;delivery&gt;</span>
+            <span class="nt">&lt;date&gt;</span>20110303<span class="nt">&lt;/date&gt;</span>
+        <span class="nt">&lt;/delivery&gt;</span>
+    <span class="nt">&lt;/request&gt;</span>
+<span class="nt">&lt;/checkout&gt;</span>
+</code></pre>
+<blockquote>
+<p>PHP used to generate valid query from XML file (above)</p>
+</blockquote>
+<pre class="highlight php"><code><span class="cp">&lt;?php</span>
+<span class="nv">$aggregator_merchant_secret</span> <span class="o">=</span> <span class="s2">"SAIPPUAKAUPPIAS"</span><span class="p">;</span>
+
+<span class="nv">$xml</span><span class="o">=</span><span class="nb">simplexml_load_file</span><span class="p">(</span><span class="s2">"payment.xml"</span><span class="p">);</span>
+<span class="nv">$xml</span> <span class="o">=</span> <span class="nb">base64_encode</span><span class="p">(</span><span class="nv">$xml</span><span class="o">-&gt;</span><span class="na">asXML</span><span class="p">());</span>
+<span class="nv">$mac</span> <span class="o">=</span> <span class="nb">strtoupper</span><span class="p">(</span><span class="nb">md5</span><span class="p">(</span><span class="s2">"</span><span class="si">{</span><span class="nv">$xml</span><span class="si">}</span><span class="s2">+</span><span class="si">{</span><span class="nv">$aggregator_merchant_secret</span><span class="si">}</span><span class="s2">"</span><span class="p">));</span>
+
+<span class="nv">$context</span> <span class="o">=</span> <span class="nb">stream_context_create</span><span class="p">(</span><span class="k">array</span><span class="p">(</span>
+  <span class="s1">'http'</span> <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(</span>
+    <span class="s1">'method'</span> <span class="o">=&gt;</span> <span class="s1">'POST'</span><span class="p">,</span>
+    <span class="s1">'header'</span> <span class="o">=&gt;</span> <span class="s1">'Content-Type: application/x-www-form-urlencoded'</span><span class="p">,</span>
+    <span class="s1">'content'</span> <span class="o">=&gt;</span> <span class="nb">http_build_query</span><span class="p">(</span><span class="k">array</span><span class="p">(</span>
+        <span class="s1">'CHECKOUT_XML'</span> <span class="o">=&gt;</span> <span class="nv">$xml</span><span class="p">,</span>
+        <span class="s1">'CHECKOUT_MAC'</span> <span class="o">=&gt;</span> <span class="nv">$mac</span>
+      <span class="p">)</span>
+    <span class="p">)</span>
+  <span class="p">),</span>
+  <span class="s2">"ssl"</span> <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(</span>
+      <span class="s2">"verify_peer"</span><span class="o">=&gt;</span><span class="kc">false</span><span class="p">,</span>
+      <span class="s2">"verify_peer_name"</span><span class="o">=&gt;</span><span class="kc">false</span><span class="p">,</span>
+  <span class="p">)</span>
+<span class="p">));</span>
+
+<span class="nv">$response</span> <span class="o">=</span>  <span class="nb">file_get_contents</span><span class="p">(</span><span class="s1">'https://payment.checkout.fi/'</span><span class="p">,</span> <span class="kc">false</span><span class="p">,</span> <span class="nv">$context</span><span class="p">);</span>
+</code></pre>
+<blockquote>
+<p>Raw HTTP request sent to server</p>
+</blockquote>
+<pre class="highlight plaintext"><code>Host: https://payment.checkout.fi/
+Connection: close
+Content-Length: 1343
+Content-Type: application/x-www-form-urlencoded
+CHECKOUT_XML=PD94bWwgdmVyc2lvbj0iMS4wIj8%2BCjxjaGVja291dCB4bWxucz0iaHR0cDovL2NoZWNrb3V0LmZpL3JlcXVlc3QiPgogICAgPHJlcXVlc3QgdHlwZT0iYWdncmVnYXRvciIgdGVzdD0iZmFsc2UiPgogICAgICAgIDxhZ2dyZWdhdG9yPjM3NTkxNzwvYWdncmVnYXRvcj4KICAgICAgICA8dG9rZW4%2BZmVlYmE2ODQtZjM1YS00Yzk4LWE4NDYtMTRkMGIxYTAyMDI0PC90b2tlbj4KICAgICAgICA8dmVyc2lvbj4wMDAyPC92ZXJzaW9uPgogICAgICAgIDxzdGFtcD4xNDkxODMwOTM5PC9zdGFtcD4KICAgICAgICA8cmVmZXJlbmNlPjExMjMxMjM8L3JlZmVyZW5jZT4KICAgICAgICA8ZGV2aWNlPjEwPC9kZXZpY2U%2BCiAgICAgICAgPGNvbnRlbnQ%2BMTwvY29udGVudD4KICAgICAgICA8dHlwZT4wPC90eXBlPgogICAgICAgIDxhbGdvcml0aG0%2BMzwvYWxnb3JpdGhtPgogICAgICAgIDxjdXJyZW5jeT5FVVI8L2N1cnJlbmN5PgogICAgICAgIDxpdGVtcz4KICAgICAgICAgICAgPGl0ZW0%2BCiAgICAgICAgICAgICAgICA8ZGVzY3JpcHRpb24%2BcHJvZHVjdCAxPC9kZXNjcmlwdGlvbj4KICAgICAgICAgICAgICAgIDxwcmljZSBjdXJyZW5jeT0iRVVSIiB2YXQ9IjIzIj41MDA8L3ByaWNlPgogICAgICAgICAgICAgICAgPG1lcmNoYW50PjM5MTgzMDwvbWVyY2hhbnQ%2BCiAgICAgICAgICAgIDwvaXRlbT4KICAgICAgICAgICAgPGFtb3VudCBjdXJyZW5jeT0iRVVSIj41MDA8L2Ftb3VudD4KICAgICAgICA8L2l0ZW1zPgogICAgICAgIDxidXllcj4KICAgICAgICAgICAgPGNvdW50cnk%2BRklOPC9jb3VudHJ5PgogICAgICAgICAgICA8bGFuZ3VhZ2U%2BRkk8L2xhbmd1YWdlPgogICAgICAgIDwvYnV5ZXI%2BCiAgICAgICAgPGRlbGl2ZXJ5PgogICAgICAgICAgICA8ZGF0ZT4yMDExMDMwMzwvZGF0ZT4KICAgICAgICA8L2RlbGl2ZXJ5PgogICAgPC9yZXF1ZXN0Pgo8L2NoZWNrb3V0Pgo%3D&amp;CHECKOUT_MAC=964617C886D55816F6F1D0C91F46C513
+</code></pre>
+<blockquote>
+<p>Respose XML</p>
+</blockquote>
+<pre class="highlight xml"><code><span class="cp">&lt;?xml version="1.0" encoding="utf-8"?&gt;</span>
+<span class="nt">&lt;response&gt;</span>
+ <span class="nt">&lt;statusCode&gt;</span>200<span class="nt">&lt;/statusCode&gt;</span>
+ <span class="nt">&lt;statusText&gt;</span>OK, payment committed<span class="nt">&lt;/statusText&gt;</span>
+<span class="nt">&lt;/response&gt;</span>
+</code></pre>
+<h3 id="tokenized-sis-payment-using-minimum-required-fields">Tokenized SiS payment using minimum required fields</h3>
 
       </div>
       <div class="dark-box">
