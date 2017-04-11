@@ -124,132 +124,127 @@
 <blockquote>
 <p>Example class implementation that will be used in the later examples</p>
 </blockquote>
-<pre class="highlight php"><code>class Checkout
-{
-    private $version = "0001";
-    private $language   = "FI";
-    private $country = "FIN";
-    private $currency   = "EUR";
-    private $device = "1";
-    private $content = "1";
-    private $type   = "0";
-    private $algorithm = "3";
-    private $merchant   = "";
-    private $password   = "";
-    private $stamp = 0;
-    private $amount = 0;
-    private $reference = "";
-    private $message = "";
-    private $return = "";
-    private $cancel = "";
-    private $reject = "";
-    private $delayed = "";
-    private $delivery_date = "";
-    private $firstname = "";
-    private $familyname = "";
-    private $address = "";
-    private $postcode   = "";
-    private $postoffice = "";
-    private $status = "";
-    private $email = "";
+<pre class="highlight php"><code><span class="cp">&lt;?php</span>
 
-    public function __construct($merchant, $password)
-    {
-        $this-&gt;merchant = $merchant; // merchant id
-        $this-&gt;password = $password; // security key (about 80 chars)
-    }
+<span class="k">class</span> <span class="nc">Checkout</span>
+<span class="p">{</span>
+    <span class="k">private</span> <span class="nv">$version</span> <span class="o">=</span> <span class="s2">"0001"</span><span class="p">;</span>
+    <span class="k">private</span> <span class="nv">$language</span> <span class="o">=</span> <span class="s2">"FI"</span><span class="p">;</span>
+    <span class="k">private</span> <span class="nv">$country</span> <span class="o">=</span> <span class="s2">"FIN"</span><span class="p">;</span>
+    <span class="k">private</span> <span class="nv">$currency</span> <span class="o">=</span> <span class="s2">"EUR"</span><span class="p">;</span>
+    <span class="k">private</span> <span class="nv">$device</span> <span class="o">=</span> <span class="s2">"1"</span><span class="p">;</span>
+    <span class="k">private</span> <span class="nv">$content</span> <span class="o">=</span> <span class="s2">"1"</span><span class="p">;</span>
+    <span class="k">private</span> <span class="nv">$type</span> <span class="o">=</span> <span class="s2">"0"</span><span class="p">;</span>
+    <span class="k">private</span> <span class="nv">$algorithm</span> <span class="o">=</span> <span class="s2">"3"</span><span class="p">;</span>
+    <span class="k">private</span> <span class="nv">$merchant</span> <span class="o">=</span> <span class="s2">""</span><span class="p">;</span>
+    <span class="k">private</span> <span class="nv">$password</span> <span class="o">=</span> <span class="s2">""</span><span class="p">;</span>
+    <span class="k">private</span> <span class="nv">$stamp</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="k">private</span> <span class="nv">$amount</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="k">private</span> <span class="nv">$reference</span> <span class="o">=</span> <span class="s2">""</span><span class="p">;</span>
+    <span class="k">private</span> <span class="nv">$message</span> <span class="o">=</span> <span class="s2">""</span><span class="p">;</span>
+    <span class="k">private</span> <span class="nv">$return</span> <span class="o">=</span> <span class="s2">""</span><span class="p">;</span>
+    <span class="k">private</span> <span class="nv">$cancel</span> <span class="o">=</span> <span class="s2">""</span><span class="p">;</span>
+    <span class="k">private</span> <span class="nv">$reject</span> <span class="o">=</span> <span class="s2">""</span><span class="p">;</span>
+    <span class="k">private</span> <span class="nv">$delayed</span> <span class="o">=</span> <span class="s2">""</span><span class="p">;</span>
+    <span class="k">private</span> <span class="nv">$delivery_date</span> <span class="o">=</span> <span class="s2">""</span><span class="p">;</span>
+    <span class="k">private</span> <span class="nv">$firstname</span> <span class="o">=</span> <span class="s2">""</span><span class="p">;</span>
+    <span class="k">private</span> <span class="nv">$familyname</span> <span class="o">=</span> <span class="s2">""</span><span class="p">;</span>
+    <span class="k">private</span> <span class="nv">$address</span> <span class="o">=</span> <span class="s2">""</span><span class="p">;</span>
+    <span class="k">private</span> <span class="nv">$postcode</span> <span class="o">=</span> <span class="s2">""</span><span class="p">;</span>
+    <span class="k">private</span> <span class="nv">$postoffice</span> <span class="o">=</span> <span class="s2">""</span><span class="p">;</span>
+    <span class="k">private</span> <span class="nv">$status</span> <span class="o">=</span> <span class="s2">""</span><span class="p">;</span>
+    <span class="k">private</span> <span class="nv">$email</span> <span class="o">=</span> <span class="s2">""</span><span class="p">;</span>
 
-    /*
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">__construct</span><span class="p">(</span><span class="nv">$merchant</span><span class="p">,</span> <span class="nv">$password</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">merchant</span> <span class="o">=</span> <span class="nv">$merchant</span><span class="p">;</span> <span class="c1">// merchant id
+</span>        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">password</span> <span class="o">=</span> <span class="nv">$password</span><span class="p">;</span> <span class="c1">// security key (about 80 chars)
+</span>    <span class="p">}</span>
+
+    <span class="cm">/*
      * generates MAC and prepares values for creating payment
-     */
-    public function getCheckoutObject($data)
-    {
-        // overwrite default values
-        foreach($data as $key =&gt; $value)
-        {
-            $this-&gt;{$key} = $value;
-        }
+     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">getCheckoutObject</span><span class="p">(</span><span class="nv">$data</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="c1">// overwrite default values
+</span>        <span class="k">foreach</span> <span class="p">(</span><span class="nv">$data</span> <span class="k">as</span> <span class="nv">$key</span> <span class="o">=&gt;</span> <span class="nv">$value</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nv">$this</span><span class="o">-&gt;</span><span class="p">{</span><span class="nv">$key</span><span class="p">}</span> <span class="o">=</span> <span class="nv">$value</span><span class="p">;</span>
+        <span class="p">}</span>
 
-        $mac = strtoupper(md5("{$this-&gt;version}+{$this-&gt;stamp}+{$this-&gt;amount}+{$this-&gt;reference}+{$this-&gt;message}+{$this-&gt;language}+{$this-&gt;merchant}+{$this-&gt;return}+{$this-&gt;cancel}+{$this-&gt;reject}+{$this-&gt;delayed}+{$this-&gt;country}+{$this-&gt;currency}+{$this-&gt;device}+{$this-&gt;content}+{$this-&gt;type}+{$this-&gt;algorithm}+{$this-&gt;delivery_date}+{$this-&gt;firstname}+{$this-&gt;familyname}+{$this-&gt;address}+{$this-&gt;postcode}+{$this-&gt;postoffice}+{$this-&gt;password}"));
-        $post['VERSION'] = $this-&gt;version;
-        $post['STAMP'] = $this-&gt;stamp;
-        $post['AMOUNT'] = $this-&gt;amount;
-        $post['REFERENCE'] = $this-&gt;reference;
-        $post['MESSAGE'] = $this-&gt;message;
-        $post['LANGUAGE']   = $this-&gt;language;
-        $post['MERCHANT']   = $this-&gt;merchant;
-        $post['RETURN'] = $this-&gt;return;
-        $post['CANCEL'] = $this-&gt;cancel;
-        $post['REJECT'] = $this-&gt;reject;
-        $post['DELAYED'] = $this-&gt;delayed;
-        $post['COUNTRY'] = $this-&gt;country;
-        $post['CURRENCY']   = $this-&gt;currency;
-        $post['DEVICE'] = $this-&gt;device;
-        $post['CONTENT'] = $this-&gt;content;
-        $post['TYPE']   = $this-&gt;type;
-        $post['ALGORITHM'] = $this-&gt;algorithm;
-        $post['DELIVERY_DATE'] = $this-&gt;delivery_date;
-        $post['FIRSTNAME'] = $this-&gt;firstname;
-        $post['FAMILYNAME'] = $this-&gt;familyname;
-        $post['ADDRESS'] = $this-&gt;address;
-        $post['POSTCODE'] = $this-&gt;postcode;
-        $post['POSTOFFICE'] = $this-&gt;postoffice;
-        $post['MAC'] = $mac;
+        <span class="nv">$mac</span> <span class="o">=</span> <span class="nb">strtoupper</span><span class="p">(</span><span class="nb">md5</span><span class="p">(</span><span class="s2">"</span><span class="si">{</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">version</span><span class="si">}</span><span class="s2">+</span><span class="si">{</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">stamp</span><span class="si">}</span><span class="s2">+</span><span class="si">{</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">amount</span><span class="si">}</span><span class="s2">+</span><span class="si">{</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">reference</span><span class="si">}</span><span class="s2">+</span><span class="si">{</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">message</span><span class="si">}</span><span class="s2">+</span><span class="si">{</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">language</span><span class="si">}</span><span class="s2">+</span><span class="si">{</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">merchant</span><span class="si">}</span><span class="s2">+</span><span class="si">{</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">return</span><span class="si">}</span><span class="s2">+</span><span class="si">{</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">cancel</span><span class="si">}</span><span class="s2">+</span><span class="si">{</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">reject</span><span class="si">}</span><span class="s2">+</span><span class="si">{</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">delayed</span><span class="si">}</span><span class="s2">+</span><span class="si">{</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">country</span><span class="si">}</span><span class="s2">+</span><span class="si">{</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">currency</span><span class="si">}</span><span class="s2">+</span><span class="si">{</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">device</span><span class="si">}</span><span class="s2">+</span><span class="si">{</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">content</span><span class="si">}</span><span class="s2">+</span><span class="si">{</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">type</span><span class="si">}</span><span class="s2">+</span><span class="si">{</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">algorithm</span><span class="si">}</span><span class="s2">+</span><span class="si">{</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">delivery_date</span><span class="si">}</span><span class="s2">+</span><span class="si">{</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">firstname</span><span class="si">}</span><span class="s2">+</span><span class="si">{</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">familyname</span><span class="si">}</span><span class="s2">+</span><span class="si">{</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">address</span><span class="si">}</span><span class="s2">+</span><span class="si">{</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">postcode</span><span class="si">}</span><span class="s2">+</span><span class="si">{</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">postoffice</span><span class="si">}</span><span class="s2">+</span><span class="si">{</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">password</span><span class="si">}</span><span class="s2">"</span><span class="p">));</span>
+        <span class="nv">$post</span><span class="p">[</span><span class="s1">'VERSION'</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">version</span><span class="p">;</span>
+        <span class="nv">$post</span><span class="p">[</span><span class="s1">'STAMP'</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">stamp</span><span class="p">;</span>
+        <span class="nv">$post</span><span class="p">[</span><span class="s1">'AMOUNT'</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">amount</span><span class="p">;</span>
+        <span class="nv">$post</span><span class="p">[</span><span class="s1">'REFERENCE'</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">reference</span><span class="p">;</span>
+        <span class="nv">$post</span><span class="p">[</span><span class="s1">'MESSAGE'</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">message</span><span class="p">;</span>
+        <span class="nv">$post</span><span class="p">[</span><span class="s1">'LANGUAGE'</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">language</span><span class="p">;</span>
+        <span class="nv">$post</span><span class="p">[</span><span class="s1">'MERCHANT'</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">merchant</span><span class="p">;</span>
+        <span class="nv">$post</span><span class="p">[</span><span class="s1">'RETURN'</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">return</span><span class="p">;</span>
+        <span class="nv">$post</span><span class="p">[</span><span class="s1">'CANCEL'</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">cancel</span><span class="p">;</span>
+        <span class="nv">$post</span><span class="p">[</span><span class="s1">'REJECT'</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">reject</span><span class="p">;</span>
+        <span class="nv">$post</span><span class="p">[</span><span class="s1">'DELAYED'</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">delayed</span><span class="p">;</span>
+        <span class="nv">$post</span><span class="p">[</span><span class="s1">'COUNTRY'</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">country</span><span class="p">;</span>
+        <span class="nv">$post</span><span class="p">[</span><span class="s1">'CURRENCY'</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">currency</span><span class="p">;</span>
+        <span class="nv">$post</span><span class="p">[</span><span class="s1">'DEVICE'</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">device</span><span class="p">;</span>
+        <span class="nv">$post</span><span class="p">[</span><span class="s1">'CONTENT'</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">content</span><span class="p">;</span>
+        <span class="nv">$post</span><span class="p">[</span><span class="s1">'TYPE'</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">type</span><span class="p">;</span>
+        <span class="nv">$post</span><span class="p">[</span><span class="s1">'ALGORITHM'</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">algorithm</span><span class="p">;</span>
+        <span class="nv">$post</span><span class="p">[</span><span class="s1">'DELIVERY_DATE'</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">delivery_date</span><span class="p">;</span>
+        <span class="nv">$post</span><span class="p">[</span><span class="s1">'FIRSTNAME'</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">firstname</span><span class="p">;</span>
+        <span class="nv">$post</span><span class="p">[</span><span class="s1">'FAMILYNAME'</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">familyname</span><span class="p">;</span>
+        <span class="nv">$post</span><span class="p">[</span><span class="s1">'ADDRESS'</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">address</span><span class="p">;</span>
+        <span class="nv">$post</span><span class="p">[</span><span class="s1">'POSTCODE'</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">postcode</span><span class="p">;</span>
+        <span class="nv">$post</span><span class="p">[</span><span class="s1">'POSTOFFICE'</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">postoffice</span><span class="p">;</span>
+        <span class="nv">$post</span><span class="p">[</span><span class="s1">'MAC'</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$mac</span><span class="p">;</span>
 
-        $post['EMAIL'] = $this-&gt;email;
-        $post['PHONE'] = $this-&gt;phone;
+        <span class="nv">$post</span><span class="p">[</span><span class="s1">'EMAIL'</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">email</span><span class="p">;</span>
+        <span class="nv">$post</span><span class="p">[</span><span class="s1">'PHONE'</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">phone</span><span class="p">;</span>
 
-        return $post;
-    }
+        <span class="k">return</span> <span class="nv">$post</span><span class="p">;</span>
+    <span class="p">}</span>
 
-    /*
+    <span class="cm">/*
      * returns payment information in XML
-     */
-    public function getCheckoutXML($data)
-    {
-        $this-&gt;device = "10";
-        return $this-&gt;sendPost($this-&gt;getCheckoutObject($data));
-    }
+     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">getCheckoutXML</span><span class="p">(</span><span class="nv">$data</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">device</span> <span class="o">=</span> <span class="s2">"10"</span><span class="p">;</span>
+        <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">sendPost</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">getCheckoutObject</span><span class="p">(</span><span class="nv">$data</span><span class="p">));</span>
+    <span class="p">}</span>
 
-    private function sendPost($post) {
-        $options = array(
-                CURLOPT_POST        =&gt; 1,
-                CURLOPT_HEADER      =&gt; 0,
-                CURLOPT_URL         =&gt; 'https://payment.checkout.fi',
-                CURLOPT_FRESH_CONNECT   =&gt; 1,
-                CURLOPT_RETURNTRANSFER  =&gt; 1,
-                CURLOPT_FORBID_REUSE    =&gt; 1,
-                CURLOPT_TIMEOUT     =&gt; 20,
-                CURLOPT_POSTFIELDS  =&gt; http_build_query($post)
-        );
+    <span class="k">private</span> <span class="k">function</span> <span class="nf">sendPost</span><span class="p">(</span><span class="nv">$post</span><span class="p">)</span> 
+    <span class="p">{</span>
+        <span class="nv">$options</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span>
+                <span class="nx">CURLOPT_POST</span> <span class="o">=&gt;</span> <span class="mi">1</span><span class="p">,</span>
+                <span class="nx">CURLOPT_HEADER</span> <span class="o">=&gt;</span> <span class="mi">0</span><span class="p">,</span>
+                <span class="nx">CURLOPT_URL</span> <span class="o">=&gt;</span> <span class="s1">'https://payment.checkout.fi'</span><span class="p">,</span>
+                <span class="nx">CURLOPT_FRESH_CONNECT</span> <span class="o">=&gt;</span> <span class="mi">1</span><span class="p">,</span>
+                <span class="nx">CURLOPT_RETURNTRANSFER</span> <span class="o">=&gt;</span> <span class="mi">1</span><span class="p">,</span>
+                <span class="nx">CURLOPT_FORBID_REUSE</span> <span class="o">=&gt;</span> <span class="mi">1</span><span class="p">,</span>
+                <span class="nx">CURLOPT_TIMEOUT</span> <span class="o">=&gt;</span> <span class="mi">20</span><span class="p">,</span>
+                <span class="nx">CURLOPT_POSTFIELDS</span> <span class="o">=&gt;</span> <span class="nb">http_build_query</span><span class="p">(</span><span class="nv">$post</span><span class="p">)</span>
+        <span class="p">);</span>
 
-        $ch = curl_init();
-        curl_setopt_array($ch, $options);
-        $result = curl_exec($ch);
-        curl_close($ch);
+        <span class="nv">$ch</span> <span class="o">=</span> <span class="nb">curl_init</span><span class="p">();</span>
+        <span class="nb">curl_setopt_array</span><span class="p">(</span><span class="nv">$ch</span><span class="p">,</span> <span class="nv">$options</span><span class="p">);</span>
+        <span class="nv">$result</span> <span class="o">=</span> <span class="nb">curl_exec</span><span class="p">(</span><span class="nv">$ch</span><span class="p">);</span>
+        <span class="nb">curl_close</span><span class="p">(</span><span class="nv">$ch</span><span class="p">);</span>
 
-        return $result;
-    }
+        <span class="k">return</span> <span class="nv">$result</span><span class="p">;</span>
+    <span class="p">}</span>
 
-    public function validateCheckout($data)
-    {
-        $generatedMac =  strtoupper(hash_hmac("sha256","{$data['VERSION']}<span class="ni">&amp;{$data['STAMP']}&amp;{$data['REFERENCE']}&amp;{$data['PAYMENT']}&amp;{$data['STATUS']}&amp;{$data['ALGORITHM']}",$this-&gt;password));</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">validateCheckout</span><span class="p">(</span><span class="nv">$data</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="nv">$generatedMac</span> <span class="o">=</span> <span class="nb">strtoupper</span><span class="p">(</span><span class="nb">hash_hmac</span><span class="p">(</span><span class="s2">"sha256"</span><span class="p">,</span> <span class="s2">"</span><span class="si">{</span><span class="nv">$data</span><span class="p">[</span><span class="s1">'VERSION'</span><span class="p">]</span><span class="si">}</span><span class="s2">&amp;</span><span class="si">{</span><span class="nv">$data</span><span class="p">[</span><span class="s1">'STAMP'</span><span class="p">]</span><span class="si">}</span><span class="s2">&amp;</span><span class="si">{</span><span class="nv">$data</span><span class="p">[</span><span class="s1">'REFERENCE'</span><span class="p">]</span><span class="si">}</span><span class="s2">&amp;</span><span class="si">{</span><span class="nv">$data</span><span class="p">[</span><span class="s1">'PAYMENT'</span><span class="p">]</span><span class="si">}</span><span class="s2">&amp;</span><span class="si">{</span><span class="nv">$data</span><span class="p">[</span><span class="s1">'STATUS'</span><span class="p">]</span><span class="si">}</span><span class="s2">&amp;</span><span class="si">{</span><span class="nv">$data</span><span class="p">[</span><span class="s1">'ALGORITHM'</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">password</span><span class="p">));</span>
+        <span class="k">return</span> <span class="p">(</span><span class="nv">$data</span><span class="p">[</span><span class="s1">'MAC'</span><span class="p">]</span> <span class="o">===</span> <span class="nv">$generatedMac</span><span class="p">);</span>
+    <span class="p">}</span>
 
-        if($data['MAC'] === $generatedMac)
-            return true;
-        else
-            return false;
-    }
-
-    public function isPaid($status)
-    {
-        if(in_array($status, array(2, 4, 5, 6, 7, 8, 9, 10)))
-            return true;
-        else
-            return false;
-    }
-}  // class Checkout
-</code></pre>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">isPaid</span><span class="p">(</span><span class="nv">$status</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="p">(</span><span class="nb">in_array</span><span class="p">(</span><span class="nv">$status</span><span class="p">,</span> <span class="k">array</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">10</span><span class="p">)));</span>
+    <span class="p">}</span>
+<span class="p">}</span>  <span class="c1">// class Checkout
+</span></code></pre>
 <p>Test credentials</p>
 
 <ul>
@@ -1077,7 +1072,7 @@ CHECKOUT_XML=&lt;base64 encoded xml string&gt;&amp;CHECKOUT_MAC=&lt;string&gt;
 </tr>
 <tr>
 <td>TYPE</td>
-<td>Payment types.</td>
+<td>Payment types. See payment types below.</td>
 <td>0</td>
 <td>N 1</td>
 <td>(&cross;)</td>
@@ -1288,6 +1283,27 @@ Are these relevat to this API???
 <td>&ldquo;commission for item #1&rdquo;</td>
 <td>AN</td>
 <td></td>
+<td></td>
+</tr>
+</tbody></table>
+
+<h3 id="payment-types">Payment types</h3>
+
+<table><thead>
+<tr>
+<th>Type</th>
+<th>Description</th>
+<th>Notes</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>0</td>
+<td>Normal payment</td>
+<td></td>
+</tr>
+<tr>
+<td>9</td>
+<td>Shop in shop payment</td>
 <td></td>
 </tr>
 </tbody></table>
@@ -1998,20 +2014,21 @@ Are these relevat to this API???
         <span class="nt">&lt;aggregator&gt;</span>375917<span class="nt">&lt;/aggregator&gt;</span>
         <span class="nt">&lt;token&gt;</span>feeba684-f35a-4c98-a846-14d0b1a02024<span class="nt">&lt;/token&gt;</span>
         <span class="nt">&lt;version&gt;</span>0002<span class="nt">&lt;/version&gt;</span>
-        <span class="nt">&lt;stamp&gt;</span>1491830939<span class="nt">&lt;/stamp&gt;</span>
+        <span class="nt">&lt;stamp&gt;</span>1491913443<span class="nt">&lt;/stamp&gt;</span>
         <span class="nt">&lt;reference&gt;</span>1123123<span class="nt">&lt;/reference&gt;</span>
         <span class="nt">&lt;device&gt;</span>10<span class="nt">&lt;/device&gt;</span>
         <span class="nt">&lt;content&gt;</span>1<span class="nt">&lt;/content&gt;</span>
         <span class="nt">&lt;type&gt;</span>0<span class="nt">&lt;/type&gt;</span>
         <span class="nt">&lt;algorithm&gt;</span>3<span class="nt">&lt;/algorithm&gt;</span>
         <span class="nt">&lt;currency&gt;</span>EUR<span class="nt">&lt;/currency&gt;</span>
+        <span class="nt">&lt;commit&gt;</span>false<span class="nt">&lt;/commit&gt;</span>
         <span class="nt">&lt;items&gt;</span>
             <span class="nt">&lt;item&gt;</span>
-                <span class="nt">&lt;description&gt;</span>product 1<span class="nt">&lt;/description&gt;</span>
-                <span class="nt">&lt;price</span> <span class="na">currency=</span><span class="s">"EUR"</span> <span class="na">vat=</span><span class="s">"23"</span><span class="nt">&gt;</span>500<span class="nt">&lt;/price&gt;</span>
+                <span class="nt">&lt;description/&gt;</span>
+                <span class="nt">&lt;price</span> <span class="na">currency=</span><span class="s">"EUR"</span> <span class="na">vat=</span><span class="s">"23"</span><span class="nt">&gt;</span>2500<span class="nt">&lt;/price&gt;</span>
                 <span class="nt">&lt;merchant&gt;</span>391830<span class="nt">&lt;/merchant&gt;</span>
             <span class="nt">&lt;/item&gt;</span>
-            <span class="nt">&lt;amount</span> <span class="na">currency=</span><span class="s">"EUR"</span><span class="nt">&gt;</span>500<span class="nt">&lt;/amount&gt;</span>
+            <span class="nt">&lt;amount</span> <span class="na">currency=</span><span class="s">"EUR"</span><span class="nt">&gt;</span>2500<span class="nt">&lt;/amount&gt;</span>
         <span class="nt">&lt;/items&gt;</span>
         <span class="nt">&lt;buyer&gt;</span>
             <span class="nt">&lt;country&gt;</span>FIN<span class="nt">&lt;/country&gt;</span>
@@ -2020,56 +2037,58 @@ Are these relevat to this API???
         <span class="nt">&lt;delivery&gt;</span>
             <span class="nt">&lt;date&gt;</span>20110303<span class="nt">&lt;/date&gt;</span>
         <span class="nt">&lt;/delivery&gt;</span>
-    <span class="nt">&lt;/request&gt;</span>
+    <span class="nt">&lt;description&gt;</span>SiS tokenized payment test request : 11.04.2017 12:24:25<span class="nt">&lt;/description&gt;&lt;/request&gt;</span>
 <span class="nt">&lt;/checkout&gt;</span>
 </code></pre>
 <blockquote>
 <p>PHP used to generate valid query from XML file (above)</p>
 </blockquote>
 <pre class="highlight php"><code><span class="cp">&lt;?php</span>
-<span class="nv">$aggregator_merchant_secret</span> <span class="o">=</span> <span class="s2">"SAIPPUAKAUPPIAS"</span><span class="p">;</span>
+<span class="nv">$aggregatorMerchantSecret</span> <span class="o">=</span> <span class="s2">"SAIPPUAKAUPPIAS"</span><span class="p">;</span>
 
-<span class="nv">$xml</span><span class="o">=</span><span class="nb">simplexml_load_file</span><span class="p">(</span><span class="s2">"payment.xml"</span><span class="p">);</span>
-<span class="nv">$xml</span> <span class="o">=</span> <span class="nb">base64_encode</span><span class="p">(</span><span class="nv">$xml</span><span class="o">-&gt;</span><span class="na">asXML</span><span class="p">());</span>
-<span class="nv">$mac</span> <span class="o">=</span> <span class="nb">strtoupper</span><span class="p">(</span><span class="nb">md5</span><span class="p">(</span><span class="s2">"</span><span class="si">{</span><span class="nv">$xml</span><span class="si">}</span><span class="s2">+</span><span class="si">{</span><span class="nv">$aggregator_merchant_secret</span><span class="si">}</span><span class="s2">"</span><span class="p">));</span>
+<span class="nv">$xml</span> <span class="o">=</span> <span class="nb">simplexml_load_file</span><span class="p">(</span><span class="s2">"payment.xml"</span><span class="p">);</span>
+<span class="nv">$checkoutXML</span> <span class="o">=</span> <span class="nb">base64_encode</span><span class="p">(</span><span class="nv">$xml</span><span class="o">-&gt;</span><span class="na">asXML</span><span class="p">());</span>
+<span class="nv">$checkoutMac</span> <span class="o">=</span> <span class="nb">strtoupper</span><span class="p">(</span><span class="nb">md5</span><span class="p">(</span><span class="s2">"</span><span class="si">{</span><span class="nv">$checkoutXML</span><span class="si">}</span><span class="s2">+</span><span class="si">{</span><span class="nv">$aggregatorMerchantSecret</span><span class="si">}</span><span class="s2">"</span><span class="p">));</span>
 
-<span class="nv">$context</span> <span class="o">=</span> <span class="nb">stream_context_create</span><span class="p">(</span><span class="k">array</span><span class="p">(</span>
+<span class="nv">$streamContext</span> <span class="o">=</span> <span class="nb">stream_context_create</span><span class="p">(</span><span class="k">array</span><span class="p">(</span>
   <span class="s1">'http'</span> <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(</span>
     <span class="s1">'method'</span> <span class="o">=&gt;</span> <span class="s1">'POST'</span><span class="p">,</span>
     <span class="s1">'header'</span> <span class="o">=&gt;</span> <span class="s1">'Content-Type: application/x-www-form-urlencoded'</span><span class="p">,</span>
     <span class="s1">'content'</span> <span class="o">=&gt;</span> <span class="nb">http_build_query</span><span class="p">(</span><span class="k">array</span><span class="p">(</span>
-        <span class="s1">'CHECKOUT_XML'</span> <span class="o">=&gt;</span> <span class="nv">$xml</span><span class="p">,</span>
-        <span class="s1">'CHECKOUT_MAC'</span> <span class="o">=&gt;</span> <span class="nv">$mac</span>
+        <span class="s1">'CHECKOUT_XML'</span> <span class="o">=&gt;</span> <span class="nv">$checkoutXML</span><span class="p">,</span>
+        <span class="s1">'CHECKOUT_MAC'</span> <span class="o">=&gt;</span> <span class="nv">$checkoutMac</span>
       <span class="p">)</span>
     <span class="p">)</span>
   <span class="p">),</span>
   <span class="s2">"ssl"</span> <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(</span>
-      <span class="s2">"verify_peer"</span><span class="o">=&gt;</span><span class="kc">false</span><span class="p">,</span>
-      <span class="s2">"verify_peer_name"</span><span class="o">=&gt;</span><span class="kc">false</span><span class="p">,</span>
+      <span class="s2">"verify_peer"</span> <span class="o">=&gt;</span> <span class="kc">false</span><span class="p">,</span>
+      <span class="s2">"verify_peer_name"</span> <span class="o">=&gt;</span> <span class="kc">false</span><span class="p">,</span>
   <span class="p">)</span>
 <span class="p">));</span>
 
-<span class="nv">$response</span> <span class="o">=</span>  <span class="nb">file_get_contents</span><span class="p">(</span><span class="s1">'https://payment.checkout.fi/'</span><span class="p">,</span> <span class="kc">false</span><span class="p">,</span> <span class="nv">$context</span><span class="p">);</span>
+<span class="nv">$response</span> <span class="o">=</span> <span class="nb">file_get_contents</span><span class="p">(</span><span class="s1">'https://payment.checkout.fi/'</span><span class="p">,</span> <span class="kc">false</span><span class="p">,</span> <span class="nv">$streamContext</span><span class="p">);</span>
 </code></pre>
 <blockquote>
 <p>Raw HTTP request sent to server</p>
 </blockquote>
-<pre class="highlight plaintext"><code>Host: https://payment.checkout.fi/
+<pre class="highlight plaintext"><code>Host: payment.checkout.fi
 Connection: close
-Content-Length: 1343
+Content-Length: 1473
 Content-Type: application/x-www-form-urlencoded
-CHECKOUT_XML=PD94bWwgdmVyc2lvbj0iMS4wIj8%2BCjxjaGVja291dCB4bWxucz0iaHR0cDovL2NoZWNrb3V0LmZpL3JlcXVlc3QiPgogICAgPHJlcXVlc3QgdHlwZT0iYWdncmVnYXRvciIgdGVzdD0iZmFsc2UiPgogICAgICAgIDxhZ2dyZWdhdG9yPjM3NTkxNzwvYWdncmVnYXRvcj4KICAgICAgICA8dG9rZW4%2BZmVlYmE2ODQtZjM1YS00Yzk4LWE4NDYtMTRkMGIxYTAyMDI0PC90b2tlbj4KICAgICAgICA8dmVyc2lvbj4wMDAyPC92ZXJzaW9uPgogICAgICAgIDxzdGFtcD4xNDkxODMwOTM5PC9zdGFtcD4KICAgICAgICA8cmVmZXJlbmNlPjExMjMxMjM8L3JlZmVyZW5jZT4KICAgICAgICA8ZGV2aWNlPjEwPC9kZXZpY2U%2BCiAgICAgICAgPGNvbnRlbnQ%2BMTwvY29udGVudD4KICAgICAgICA8dHlwZT4wPC90eXBlPgogICAgICAgIDxhbGdvcml0aG0%2BMzwvYWxnb3JpdGhtPgogICAgICAgIDxjdXJyZW5jeT5FVVI8L2N1cnJlbmN5PgogICAgICAgIDxpdGVtcz4KICAgICAgICAgICAgPGl0ZW0%2BCiAgICAgICAgICAgICAgICA8ZGVzY3JpcHRpb24%2BcHJvZHVjdCAxPC9kZXNjcmlwdGlvbj4KICAgICAgICAgICAgICAgIDxwcmljZSBjdXJyZW5jeT0iRVVSIiB2YXQ9IjIzIj41MDA8L3ByaWNlPgogICAgICAgICAgICAgICAgPG1lcmNoYW50PjM5MTgzMDwvbWVyY2hhbnQ%2BCiAgICAgICAgICAgIDwvaXRlbT4KICAgICAgICAgICAgPGFtb3VudCBjdXJyZW5jeT0iRVVSIj41MDA8L2Ftb3VudD4KICAgICAgICA8L2l0ZW1zPgogICAgICAgIDxidXllcj4KICAgICAgICAgICAgPGNvdW50cnk%2BRklOPC9jb3VudHJ5PgogICAgICAgICAgICA8bGFuZ3VhZ2U%2BRkk8L2xhbmd1YWdlPgogICAgICAgIDwvYnV5ZXI%2BCiAgICAgICAgPGRlbGl2ZXJ5PgogICAgICAgICAgICA8ZGF0ZT4yMDExMDMwMzwvZGF0ZT4KICAgICAgICA8L2RlbGl2ZXJ5PgogICAgPC9yZXF1ZXN0Pgo8L2NoZWNrb3V0Pgo%3D&amp;CHECKOUT_MAC=964617C886D55816F6F1D0C91F46C513
+CHECKOUT_XML=PD94bWwgdmVyc2lvbj0iMS4wIj8%2BCjxjaGVja291dCB4bWxucz0iaHR0cDovL2NoZWNrb3V0LmZpL3JlcXVlc3QiPgogICAgPHJlcXVlc3QgdHlwZT0iYWdncmVnYXRvciIgdGVzdD0iZmFsc2UiPgogICAgICAgIDxhZ2dyZWdhdG9yPjM3NTkxNzwvYWdncmVnYXRvcj4KICAgICAgICA8dG9rZW4%2BZmVlYmE2ODQtZjM1YS00Yzk4LWE4NDYtMTRkMGIxYTAyMDI0PC90b2tlbj4KICAgICAgICA8dmVyc2lvbj4wMDAyPC92ZXJzaW9uPgogICAgICAgIDxzdGFtcD4xNDkxOTEzNDQzPC9zdGFtcD4KICAgICAgICA8cmVmZXJlbmNlPjExMjMxMjM8L3JlZmVyZW5jZT4KICAgICAgICA8ZGV2aWNlPjEwPC9kZXZpY2U%2BCiAgICAgICAgPGNvbnRlbnQ%2BMTwvY29udGVudD4KICAgICAgICA8dHlwZT4wPC90eXBlPgogICAgICAgIDxhbGdvcml0aG0%2BMzwvYWxnb3JpdGhtPgogICAgICAgIDxjdXJyZW5jeT5FVVI8L2N1cnJlbmN5PgogICAgICAgIDxjb21taXQ%2BZmFsc2U8L2NvbW1pdD4KICAgICAgICA8aXRlbXM%2BCiAgICAgICAgICAgIDxpdGVtPgogICAgICAgICAgICAgICAgPGRlc2NyaXB0aW9uLz4KICAgICAgICAgICAgICAgIDxwcmljZSBjdXJyZW5jeT0iRVVSIiB2YXQ9IjIzIj4yNTAwPC9wcmljZT4KICAgICAgICAgICAgICAgIDxtZXJjaGFudD4zOTE4MzA8L21lcmNoYW50PgogICAgICAgICAgICA8L2l0ZW0%2BCiAgICAgICAgICAgIDxhbW91bnQgY3VycmVuY3k9IkVVUiI%2BMjUwMDwvYW1vdW50PgogICAgICAgIDwvaXRlbXM%2BCiAgICAgICAgPGJ1eWVyPgogICAgICAgICAgICA8Y291bnRyeT5GSU48L2NvdW50cnk%2BCiAgICAgICAgICAgIDxsYW5ndWFnZT5GSTwvbGFuZ3VhZ2U%2BCiAgICAgICAgPC9idXllcj4KICAgICAgICA8ZGVsaXZlcnk%2BCiAgICAgICAgICAgIDxkYXRlPjIwMTEwMzAzPC9kYXRlPgogICAgICAgIDwvZGVsaXZlcnk%2BCiAgICA8ZGVzY3JpcHRpb24%2BU2lTIHRva2VuaXplZCBwYXltZW50IHRlc3QgcmVxdWVzdCA6IDExLjA0LjIwMTcgMTI6MjQ6MjU8L2Rlc2NyaXB0aW9uPjwvcmVxdWVzdD4KPC9jaGVja291dD4K&amp;CHECKOUT_MAC=C9362F2EBC5D38F9E4AB82EF177A7CCC
 </code></pre>
 <blockquote>
 <p>Respose XML</p>
 </blockquote>
 <pre class="highlight xml"><code><span class="cp">&lt;?xml version="1.0" encoding="utf-8"?&gt;</span>
 <span class="nt">&lt;response&gt;</span>
- <span class="nt">&lt;statusCode&gt;</span>200<span class="nt">&lt;/statusCode&gt;</span>
- <span class="nt">&lt;statusText&gt;</span>OK, payment committed<span class="nt">&lt;/statusText&gt;</span>
+ <span class="nt">&lt;statusCode&gt;</span>201<span class="nt">&lt;/statusCode&gt;</span>
+ <span class="nt">&lt;statusText&gt;</span>OK, authorization hold created<span class="nt">&lt;/statusText&gt;</span>
 <span class="nt">&lt;/response&gt;</span>
 </code></pre>
 <h3 id="tokenized-sis-payment-using-minimum-required-fields">Tokenized SiS payment using minimum required fields</h3>
+
+<p>Creates an authorization hold for 25.00 euros.</p>
 
       </div>
       <div class="dark-box">

@@ -3,7 +3,7 @@ title: Checkout API Reference
 
 language_tabs:
   - code
-
+  
 toc_footers:
 #  - <a href='#'>Sign Up for a Developer Key</a>
 #  - <a href='https://github.com/tripit/slate'>Documentation Powered by Slate</a>
@@ -24,18 +24,20 @@ To get started with the API, get in touch with Checkout Finland's customer suppo
 > Example class implementation that will be used in the later examples
 
 ```php
+<?php
+
 class Checkout
 {
 	private $version = "0001";
-	private $language	= "FI";
+	private $language = "FI";
 	private $country = "FIN";
-	private $currency	= "EUR";
+	private $currency = "EUR";
 	private $device	= "1";
 	private $content = "1";
-	private $type	= "0";
+	private $type = "0";
 	private $algorithm = "3";
-	private $merchant	= "";
-	private $password	= "";
+	private $merchant = "";
+	private $password = "";
 	private $stamp = 0;
 	private $amount	= 0;
 	private $reference = "";
@@ -48,7 +50,7 @@ class Checkout
 	private $firstname = "";
 	private $familyname	= "";
 	private $address = "";
-	private $postcode	= "";
+	private $postcode = "";
 	private $postoffice	= "";
 	private $status	= "";
 	private $email = "";
@@ -65,8 +67,7 @@ class Checkout
 	public function getCheckoutObject($data)
 	{
 		// overwrite default values
-		foreach($data as $key => $value)
-		{
+		foreach ($data as $key => $value) {
 			$this->{$key} = $value;
 		}
 
@@ -76,17 +77,17 @@ class Checkout
 		$post['AMOUNT']	= $this->amount;
 		$post['REFERENCE'] = $this->reference;
 		$post['MESSAGE'] = $this->message;
-		$post['LANGUAGE']	= $this->language;
-		$post['MERCHANT']	= $this->merchant;
+		$post['LANGUAGE'] = $this->language;
+		$post['MERCHANT'] = $this->merchant;
 		$post['RETURN']	= $this->return;
 		$post['CANCEL']	= $this->cancel;
 		$post['REJECT']	= $this->reject;
 		$post['DELAYED'] = $this->delayed;
 		$post['COUNTRY'] = $this->country;
-		$post['CURRENCY']	= $this->currency;
+		$post['CURRENCY'] = $this->currency;
 		$post['DEVICE']	= $this->device;
 		$post['CONTENT'] = $this->content;
-		$post['TYPE']	= $this->type;
+		$post['TYPE'] = $this->type;
 		$post['ALGORITHM'] = $this->algorithm;
 		$post['DELIVERY_DATE'] = $this->delivery_date;
 		$post['FIRSTNAME'] = $this->firstname;
@@ -111,16 +112,17 @@ class Checkout
 		return $this->sendPost($this->getCheckoutObject($data));
 	}
 
-	private function sendPost($post) {
+	private function sendPost($post) 
+	{
 		$options = array(
-				CURLOPT_POST 		=> 1,
-				CURLOPT_HEADER 		=> 0,
-				CURLOPT_URL 		=> 'https://payment.checkout.fi',
-				CURLOPT_FRESH_CONNECT 	=> 1,
-				CURLOPT_RETURNTRANSFER 	=> 1,
-				CURLOPT_FORBID_REUSE 	=> 1,
-				CURLOPT_TIMEOUT 	=> 20,
-				CURLOPT_POSTFIELDS 	=> http_build_query($post)
+				CURLOPT_POST => 1,
+				CURLOPT_HEADER => 0,
+				CURLOPT_URL => 'https://payment.checkout.fi',
+				CURLOPT_FRESH_CONNECT => 1,
+				CURLOPT_RETURNTRANSFER => 1,
+				CURLOPT_FORBID_REUSE => 1,
+				CURLOPT_TIMEOUT => 20,
+				CURLOPT_POSTFIELDS => http_build_query($post)
 		);
 
 		$ch = curl_init();
@@ -133,20 +135,13 @@ class Checkout
 
 	public function validateCheckout($data)
 	{
-		$generatedMac =  strtoupper(hash_hmac("sha256","{$data['VERSION']}&{$data['STAMP']}&{$data['REFERENCE']}&{$data['PAYMENT']}&{$data['STATUS']}&{$data['ALGORITHM']}",$this->password));
-
-		if($data['MAC'] === $generatedMac)
-			return true;
-		else
-			return false;
+		$generatedMac = strtoupper(hash_hmac("sha256", "{$data['VERSION']}&{$data['STAMP']}&{$data['REFERENCE']}&{$data['PAYMENT']}&{$data['STATUS']}&{$data['ALGORITHM']}", $this->password));
+		return ($data['MAC'] === $generatedMac);
 	}
 
 	public function isPaid($status)
 	{
-		if(in_array($status, array(2, 4, 5, 6, 7, 8, 9, 10)))
-			return true;
-		else
-			return false;
+        return (in_array($status, array(2, 4, 5, 6, 7, 8, 9, 10)));
 	}
 }  // class Checkout
 ```
@@ -534,7 +529,7 @@ md5( &lt;xml_string&gt; + '+' + &lt;aggregator_merchant_secret&gt; )
 | DESCRIPTION | Description of payment/purchase |  "Item 1#, Item #2..." | AN 1000 |  | |
 | DEVICE      | Device type<br />`1 = HTML`, `10 = XML` |  1 | N 2 | &cross; | |
 | CONTENT     | Content of the purchase.<br />`1 = Normal`, `2 = adult industry` |  1 | N 2 | (&cross;) | 1 |
-| TYPE        | Payment types. |  0 | N 1 | (&cross;) | 1 |
+| TYPE        | Payment types. See payment types below. |  0 | N 1 | (&cross;) | 1 |
 | ALGORITHM   | Checksum calculation algorithm. Use 3 commonly. |  3 | N 1 | &cross; | |
 | CURRENCY    | Currency. Currently always EUR. | "EUR" | AN 3 | &cross; | |
 | TOKEN       | Token of credit card used on tokenized payments<br/>Must meet | "f47ac10b-58cc-4372-a567-0e02b2c3d479" | UUID4 | (&cross;) |  2,4 |
@@ -590,6 +585,13 @@ Are these relevat to this API???
 |   a | Amount of commission in cents | 48 | N | | |
 |   m | Merchant ID, that will receive the commission from the payment (usually same as ITEM.MERCHANT) | 585858 | N | | |
 |   d | Message/description of payment | "commission for item #1" | AN | | |
+
+### Payment types
+
+ Type| Description          | Notes 
+-----|----------------------|-------
+   0 | Normal payment       |
+   9 | Shop in shop payment | 
 
 ### XML-element : Buyer
 
@@ -878,20 +880,21 @@ XML | | &lt;data&gt;Some data&lt;/data&gt;
         <aggregator>375917</aggregator>
         <token>feeba684-f35a-4c98-a846-14d0b1a02024</token>
         <version>0002</version>
-        <stamp>1491830939</stamp>
+        <stamp>1491913443</stamp>
         <reference>1123123</reference>
         <device>10</device>
         <content>1</content>
         <type>0</type>
         <algorithm>3</algorithm>
         <currency>EUR</currency>
+        <commit>false</commit>
         <items>
             <item>
-                <description>product 1</description>
-                <price currency="EUR" vat="23">500</price>
+                <description/>
+                <price currency="EUR" vat="23">2500</price>
                 <merchant>391830</merchant>
             </item>
-            <amount currency="EUR">500</amount>
+            <amount currency="EUR">2500</amount>
         </items>
         <buyer>
             <country>FIN</country>
@@ -900,58 +903,58 @@ XML | | &lt;data&gt;Some data&lt;/data&gt;
         <delivery>
             <date>20110303</date>
         </delivery>
-    </request>
+    <description>SiS tokenized payment test request : 11.04.2017 12:24:25</description></request>
 </checkout>
 ```
-
 >PHP used to generate valid query from XML file (above)
 
 ```php
 <?php
-$aggregator_merchant_secret = "SAIPPUAKAUPPIAS";
+$aggregatorMerchantSecret = "SAIPPUAKAUPPIAS";
 
-$xml=simplexml_load_file("payment.xml");
-$xml = base64_encode($xml->asXML());
-$mac = strtoupper(md5("{$xml}+{$aggregator_merchant_secret}"));
+$xml = simplexml_load_file("payment.xml");
+$checkoutXML = base64_encode($xml->asXML());
+$checkoutMac = strtoupper(md5("{$checkoutXML}+{$aggregatorMerchantSecret}"));
 
-$context = stream_context_create(array(
+$streamContext = stream_context_create(array(
   'http' => array(
     'method' => 'POST',
     'header' => 'Content-Type: application/x-www-form-urlencoded',
     'content' => http_build_query(array(
-        'CHECKOUT_XML' => $xml,
-        'CHECKOUT_MAC' => $mac
+        'CHECKOUT_XML' => $checkoutXML,
+        'CHECKOUT_MAC' => $checkoutMac
       )
     )
   ),
   "ssl" => array(
-      "verify_peer"=>false,
-      "verify_peer_name"=>false,
+      "verify_peer" => false,
+      "verify_peer_name" => false,
   )
 ));
 
-$response =  file_get_contents('https://payment.checkout.fi/', false, $context);
+$response = file_get_contents('https://payment.checkout.fi/', false, $streamContext);
 ```
-
 >Raw HTTP request sent to server
 
-```text
-Host: https://payment.checkout.fi/
+```plaintext
+Host: payment.checkout.fi
 Connection: close
-Content-Length: 1343
+Content-Length: 1473
 Content-Type: application/x-www-form-urlencoded
-CHECKOUT_XML=PD94bWwgdmVyc2lvbj0iMS4wIj8%2BCjxjaGVja291dCB4bWxucz0iaHR0cDovL2NoZWNrb3V0LmZpL3JlcXVlc3QiPgogICAgPHJlcXVlc3QgdHlwZT0iYWdncmVnYXRvciIgdGVzdD0iZmFsc2UiPgogICAgICAgIDxhZ2dyZWdhdG9yPjM3NTkxNzwvYWdncmVnYXRvcj4KICAgICAgICA8dG9rZW4%2BZmVlYmE2ODQtZjM1YS00Yzk4LWE4NDYtMTRkMGIxYTAyMDI0PC90b2tlbj4KICAgICAgICA8dmVyc2lvbj4wMDAyPC92ZXJzaW9uPgogICAgICAgIDxzdGFtcD4xNDkxODMwOTM5PC9zdGFtcD4KICAgICAgICA8cmVmZXJlbmNlPjExMjMxMjM8L3JlZmVyZW5jZT4KICAgICAgICA8ZGV2aWNlPjEwPC9kZXZpY2U%2BCiAgICAgICAgPGNvbnRlbnQ%2BMTwvY29udGVudD4KICAgICAgICA8dHlwZT4wPC90eXBlPgogICAgICAgIDxhbGdvcml0aG0%2BMzwvYWxnb3JpdGhtPgogICAgICAgIDxjdXJyZW5jeT5FVVI8L2N1cnJlbmN5PgogICAgICAgIDxpdGVtcz4KICAgICAgICAgICAgPGl0ZW0%2BCiAgICAgICAgICAgICAgICA8ZGVzY3JpcHRpb24%2BcHJvZHVjdCAxPC9kZXNjcmlwdGlvbj4KICAgICAgICAgICAgICAgIDxwcmljZSBjdXJyZW5jeT0iRVVSIiB2YXQ9IjIzIj41MDA8L3ByaWNlPgogICAgICAgICAgICAgICAgPG1lcmNoYW50PjM5MTgzMDwvbWVyY2hhbnQ%2BCiAgICAgICAgICAgIDwvaXRlbT4KICAgICAgICAgICAgPGFtb3VudCBjdXJyZW5jeT0iRVVSIj41MDA8L2Ftb3VudD4KICAgICAgICA8L2l0ZW1zPgogICAgICAgIDxidXllcj4KICAgICAgICAgICAgPGNvdW50cnk%2BRklOPC9jb3VudHJ5PgogICAgICAgICAgICA8bGFuZ3VhZ2U%2BRkk8L2xhbmd1YWdlPgogICAgICAgIDwvYnV5ZXI%2BCiAgICAgICAgPGRlbGl2ZXJ5PgogICAgICAgICAgICA8ZGF0ZT4yMDExMDMwMzwvZGF0ZT4KICAgICAgICA8L2RlbGl2ZXJ5PgogICAgPC9yZXF1ZXN0Pgo8L2NoZWNrb3V0Pgo%3D&CHECKOUT_MAC=964617C886D55816F6F1D0C91F46C513
+CHECKOUT_XML=PD94bWwgdmVyc2lvbj0iMS4wIj8%2BCjxjaGVja291dCB4bWxucz0iaHR0cDovL2NoZWNrb3V0LmZpL3JlcXVlc3QiPgogICAgPHJlcXVlc3QgdHlwZT0iYWdncmVnYXRvciIgdGVzdD0iZmFsc2UiPgogICAgICAgIDxhZ2dyZWdhdG9yPjM3NTkxNzwvYWdncmVnYXRvcj4KICAgICAgICA8dG9rZW4%2BZmVlYmE2ODQtZjM1YS00Yzk4LWE4NDYtMTRkMGIxYTAyMDI0PC90b2tlbj4KICAgICAgICA8dmVyc2lvbj4wMDAyPC92ZXJzaW9uPgogICAgICAgIDxzdGFtcD4xNDkxOTEzNDQzPC9zdGFtcD4KICAgICAgICA8cmVmZXJlbmNlPjExMjMxMjM8L3JlZmVyZW5jZT4KICAgICAgICA8ZGV2aWNlPjEwPC9kZXZpY2U%2BCiAgICAgICAgPGNvbnRlbnQ%2BMTwvY29udGVudD4KICAgICAgICA8dHlwZT4wPC90eXBlPgogICAgICAgIDxhbGdvcml0aG0%2BMzwvYWxnb3JpdGhtPgogICAgICAgIDxjdXJyZW5jeT5FVVI8L2N1cnJlbmN5PgogICAgICAgIDxjb21taXQ%2BZmFsc2U8L2NvbW1pdD4KICAgICAgICA8aXRlbXM%2BCiAgICAgICAgICAgIDxpdGVtPgogICAgICAgICAgICAgICAgPGRlc2NyaXB0aW9uLz4KICAgICAgICAgICAgICAgIDxwcmljZSBjdXJyZW5jeT0iRVVSIiB2YXQ9IjIzIj4yNTAwPC9wcmljZT4KICAgICAgICAgICAgICAgIDxtZXJjaGFudD4zOTE4MzA8L21lcmNoYW50PgogICAgICAgICAgICA8L2l0ZW0%2BCiAgICAgICAgICAgIDxhbW91bnQgY3VycmVuY3k9IkVVUiI%2BMjUwMDwvYW1vdW50PgogICAgICAgIDwvaXRlbXM%2BCiAgICAgICAgPGJ1eWVyPgogICAgICAgICAgICA8Y291bnRyeT5GSU48L2NvdW50cnk%2BCiAgICAgICAgICAgIDxsYW5ndWFnZT5GSTwvbGFuZ3VhZ2U%2BCiAgICAgICAgPC9idXllcj4KICAgICAgICA8ZGVsaXZlcnk%2BCiAgICAgICAgICAgIDxkYXRlPjIwMTEwMzAzPC9kYXRlPgogICAgICAgIDwvZGVsaXZlcnk%2BCiAgICA8ZGVzY3JpcHRpb24%2BU2lTIHRva2VuaXplZCBwYXltZW50IHRlc3QgcmVxdWVzdCA6IDExLjA0LjIwMTcgMTI6MjQ6MjU8L2Rlc2NyaXB0aW9uPjwvcmVxdWVzdD4KPC9jaGVja291dD4K&CHECKOUT_MAC=C9362F2EBC5D38F9E4AB82EF177A7CCC
 ```
-
 > Respose XML
 
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
 <response>
- <statusCode>200</statusCode>
- <statusText>OK, payment committed</statusText>
+ <statusCode>201</statusCode>
+ <statusText>OK, authorization hold created</statusText>
 </response>
 ```
 
+
 ### Tokenized SiS payment using minimum required fields
+
+Creates an authorization hold for 25.00 euros.
 
