@@ -958,6 +958,7 @@ CHECKOUT_XML=&lt;base64 encoded xml string&gt;&amp;CHECKOUT_MAC=&lt;string&gt;
       <span class="nt">&lt;algorithm&gt;&lt;/algorithm&gt;</span>
       <span class="nt">&lt;currency&gt;&lt;/currency&gt;</span>
       <span class="nt">&lt;token&gt;&lt;/token&gt;</span>
+      <span class="nt">&lt;commit&gt;&lt;/commit&gt;</span>
       <span class="nt">&lt;items&gt;</span>
           <span class="nt">&lt;item&gt;</span>
               <span class="nt">&lt;code&gt;&lt;/code&gt;</span>
@@ -1096,11 +1097,11 @@ CHECKOUT_XML=&lt;base64 encoded xml string&gt;&amp;CHECKOUT_MAC=&lt;string&gt;
 </tr>
 <tr>
 <td>TOKEN</td>
-<td>Token of credit card used on tokenized payments<br/>Must meet</td>
+<td>Token of credit card used on tokenized payments</td>
 <td>&ldquo;f47ac10b-58cc-4372-a567-0e02b2c3d479&rdquo;</td>
 <td>UUID4</td>
 <td>(&cross;)</td>
-<td>2,4</td>
+<td>2, 4</td>
 </tr>
 <tr>
 <td>COMMIT</td>
@@ -2018,7 +2019,7 @@ Are these relevat to this API???
         <span class="nt">&lt;reference&gt;</span>1123123<span class="nt">&lt;/reference&gt;</span>
         <span class="nt">&lt;device&gt;</span>10<span class="nt">&lt;/device&gt;</span>
         <span class="nt">&lt;content&gt;</span>1<span class="nt">&lt;/content&gt;</span>
-        <span class="nt">&lt;type&gt;</span>0<span class="nt">&lt;/type&gt;</span>
+        <span class="nt">&lt;type&gt;</span>9<span class="nt">&lt;/type&gt;</span>
         <span class="nt">&lt;algorithm&gt;</span>3<span class="nt">&lt;/algorithm&gt;</span>
         <span class="nt">&lt;currency&gt;</span>EUR<span class="nt">&lt;/currency&gt;</span>
         <span class="nt">&lt;commit&gt;</span>false<span class="nt">&lt;/commit&gt;</span>
@@ -2037,7 +2038,7 @@ Are these relevat to this API???
         <span class="nt">&lt;delivery&gt;</span>
             <span class="nt">&lt;date&gt;</span>20110303<span class="nt">&lt;/date&gt;</span>
         <span class="nt">&lt;/delivery&gt;</span>
-    <span class="nt">&lt;description&gt;</span>SiS tokenized payment test request : 11.04.2017 12:24:25<span class="nt">&lt;/description&gt;&lt;/request&gt;</span>
+    <span class="nt">&lt;description&gt;</span>SiS tokenized payment test request : 11.04.2017 12:37:29<span class="nt">&lt;/description&gt;&lt;/request&gt;</span>
 <span class="nt">&lt;/checkout&gt;</span>
 </code></pre>
 <blockquote>
@@ -2075,7 +2076,7 @@ Are these relevat to this API???
 Connection: close
 Content-Length: 1473
 Content-Type: application/x-www-form-urlencoded
-CHECKOUT_XML=PD94bWwgdmVyc2lvbj0iMS4wIj8%2BCjxjaGVja291dCB4bWxucz0iaHR0cDovL2NoZWNrb3V0LmZpL3JlcXVlc3QiPgogICAgPHJlcXVlc3QgdHlwZT0iYWdncmVnYXRvciIgdGVzdD0iZmFsc2UiPgogICAgICAgIDxhZ2dyZWdhdG9yPjM3NTkxNzwvYWdncmVnYXRvcj4KICAgICAgICA8dG9rZW4%2BZmVlYmE2ODQtZjM1YS00Yzk4LWE4NDYtMTRkMGIxYTAyMDI0PC90b2tlbj4KICAgICAgICA8dmVyc2lvbj4wMDAyPC92ZXJzaW9uPgogICAgICAgIDxzdGFtcD4xNDkxOTEzNDQzPC9zdGFtcD4KICAgICAgICA8cmVmZXJlbmNlPjExMjMxMjM8L3JlZmVyZW5jZT4KICAgICAgICA8ZGV2aWNlPjEwPC9kZXZpY2U%2BCiAgICAgICAgPGNvbnRlbnQ%2BMTwvY29udGVudD4KICAgICAgICA8dHlwZT4wPC90eXBlPgogICAgICAgIDxhbGdvcml0aG0%2BMzwvYWxnb3JpdGhtPgogICAgICAgIDxjdXJyZW5jeT5FVVI8L2N1cnJlbmN5PgogICAgICAgIDxjb21taXQ%2BZmFsc2U8L2NvbW1pdD4KICAgICAgICA8aXRlbXM%2BCiAgICAgICAgICAgIDxpdGVtPgogICAgICAgICAgICAgICAgPGRlc2NyaXB0aW9uLz4KICAgICAgICAgICAgICAgIDxwcmljZSBjdXJyZW5jeT0iRVVSIiB2YXQ9IjIzIj4yNTAwPC9wcmljZT4KICAgICAgICAgICAgICAgIDxtZXJjaGFudD4zOTE4MzA8L21lcmNoYW50PgogICAgICAgICAgICA8L2l0ZW0%2BCiAgICAgICAgICAgIDxhbW91bnQgY3VycmVuY3k9IkVVUiI%2BMjUwMDwvYW1vdW50PgogICAgICAgIDwvaXRlbXM%2BCiAgICAgICAgPGJ1eWVyPgogICAgICAgICAgICA8Y291bnRyeT5GSU48L2NvdW50cnk%2BCiAgICAgICAgICAgIDxsYW5ndWFnZT5GSTwvbGFuZ3VhZ2U%2BCiAgICAgICAgPC9idXllcj4KICAgICAgICA8ZGVsaXZlcnk%2BCiAgICAgICAgICAgIDxkYXRlPjIwMTEwMzAzPC9kYXRlPgogICAgICAgIDwvZGVsaXZlcnk%2BCiAgICA8ZGVzY3JpcHRpb24%2BU2lTIHRva2VuaXplZCBwYXltZW50IHRlc3QgcmVxdWVzdCA6IDExLjA0LjIwMTcgMTI6MjQ6MjU8L2Rlc2NyaXB0aW9uPjwvcmVxdWVzdD4KPC9jaGVja291dD4K&amp;CHECKOUT_MAC=C9362F2EBC5D38F9E4AB82EF177A7CCC
+CHECKOUT_XML=PD94bWwgdmVyc2lvbj0iMS4wIj8%2BCjxjaGVja291dCB4bWxucz0iaHR0cDovL2NoZWNrb3V0LmZpL3JlcXVlc3QiPgogICAgPHJlcXVlc3QgdHlwZT0iYWdncmVnYXRvciIgdGVzdD0iZmFsc2UiPgogICAgICAgIDxhZ2dyZWdhdG9yPjM3NTkxNzwvYWdncmVnYXRvcj4KICAgICAgICA8dG9rZW4%2BZmVlYmE2ODQtZjM1YS00Yzk4LWE4NDYtMTRkMGIxYTAyMDI0PC90b2tlbj4KICAgICAgICA8dmVyc2lvbj4wMDAyPC92ZXJzaW9uPgogICAgICAgIDxzdGFtcD4xNDkxOTEzNDQzPC9zdGFtcD4KICAgICAgICA8cmVmZXJlbmNlPjExMjMxMjM8L3JlZmVyZW5jZT4KICAgICAgICA8ZGV2aWNlPjEwPC9kZXZpY2U%2BCiAgICAgICAgPGNvbnRlbnQ%2BMTwvY29udGVudD4KICAgICAgICA8dHlwZT45PC90eXBlPgogICAgICAgIDxhbGdvcml0aG0%2BMzwvYWxnb3JpdGhtPgogICAgICAgIDxjdXJyZW5jeT5FVVI8L2N1cnJlbmN5PgogICAgICAgIDxjb21taXQ%2BZmFsc2U8L2NvbW1pdD4KICAgICAgICA8aXRlbXM%2BCiAgICAgICAgICAgIDxpdGVtPgogICAgICAgICAgICAgICAgPGRlc2NyaXB0aW9uLz4KICAgICAgICAgICAgICAgIDxwcmljZSBjdXJyZW5jeT0iRVVSIiB2YXQ9IjIzIj4yNTAwPC9wcmljZT4KICAgICAgICAgICAgICAgIDxtZXJjaGFudD4zOTE4MzA8L21lcmNoYW50PgogICAgICAgICAgICA8L2l0ZW0%2BCiAgICAgICAgICAgIDxhbW91bnQgY3VycmVuY3k9IkVVUiI%2BMjUwMDwvYW1vdW50PgogICAgICAgIDwvaXRlbXM%2BCiAgICAgICAgPGJ1eWVyPgogICAgICAgICAgICA8Y291bnRyeT5GSU48L2NvdW50cnk%2BCiAgICAgICAgICAgIDxsYW5ndWFnZT5GSTwvbGFuZ3VhZ2U%2BCiAgICAgICAgPC9idXllcj4KICAgICAgICA8ZGVsaXZlcnk%2BCiAgICAgICAgICAgIDxkYXRlPjIwMTEwMzAzPC9kYXRlPgogICAgICAgIDwvZGVsaXZlcnk%2BCiAgICA8ZGVzY3JpcHRpb24%2BU2lTIHRva2VuaXplZCBwYXltZW50IHRlc3QgcmVxdWVzdCA6IDExLjA0LjIwMTcgMTI6Mzc6Mjk8L2Rlc2NyaXB0aW9uPjwvcmVxdWVzdD4KPC9jaGVja291dD4K&amp;CHECKOUT_MAC=FB0145FD7FD9AC7516AD60F94C4590D4
 </code></pre>
 <blockquote>
 <p>Respose XML</p>

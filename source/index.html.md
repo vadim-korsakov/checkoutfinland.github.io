@@ -471,6 +471,7 @@ md5( &lt;xml_string&gt; + '+' + &lt;aggregator_merchant_secret&gt; )
       <algorithm></algorithm>
       <currency></currency>
       <token></token>
+      <commit></commit>
       <items>
           <item>
               <code></code>
@@ -532,7 +533,7 @@ md5( &lt;xml_string&gt; + '+' + &lt;aggregator_merchant_secret&gt; )
 | TYPE        | Payment types. See payment types below. |  0 | N 1 | (&cross;) | 1 |
 | ALGORITHM   | Checksum calculation algorithm. Use 3 commonly. |  3 | N 1 | &cross; | |
 | CURRENCY    | Currency. Currently always EUR. | "EUR" | AN 3 | &cross; | |
-| TOKEN       | Token of credit card used on tokenized payments<br/>Must meet | "f47ac10b-58cc-4372-a567-0e02b2c3d479" | UUID4 | (&cross;) |  2,4 |
+| TOKEN       | Token of credit card used on tokenized payments | "f47ac10b-58cc-4372-a567-0e02b2c3d479" | UUID4 | (&cross;) |  2, 4 |
 | COMMIT      | Commit token payment (if false, makes a reservation). Field is ignored if not tokenized payment. Default value is TRUE. | true/false | BOOL | (&cross;) |  2 |
 | ITEMS       | `Items` XML element | XML | XML | &cross;  | |
 | BUYER       | `Buyer` XML element | XML | XML | &cross;  | |
@@ -884,7 +885,7 @@ XML | | &lt;data&gt;Some data&lt;/data&gt;
         <reference>1123123</reference>
         <device>10</device>
         <content>1</content>
-        <type>0</type>
+        <type>9</type>
         <algorithm>3</algorithm>
         <currency>EUR</currency>
         <commit>false</commit>
@@ -903,7 +904,7 @@ XML | | &lt;data&gt;Some data&lt;/data&gt;
         <delivery>
             <date>20110303</date>
         </delivery>
-    <description>SiS tokenized payment test request : 11.04.2017 12:24:25</description></request>
+    <description>SiS tokenized payment test request : 11.04.2017 12:37:29</description></request>
 </checkout>
 ```
 >PHP used to generate valid query from XML file (above)
@@ -941,7 +942,7 @@ Host: payment.checkout.fi
 Connection: close
 Content-Length: 1473
 Content-Type: application/x-www-form-urlencoded
-CHECKOUT_XML=PD94bWwgdmVyc2lvbj0iMS4wIj8%2BCjxjaGVja291dCB4bWxucz0iaHR0cDovL2NoZWNrb3V0LmZpL3JlcXVlc3QiPgogICAgPHJlcXVlc3QgdHlwZT0iYWdncmVnYXRvciIgdGVzdD0iZmFsc2UiPgogICAgICAgIDxhZ2dyZWdhdG9yPjM3NTkxNzwvYWdncmVnYXRvcj4KICAgICAgICA8dG9rZW4%2BZmVlYmE2ODQtZjM1YS00Yzk4LWE4NDYtMTRkMGIxYTAyMDI0PC90b2tlbj4KICAgICAgICA8dmVyc2lvbj4wMDAyPC92ZXJzaW9uPgogICAgICAgIDxzdGFtcD4xNDkxOTEzNDQzPC9zdGFtcD4KICAgICAgICA8cmVmZXJlbmNlPjExMjMxMjM8L3JlZmVyZW5jZT4KICAgICAgICA8ZGV2aWNlPjEwPC9kZXZpY2U%2BCiAgICAgICAgPGNvbnRlbnQ%2BMTwvY29udGVudD4KICAgICAgICA8dHlwZT4wPC90eXBlPgogICAgICAgIDxhbGdvcml0aG0%2BMzwvYWxnb3JpdGhtPgogICAgICAgIDxjdXJyZW5jeT5FVVI8L2N1cnJlbmN5PgogICAgICAgIDxjb21taXQ%2BZmFsc2U8L2NvbW1pdD4KICAgICAgICA8aXRlbXM%2BCiAgICAgICAgICAgIDxpdGVtPgogICAgICAgICAgICAgICAgPGRlc2NyaXB0aW9uLz4KICAgICAgICAgICAgICAgIDxwcmljZSBjdXJyZW5jeT0iRVVSIiB2YXQ9IjIzIj4yNTAwPC9wcmljZT4KICAgICAgICAgICAgICAgIDxtZXJjaGFudD4zOTE4MzA8L21lcmNoYW50PgogICAgICAgICAgICA8L2l0ZW0%2BCiAgICAgICAgICAgIDxhbW91bnQgY3VycmVuY3k9IkVVUiI%2BMjUwMDwvYW1vdW50PgogICAgICAgIDwvaXRlbXM%2BCiAgICAgICAgPGJ1eWVyPgogICAgICAgICAgICA8Y291bnRyeT5GSU48L2NvdW50cnk%2BCiAgICAgICAgICAgIDxsYW5ndWFnZT5GSTwvbGFuZ3VhZ2U%2BCiAgICAgICAgPC9idXllcj4KICAgICAgICA8ZGVsaXZlcnk%2BCiAgICAgICAgICAgIDxkYXRlPjIwMTEwMzAzPC9kYXRlPgogICAgICAgIDwvZGVsaXZlcnk%2BCiAgICA8ZGVzY3JpcHRpb24%2BU2lTIHRva2VuaXplZCBwYXltZW50IHRlc3QgcmVxdWVzdCA6IDExLjA0LjIwMTcgMTI6MjQ6MjU8L2Rlc2NyaXB0aW9uPjwvcmVxdWVzdD4KPC9jaGVja291dD4K&CHECKOUT_MAC=C9362F2EBC5D38F9E4AB82EF177A7CCC
+CHECKOUT_XML=PD94bWwgdmVyc2lvbj0iMS4wIj8%2BCjxjaGVja291dCB4bWxucz0iaHR0cDovL2NoZWNrb3V0LmZpL3JlcXVlc3QiPgogICAgPHJlcXVlc3QgdHlwZT0iYWdncmVnYXRvciIgdGVzdD0iZmFsc2UiPgogICAgICAgIDxhZ2dyZWdhdG9yPjM3NTkxNzwvYWdncmVnYXRvcj4KICAgICAgICA8dG9rZW4%2BZmVlYmE2ODQtZjM1YS00Yzk4LWE4NDYtMTRkMGIxYTAyMDI0PC90b2tlbj4KICAgICAgICA8dmVyc2lvbj4wMDAyPC92ZXJzaW9uPgogICAgICAgIDxzdGFtcD4xNDkxOTEzNDQzPC9zdGFtcD4KICAgICAgICA8cmVmZXJlbmNlPjExMjMxMjM8L3JlZmVyZW5jZT4KICAgICAgICA8ZGV2aWNlPjEwPC9kZXZpY2U%2BCiAgICAgICAgPGNvbnRlbnQ%2BMTwvY29udGVudD4KICAgICAgICA8dHlwZT45PC90eXBlPgogICAgICAgIDxhbGdvcml0aG0%2BMzwvYWxnb3JpdGhtPgogICAgICAgIDxjdXJyZW5jeT5FVVI8L2N1cnJlbmN5PgogICAgICAgIDxjb21taXQ%2BZmFsc2U8L2NvbW1pdD4KICAgICAgICA8aXRlbXM%2BCiAgICAgICAgICAgIDxpdGVtPgogICAgICAgICAgICAgICAgPGRlc2NyaXB0aW9uLz4KICAgICAgICAgICAgICAgIDxwcmljZSBjdXJyZW5jeT0iRVVSIiB2YXQ9IjIzIj4yNTAwPC9wcmljZT4KICAgICAgICAgICAgICAgIDxtZXJjaGFudD4zOTE4MzA8L21lcmNoYW50PgogICAgICAgICAgICA8L2l0ZW0%2BCiAgICAgICAgICAgIDxhbW91bnQgY3VycmVuY3k9IkVVUiI%2BMjUwMDwvYW1vdW50PgogICAgICAgIDwvaXRlbXM%2BCiAgICAgICAgPGJ1eWVyPgogICAgICAgICAgICA8Y291bnRyeT5GSU48L2NvdW50cnk%2BCiAgICAgICAgICAgIDxsYW5ndWFnZT5GSTwvbGFuZ3VhZ2U%2BCiAgICAgICAgPC9idXllcj4KICAgICAgICA8ZGVsaXZlcnk%2BCiAgICAgICAgICAgIDxkYXRlPjIwMTEwMzAzPC9kYXRlPgogICAgICAgIDwvZGVsaXZlcnk%2BCiAgICA8ZGVzY3JpcHRpb24%2BU2lTIHRva2VuaXplZCBwYXltZW50IHRlc3QgcmVxdWVzdCA6IDExLjA0LjIwMTcgMTI6Mzc6Mjk8L2Rlc2NyaXB0aW9uPjwvcmVxdWVzdD4KPC9jaGVja291dD4K&CHECKOUT_MAC=FB0145FD7FD9AC7516AD60F94C4590D4
 ```
 > Respose XML
 
