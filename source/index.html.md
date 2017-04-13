@@ -657,26 +657,58 @@ Are these relevat to this API???
 |   400 | Error in query, missing parameters etc. Detailed information in statusText field |
 |   500 | Error proceccing the query. Detailed information in statusText field |
 
-## Revert
+## Retract authorization hold
 
-Reverts an existing debit-reservation or committed payment. If this is done for a reservation, the reservation is simply removed or lowered. If this is done for a committed payment, it will create a recompensation to the original payer.
+Retracts (deletes) an existing authorization hold.
 
 ### HTTP Request
 
-`POST /payment/<transactionStamp>/retract`
+```
+POST /token/payment/retract HTTP/1.1
+Host: payment.checkout.fi
+Content-Type: application/x-www-form-urlencoded
+Cache-Control: no-cache
 
-| # | Description | Name | Value | Format | Required |
-|---|-------------|------|-------|--------|----------|
-| 1 | Amount of payment reservation to be retracted in cents | AMOUNT | | N | Yes
-| 2 | Merchant id of which the initial reservation was done with | MERCHANT | | N | Yes
+merchant=375917&stamp=1492081304
+```
+
+`POST https://payment.checkout.fi/token/payment/retract`
+
+Body field     | Type  | Description                   | Notes |
+---------------|-------|-------------------------------|-------|
+merchant       | N     | Merchant id of which the initial reservation was done with |
+stamp          | AN 20 | Stamp id of the initial token payment |
 
 
 ### HTTP Response
 
-| #  | Description | Name | Format |
-|----|-------------|------|--------|
-| 1 | HTTP Status code (200 if retract successful, 404 if payment not found) | statusCode | SCODE |
-| 2 | Status text (e.g. 'payment retracted') | statusText | AN |
+```
+<?xml version="1.0" encoding="utf-8"?>
+<response>
+    <statusCode>200</statusCode>
+    <statusText>Authorization hold retracted.</statusText>
+</response>
+```
+
+
+Body field | Type | Description
+-------------- | -------------- | --------------
+statusCode | SCODE | Checkout status code, described in table below
+statusText | AN | Status message
+
+#### Status codes & -texts
+
+Status Code | Status Text
+---- | -----------
+200 | Authorization hold retracted.
+400 | No trade with given merchant/stamp found.
+401 | Payment has been committed.
+402 | Authorization hold has already been reverted.
+500 | No transactions found.
+501 | Error fetching trade status.
+502 | Error while fetching transaction ID.
+503 | Error while fetching result.
+504 | Error while reverting.
 
 ## Commit payment
 
@@ -689,7 +721,6 @@ POST /token/commit HTTP/1.1
 Host: payment.checkout.fi
 Content-Type: application/x-www-form-urlencoded
 Cache-Control: no-cache
-Postman-Token: 4950cd27-b70e-56c1-13ee-4bcb48f3494b
 
 merchant=375917&stamp=1491980656&amount=90
 ```
