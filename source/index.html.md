@@ -3,7 +3,7 @@ title: Checkout API Reference
 
 language_tabs:
   - code
-  
+
 toc_footers:
 #  - <a href='#'>Sign Up for a Developer Key</a>
 #  - <a href='https://github.com/tripit/slate'>Documentation Powered by Slate</a>
@@ -684,19 +684,53 @@ Commits an existing credit card reservation.
 
 ### HTTP Request
 
-`POST /payment/<transactionStamp>/commit`
+```code
+POST /token/commit HTTP/1.1
+Host: payment.checkout.fi
+Content-Type: application/x-www-form-urlencoded
+Cache-Control: no-cache
+Postman-Token: 4950cd27-b70e-56c1-13ee-4bcb48f3494b
 
-| # | Description | Name | Value | Format | Required |
-|---|-------------|------|-------|--------|----------|
-| 1 | Amount of payment reservation to be committed | AMOUNT | | N | Yes
-| 2 | Merchant id of which the initial reservation was done with | MERCHANT | | N | Yes
+merchant=375917&stamp=1491980656&amount=90
+```
+
+`POST https://payment.checkout.fi/token/commit`
+
+Body field     | Type  | Description                   | Notes |
+---------------|-------|-------------------------------|-------|
+merchant       | N     | Merchant id of which the initial reservation was done with |
+stamp          | AN 20 | Stamp id of the initial token payment |
+amount         | N     | Amount of payment reservation to be committed (cents) | 1
+
+*Note 1.)* Must be less than or equal to initial authorization hold amount
 
 ### HTTP Response
 
-| # | Description | Name | Format |
-|---|-------------|------|--------|
-| 1 | HTTP Status code (200 if commit successful, 404 if payment not found) | statusCode | SCODE |
-| 2 | Status text (e.g. 'payment committed') | statusText | AN |
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<response>
+    <statusCode>200</statusCode>
+    <statusText>Payment committed.</statusText>
+</response>
+```
+
+Body field | Type | Description
+-------------- | -------------- | --------------
+statusCode | SCODE | Checkout status code, described in table below
+statusText | AN | status message, e.g. 'Token has already been migrated...'
+
+#### Status codes & -texts
+
+Status Code | Status Text
+---- | -----------
+200 | Payment committed.
+400 | No trade with given merchant/stamp found.
+401 | Given amount larger than authorization hold.
+500 | No transactions found.
+501 | Error while fetching transaction ID.
+502 | Error while fetching result.
+503 | Error while committing.
+
 
 # Polling
 

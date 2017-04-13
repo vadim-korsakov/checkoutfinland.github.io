@@ -1644,58 +1644,107 @@ Are these relevat to this API???
 <p>Commits an existing credit card reservation.</p>
 
 <h3 id="http-request">HTTP Request</h3>
+<pre class="highlight plaintext"><code>POST /token/commit HTTP/1.1
+Host: payment.checkout.fi
+Content-Type: application/x-www-form-urlencoded
+Cache-Control: no-cache
+Postman-Token: 4950cd27-b70e-56c1-13ee-4bcb48f3494b
 
-<p><code class="prettyprint">POST /payment/&lt;transactionStamp&gt;/commit</code></p>
+merchant=375917&amp;stamp=1491980656&amp;amount=90
+</code></pre>
+<p><code class="prettyprint">POST https://payment.checkout.fi/token/commit</code></p>
 
 <table><thead>
 <tr>
-<th>#</th>
+<th>Body field</th>
+<th>Type</th>
 <th>Description</th>
-<th>Name</th>
-<th>Value</th>
-<th>Format</th>
-<th>Required</th>
+<th>Notes</th>
 </tr>
 </thead><tbody>
 <tr>
-<td>1</td>
-<td>Amount of payment reservation to be committed</td>
-<td>AMOUNT</td>
-<td></td>
+<td>merchant</td>
 <td>N</td>
-<td>Yes</td>
+<td>Merchant id of which the initial reservation was done with</td>
+<td></td>
 </tr>
 <tr>
-<td>2</td>
-<td>Merchant id of which the initial reservation was done with</td>
-<td>MERCHANT</td>
+<td>stamp</td>
+<td>AN 20</td>
+<td>Stamp id of the initial token payment</td>
 <td></td>
+</tr>
+<tr>
+<td>amount</td>
 <td>N</td>
-<td>Yes</td>
+<td>Amount of payment reservation to be committed (cents)</td>
+<td>1</td>
 </tr>
 </tbody></table>
 
-<h3 id="http-response">HTTP Response</h3>
+<p><em>Note 1.)</em> Must be less than or equal to initial authorization hold amount</p>
 
+<h3 id="http-response">HTTP Response</h3>
+<pre class="highlight xml"><code><span class="cp">&lt;?xml version="1.0" encoding="utf-8"?&gt;</span>
+<span class="nt">&lt;response&gt;</span>
+    <span class="nt">&lt;statusCode&gt;</span>200<span class="nt">&lt;/statusCode&gt;</span>
+    <span class="nt">&lt;statusText&gt;</span>Payment committed.<span class="nt">&lt;/statusText&gt;</span>
+<span class="nt">&lt;/response&gt;</span>
+</code></pre>
 <table><thead>
 <tr>
-<th>#</th>
+<th>Body field</th>
+<th>Type</th>
 <th>Description</th>
-<th>Name</th>
-<th>Format</th>
 </tr>
 </thead><tbody>
 <tr>
-<td>1 </td>
-<td>HTTP Status code (200 if commit successful, 404 if payment not found)</td>
 <td>statusCode</td>
 <td>SCODE</td>
+<td>Checkout status code, described in table below</td>
 </tr>
 <tr>
-<td>2</td>
-<td>Status text (e.g. &#39;payment committed&rsquo;)</td>
 <td>statusText</td>
 <td>AN</td>
+<td>status message, e.g. &#39;Token has already been migrated&hellip;&rsquo;</td>
+</tr>
+</tbody></table>
+
+<h4 id="status-codes-amp-texts">Status codes &amp; -texts</h4>
+
+<table><thead>
+<tr>
+<th>Status Code</th>
+<th>Status Text</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>200</td>
+<td>Payment committed.</td>
+</tr>
+<tr>
+<td>400</td>
+<td>No trade with given merchant/stamp found.</td>
+</tr>
+<tr>
+<td>401</td>
+<td>Given amount larger than authorization hold.</td>
+</tr>
+<tr>
+<td>500</td>
+<td>No transactions found.</td>
+</tr>
+<tr>
+<td>501</td>
+<td>Error while fetching transaction ID.</td>
+</tr>
+<tr>
+<td>502</td>
+<td>Error while fetching result.</td>
+</tr>
+<tr>
+<td>503</td>
+<td>Error while committing.</td>
 </tr>
 </tbody></table>
 
