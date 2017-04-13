@@ -1250,7 +1250,13 @@ Are these relevat to this API???
 <blockquote>
 <p>JSON data in ITEMS.ITEM.CONTROL field</p>
 </blockquote>
-<pre class="highlight plaintext"><code>[{a:&lt;amountm in euro cents&gt;,m:&lt;merchant id&gt;,d:&lt;description&gt;}]
+<pre class="highlight plaintext"><code>[
+    {
+    a : &lt;amountm in euro cents&gt;,
+    m : &lt;merchant id&gt;,
+    d : &lt;description&gt;
+    }
+]
 </code></pre>
 <table><thead>
 <tr>
@@ -1567,15 +1573,55 @@ Are these relevat to this API???
 </thead><tbody>
 <tr>
 <td>200</td>
-<td>HTTP Status code (200 if payment/reservation successful)</td>
+<td>OK, payment committed</td>
+</tr>
+<tr>
+<td>201</td>
+<td>OK, authorization hold created</td>
 </tr>
 <tr>
 <td>400</td>
-<td>Error in query, missing parameters etc. Detailed information in statusText field</td>
+<td>Aggregator not found</td>
+</tr>
+<tr>
+<td>401</td>
+<td>Merchant has no aggregator status</td>
+</tr>
+<tr>
+<td>402</td>
+<td>Invalid merchant id</td>
+</tr>
+<tr>
+<td>403</td>
+<td>Merchant not found</td>
+</tr>
+<tr>
+<td>404</td>
+<td>Amounts wont match</td>
+</tr>
+<tr>
+<td>405</td>
+<td>Trade amount is 0 or less</td>
+</tr>
+<tr>
+<td>406</td>
+<td>Token not found</td>
 </tr>
 <tr>
 <td>500</td>
-<td>Error proceccing the query. Detailed information in statusText field</td>
+<td>Error parsing XML</td>
+</tr>
+<tr>
+<td>502</td>
+<td>Creating a trade failed (&lt;errcode&gt;)</td>
+</tr>
+<tr>
+<td>503</td>
+<td>Failed creating new trade</td>
+</tr>
+<tr>
+<td>504</td>
+<td>Aggregate can&rsquo;t buy from self</td>
 </tr>
 </tbody></table>
 
@@ -2115,7 +2161,7 @@ merchant=375917&amp;stamp=1491980656&amp;amount=90
         <span class="nt">&lt;reference&gt;</span>1123123<span class="nt">&lt;/reference&gt;</span>
         <span class="nt">&lt;device&gt;</span>10<span class="nt">&lt;/device&gt;</span>
         <span class="nt">&lt;content&gt;</span>1<span class="nt">&lt;/content&gt;</span>
-        <span class="nt">&lt;type&gt;</span>9<span class="nt">&lt;/type&gt;</span>
+        <span class="nt">&lt;type&gt;</span>0<span class="nt">&lt;/type&gt;</span>
         <span class="nt">&lt;algorithm&gt;</span>3<span class="nt">&lt;/algorithm&gt;</span>
         <span class="nt">&lt;currency&gt;</span>EUR<span class="nt">&lt;/currency&gt;</span>
         <span class="nt">&lt;commit&gt;</span>false<span class="nt">&lt;/commit&gt;</span>

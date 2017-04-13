@@ -578,7 +578,13 @@ Are these relevat to this API???
 >JSON data in ITEMS.ITEM.CONTROL field
 
 ```JSON
-[{a:<amountm in euro cents>,m:<merchant id>,d:<description>}]
+[
+    {
+    a : <amountm in euro cents>,
+    m : <merchant id>,
+    d : <description>
+    }
+]
 ```
 
 | Name| Description  | Value | Format | Required | Notes |
@@ -625,11 +631,11 @@ Are these relevat to this API???
 
 ### XML-element : Control
 
-| Name   | Description  | Value | Format | Required | Notes |
-|--------|------|-------|--------|----------|-------|
-| RETURN | Return callback. Called when the payment is successfully paid. |  | AN 300 | &cross; * | 1 |
-| CANCEL | Cancel callback. Called when the payment is cancelled for some reason. |  | AN 300 | &cross; * | 1 |
-| REJECT | Reject callback. Called when the payment is rejected. If not defined, on reject the cancel will be called. |  | AN 300 |  | |
+Name   | Description  | Value | Format | Required | Notes
+-------|------|-------|--------|----------|-------
+RETURN | Return callback. Called when the payment is successfully paid. |  | AN 300 | &cross; * | 1
+CANCEL | Cancel callback. Called when the payment is cancelled for some reason. |  | AN 300 | &cross; * | 1
+REJECT | Reject callback. Called when the payment is rejected. If not defined, on reject the cancel will be called. |  | AN 300 |  |
 
 >Response XML
 
@@ -643,19 +649,31 @@ Are these relevat to this API???
 
 ### Response body (XML)
 
-|  Name      | Description | Format |
-|------------|-------------|--------|
-| statusCode | HTTP Status code (200 if payment/reservation successful) | N |
-| statusText | Status text (e.g. 'payment done') |  AN |
+ Name      | Description | Format
+-----------|-------------|-------
+statusCode | HTTP Status code (200 if payment/reservation successful) | N
+statusText | Status text (e.g. 'payment done') |  AN
 
 
 ### Response status dodes  
 
-|  Code | Description | 
-|-------|-------------|
-|   200 | HTTP Status code (200 if payment/reservation successful) |
-|   400 | Error in query, missing parameters etc. Detailed information in statusText field |
-|   500 | Error proceccing the query. Detailed information in statusText field |
+Code | Description 
+-----|-------------
+ 200 | OK, payment committed 
+ 201 | OK, authorization hold created 
+ 400 | Aggregator not found 
+ 401 | Merchant has no aggregator status 
+ 402 | Invalid merchant id 
+ 403 | Merchant not found 
+ 404 | Amounts wont match 
+ 405 | Trade amount is 0 or less 
+ 406 | Token not found
+ 500 | Error parsing XML 
+ 502 | Creating a trade failed (&lt;errcode&gt;) 
+ 503 | Failed creating new trade 
+ 504 | Aggregate can't buy from self 
+
+
 
 ## Retract authorization hold
 
@@ -950,7 +968,7 @@ XML | | &lt;data&gt;Some data&lt;/data&gt;
         <reference>1123123</reference>
         <device>10</device>
         <content>1</content>
-        <type>9</type>
+        <type>0</type>
         <algorithm>3</algorithm>
         <currency>EUR</currency>
         <commit>false</commit>
