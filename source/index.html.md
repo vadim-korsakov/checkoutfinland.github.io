@@ -717,7 +717,7 @@ amount         | N     | Amount of payment reservation to be committed (cents) |
 Body field | Type | Description
 -------------- | -------------- | --------------
 statusCode | SCODE | Checkout status code, described in table below
-statusText | AN | status message, e.g. 'Token has already been migrated...'
+statusText | AN | Status message
 
 #### Status codes & -texts
 
