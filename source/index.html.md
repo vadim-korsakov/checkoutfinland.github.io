@@ -672,6 +672,7 @@ Code | Description
  502 | Creating a trade failed (&lt;errcode&gt;) 
  503 | Failed creating new trade 
  504 | Aggregate can't buy from self 
+ 505 | Failed to get payment archive ID
 
 
 
