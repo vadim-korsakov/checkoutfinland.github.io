@@ -1623,6 +1623,10 @@ Are these relevat to this API???
 <td>504</td>
 <td>Aggregate can&rsquo;t buy from self</td>
 </tr>
+<tr>
+<td>505</td>
+<td>Failed to get payment archive ID</td>
+</tr>
 </tbody></table>
 
 <h2 id="retract-authorization-hold">Retract authorization hold</h2>
@@ -1821,7 +1825,11 @@ merchant=375917&amp;stamp=1491980656&amp;amount=90
 </tr>
 <tr>
 <td>401</td>
-<td>Given amount larger than authorization hold.</td>
+<td>Payment has already been committed.</td>
+</tr>
+<tr>
+<td>402</td>
+<td>Commit amount larger than authorization hold.</td>
 </tr>
 <tr>
 <td>500</td>
@@ -1829,14 +1837,22 @@ merchant=375917&amp;stamp=1491980656&amp;amount=90
 </tr>
 <tr>
 <td>501</td>
-<td>Error while fetching transaction ID.</td>
+<td>Error fetching trade status.</td>
 </tr>
 <tr>
 <td>502</td>
-<td>Error while fetching result.</td>
+<td>Error while fetching transaction ID.</td>
 </tr>
 <tr>
 <td>503</td>
+<td> Error parsing response.</td>
+</tr>
+<tr>
+<td>504</td>
+<td>Error while fetching result.</td>
+</tr>
+<tr>
+<td>505</td>
 <td>Error while committing.</td>
 </tr>
 </tbody></table>

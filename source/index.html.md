@@ -775,11 +775,14 @@ Status Code | Status Text
 ---- | -----------
 200 | Payment committed.
 400 | No trade with given merchant/stamp found.
-401 | Given amount larger than authorization hold.
+401 | Payment has already been committed.
+402 | Commit amount larger than authorization hold.
 500 | No transactions found.
-501 | Error while fetching transaction ID.
-502 | Error while fetching result.
-503 | Error while committing.
+501 | Error fetching trade status.
+502 | Error while fetching transaction ID.
+503 | Error parsing response.
+504 | Error while fetching result.
+505 | Error while committing.
 
 
 # Polling
