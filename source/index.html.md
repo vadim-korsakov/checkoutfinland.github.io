@@ -655,7 +655,7 @@ statusCode | HTTP Status code (200 if payment/reservation successful) | N
 statusText | Status text (e.g. 'payment done') |  AN
 
 
-### Response status dodes  
+### Response status codes  
 
 Code | Description 
 -----|-------------
@@ -726,8 +726,9 @@ Status Code | Status Text
 500 | No transactions found.
 501 | Error fetching trade status.
 502 | Error while fetching transaction ID.
-503 | Error while fetching result.
-504 | Error while reverting.
+503 | Error parsing response.
+504 | Error while fetching result.
+505 | Error while reverting.
 
 ## Commit payment
 
@@ -736,7 +737,7 @@ Commits an existing credit card reservation.
 ### HTTP Request
 
 ```code
-POST /token/commit HTTP/1.1
+POST /token/payment/commit HTTP/1.1
 Host: payment.checkout.fi
 Content-Type: application/x-www-form-urlencoded
 Cache-Control: no-cache
@@ -744,7 +745,7 @@ Cache-Control: no-cache
 merchant=375917&stamp=1491980656&amount=90
 ```
 
-`POST https://payment.checkout.fi/token/commit`
+`POST https://payment.checkout.fi/token/payment/commit`
 
 Body field     | Type  | Description                   | Notes |
 ---------------|-------|-------------------------------|-------|
@@ -780,7 +781,7 @@ Status Code | Status Text
 500 | No transactions found.
 501 | Error fetching trade status.
 502 | Error while fetching transaction ID.
-503 | Error parsing response.
+503 | Error parsing response.
 504 | Error while fetching result.
 505 | Error while committing.
 

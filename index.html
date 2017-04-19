@@ -1563,7 +1563,7 @@ Are these relevat to this API???
 </tr>
 </tbody></table>
 
-<h3 id="response-status-dodes">Response status dodes</h3>
+<h3 id="response-status-codes">Response status codes</h3>
 
 <table><thead>
 <tr>
@@ -1729,10 +1729,14 @@ merchant=375917&amp;stamp=1492081304
 </tr>
 <tr>
 <td>503</td>
-<td>Error while fetching result.</td>
+<td>Error parsing response.</td>
 </tr>
 <tr>
 <td>504</td>
+<td>Error while fetching result.</td>
+</tr>
+<tr>
+<td>505</td>
 <td>Error while reverting.</td>
 </tr>
 </tbody></table>
@@ -1742,14 +1746,14 @@ merchant=375917&amp;stamp=1492081304
 <p>Commits an existing credit card reservation.</p>
 
 <h3 id="http-request">HTTP Request</h3>
-<pre class="highlight plaintext"><code>POST /token/commit HTTP/1.1
+<pre class="highlight plaintext"><code>POST /token/payment/commit HTTP/1.1
 Host: payment.checkout.fi
 Content-Type: application/x-www-form-urlencoded
 Cache-Control: no-cache
 
 merchant=375917&amp;stamp=1491980656&amp;amount=90
 </code></pre>
-<p><code class="prettyprint">POST https://payment.checkout.fi/token/commit</code></p>
+<p><code class="prettyprint">POST https://payment.checkout.fi/token/payment/commit</code></p>
 
 <table><thead>
 <tr>
@@ -1845,7 +1849,7 @@ merchant=375917&amp;stamp=1491980656&amp;amount=90
 </tr>
 <tr>
 <td>503</td>
-<td> Error parsing response.</td>
+<td>Error parsing response.</td>
 </tr>
 <tr>
 <td>504</td>
