@@ -731,6 +731,8 @@ Status Code | Status Text
 503 | Error parsing response.
 504 | Error while fetching result.
 505 | Error while reverting.
+600 | Missing required parameters.
+700 | Invalid HMAC.
 
 ## Commit payment
 
@@ -788,6 +790,8 @@ Status Code | Status Text
 503 | Error parsing response.
 504 | Error while fetching result.
 505 | Error while committing.
+600 | Missing required parameters.
+700 | Invalid HMAC.
 
 
 ## Fetch trade info
@@ -854,6 +858,8 @@ Status Code | Status Text
 401 | No trade with given merchant/stamp found.
 500 | No transactions found.
 501 | Information fetching failed.
+600 | Missing required parameters.
+700 | Invalid HMAC.
 
 # Refund
 
