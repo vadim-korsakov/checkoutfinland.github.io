@@ -1011,7 +1011,7 @@ function calculateHMAC(reqParams, secret) {
 Separate the key & value of the request parameters with ':' and separate each parameter with a linebreak '\n'.
 
 ```
-# if the request fields are for example 'merchant', stamp' & 'amount, the final mac string used for calculation would be this:
+# if the request fields are for example 'merchant', 'stamp' & 'amount, the final mac string used for calculation would be this:
 "amount:50
 merchant:375917
 stamp:1492599660"
