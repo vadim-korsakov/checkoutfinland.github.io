@@ -232,7 +232,7 @@ Status Code | Status Text
 ---- | -----------
 200 | Token was migrated successfully
 201 | Token has already been migrated, will return existing checkout-token
-400 | Merchant with given ID not found
+400 | Merchant with given ID not found.
 500 | General internal server error
 
 ## Token removal
@@ -655,23 +655,23 @@ statusCode | HTTP Status code (200 if payment/reservation successful) | N
 statusText | Status text (e.g. 'payment done') |  AN
 
 
-### Response status codes  
+### Response status codes
 
-Code | Description 
+Code | Description
 -----|-------------
- 200 | OK, payment committed 
- 201 | OK, authorization hold created 
- 400 | Aggregator not found 
- 401 | Merchant has no aggregator status 
- 402 | Invalid merchant id 
- 403 | Merchant not found 
- 404 | Amounts wont match 
- 405 | Trade amount is 0 or less 
+ 200 | OK, payment committed
+ 201 | OK, authorization hold created
+ 400 | Aggregator not found
+ 401 | Merchant has no aggregator status
+ 402 | Invalid merchant id
+ 403 | Merchant not found
+ 404 | Amounts wont match
+ 405 | Trade amount is 0 or less
  406 | Token not found
- 500 | Error parsing XML 
- 502 | Creating a trade failed (&lt;errcode&gt;) 
- 503 | Failed creating new trade 
- 504 | Aggregate can't buy from self 
+ 500 | Error parsing XML
+ 502 | Creating a trade failed (&lt;errcode&gt;)
+ 503 | Failed creating new trade
+ 504 | Aggregate can't buy from self
  505 | Failed to get payment archive ID
 
 
@@ -688,7 +688,7 @@ Host: payment.checkout.fi
 Content-Type: application/x-www-form-urlencoded
 Cache-Control: no-cache
 
-merchant=375917&stamp=1492081304
+stamp=1492599660&hmac=3BB1330F9A90BBEBDB586EA58CDE70F2A1DB8870E5A71DF868384F14916377D2&merchant=375917
 ```
 
 `POST https://payment.checkout.fi/token/payment/retract`
@@ -697,6 +697,7 @@ Body field     | Type  | Description                   | Notes |
 ---------------|-------|-------------------------------|-------|
 merchant       | N     | Merchant id of which the initial reservation was done with |
 stamp          | AN 20 | Stamp id of the initial token payment |
+hmac           | AN    | Calculated HMAC, [instructions](#hmac-calculation) |
 
 
 ### HTTP Response
@@ -711,7 +712,7 @@ stamp          | AN 20 | Stamp id of the initial token payment |
 
 
 Body field | Type | Description
--------------- | -------------- | --------------
+---------- | ---- | -----------
 statusCode | SCODE | Checkout status code, described in table below
 statusText | AN | Status message
 
@@ -720,9 +721,10 @@ statusText | AN | Status message
 Status Code | Status Text
 ---- | -----------
 200 | Authorization hold retracted.
-400 | No trade with given merchant/stamp found.
-401 | Payment has been committed.
-402 | Authorization hold has already been reverted.
+400 | Merchant with given ID not found.
+401 | No trade with given merchant/stamp found.
+402 | Payment has been committed.
+403 | Authorization hold has already been reverted.
 500 | No transactions found.
 501 | Error fetching trade status.
 502 | Error while fetching transaction ID.
@@ -742,7 +744,7 @@ Host: payment.checkout.fi
 Content-Type: application/x-www-form-urlencoded
 Cache-Control: no-cache
 
-merchant=375917&stamp=1491980656&amount=90
+stamp=1492599660&hmac=104150D231401BDEB01F3E62B6FB32812C8314E3C0E9D10CB2749215FA0777D2&merchant=375917&amount=50
 ```
 
 `POST https://payment.checkout.fi/token/payment/commit`
@@ -752,6 +754,7 @@ Body field     | Type  | Description                   | Notes |
 merchant       | N     | Merchant id of which the initial reservation was done with |
 stamp          | AN 20 | Stamp id of the initial token payment |
 amount         | N     | Amount of payment reservation to be committed (cents) | 1
+hmac           | AN    | Calculated HMAC, [instructions](#hmac-calculation) |
 
 *Note 1.)* Must be less than or equal to initial authorization hold amount
 
@@ -775,9 +778,10 @@ statusText | AN | Status message
 Status Code | Status Text
 ---- | -----------
 200 | Payment committed.
-400 | No trade with given merchant/stamp found.
-401 | Payment has already been committed.
-402 | Commit amount larger than authorization hold.
+400 | Merchant with given ID not found.
+401 | No trade with given merchant/stamp found.
+402 | Payment has already been committed.
+403 | Commit amount larger than authorization hold.
 500 | No transactions found.
 501 | Error fetching trade status.
 502 | Error while fetching transaction ID.
@@ -786,49 +790,70 @@ Status Code | Status Text
 505 | Error while committing.
 
 
-# Polling
+## Fetch trade info
 
-## URL
+Fetches info & status of trade.
 
-* `POST`: https://rpcapi.checkout.fi/poll
-
-## Field descriptions
-
-| # | Description | Field | Value | Format | Required |
-|---|-------------|-------|-------|--------|----------|
-| 1 | Payment version, always "0001" | VERSION | "0001" | AN 4 | Yes |
-| 2 | Unique identifier for the payment in the context of the merchant. Has to be unique. | STAMP | | AN 20 | Yes |
-| 3 | Payment reference number for the payment from the merchant. | REFERENCE | | AN 20 | Yes |
-| 4 | Payment archive id | PAYMENT | Checkouts unique ID for the payment. | | AN | Yes |
-| 5 | Payment amount in cents | AMOUNT | 1000 | N 8 | Yes |
-| 6 | Valuutta. Default, always use EUR.  | CURRENCY | "EUR" | AN 3 | Yes |
-| 7 | Return message format. Default, always use 1. `1 == xml`. | FORMAT | 1 | N 1 | Yes |
-| 8 | Algorithm used to validate. Default, always use 1. `1 == MD5`. | ALGORITHM | 1 | N 1 | Yes |
-| 9 | Checksum is calculated by combining fields 1-8 and the secret key, separating them with a `+`-sign | MAC |  | MAC | | AN 32 | Yes |
-
-## Calculating the checksum
-
-> Example of calculating the MD5
-
-```php
-MD5(
-  VERSION+STAMP+REFERENCE+MERCHANT+
-  AMOUNT+CURRENCY+FORMAT+ALGORITHM+SECRET_KEY
-)
-```
-
-## Response
-
-> Example of a successfull query
+### HTTP Request
 
 ```
-<?xml version=”1.0”?>
-<trade> <status>2</status>
-</trade>
+POST /token/payment/info HTTP/1.1
+Host: payment.checkout.fi
+Content-Type: application/x-www-form-urlencoded
+Cache-Control: no-cache
+
+stamp=1492599660&merchant=375917&hmac=3BB1330F9A90BBEBDB586EA58CDE70F2A1DB8870E5A71DF868384F14916377D2
 ```
 
-If the MAC check fails or any of the fields are incorrect or do not correspond to the fields found in checkout the interface will simply return `error`.
+`POST https://payment.checkout.fi/token/payment/info`
 
+Body field     | Type  | Description                   | Notes |
+---------------|-------|-------------------------------|-------|
+merchant       | N     | Merchant id of which the initial reservation was done with |
+stamp          | AN 20 | Stamp id of the initial token payment |
+hmac           | AN    | Calculated HMAC, [instructions](#hmac-calculation) |
+
+
+### HTTP Response
+
+```
+<?xml version="1.0" encoding="utf-8"?>
+<response>
+    <statusCode>200</statusCode>
+    <statusText>Payment information fetched.</statusText>
+    <payment>
+        <status>reverted</status>
+        <currentAmount>0</currentAmount>
+        <initialAmount>100</initialAmount>
+        <createdTime>2017-04-19T11:01:01Z</createdTime>
+        <modifiedTime>2017-04-19T11:13:34Z</modifiedTime>
+        <currency>EUR</currency>
+    </payment>
+</response>
+```
+
+
+Body field | Type | Description
+-------------- | -------------- | --------------
+statusCode | SCODE | Checkout status code, described in table below
+statusText | AN | Status message
+payment    || Object including info-fields|
+payment.status | AN | Status of trade, e.g. 'committed', 'reverted'
+payment.currentAmount | AMOUNT | Current amount of trade in cents (e.g. if committed with amount 50, then 50)
+payment.initialAmount | AMOUNT | Initial amount of trade in cents (amount which trade was originally created with)
+payment.createdTime | N | Timestamp of when trade was created
+payment.modifiedTime | N | Timestamp when trade was last modified
+payment.currency | CURRENCY | Currency with which trade was created, e.g. "EUR"
+
+#### Status codes & -texts
+
+Status Code | Status Text
+---- | -----------
+200 | Payment information fetched.
+400 | Merchant with given ID not found.
+401 | No trade with given merchant/stamp found.
+500 | No transactions found.
+501 | Information fetching failed.
 
 # Refund
 
@@ -940,7 +965,7 @@ $messageMac=strtoupper(hash_hmac("sha256", base64_encode($message), $secretKey))
 
 # Data types
 
-Type | Format (regex) | Example
+Type | Format | Example
 -------------- | -------------- | --------------
 N | ^[0-9]+$ | 505050
 AN | ^[.,’-=/\w;\s]{0,1023}$ | Alph4num3r1c
@@ -949,12 +974,56 @@ AMOUNT | ^\d{1,12}$ | 9000
 CURRENCY | ^(EUR)$ | EUR
 UUID4 | ^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$ | f47ac10b-58cc-4372-a567-0e02b2c3d479
 SCODE | ^\d{1,6}$ | 9001
+TIMESTAMP | \d{4}-[0-1]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d\+\d{4} | 2017-04-19T11:01:01Z
 JSON | | [{a:1,b:2},{data:'some text'}]
 XML | | &lt;data&gt;Some data&lt;/data&gt;
 
+# HMAC-calculation
+
+If an API (e.g. [commit](#commit-payment), [retract](#retract-authorization-hold), [trade info fetch](#fetch-trade-info)) requires the 'hmac'-field, you must calculate it with SHA256 using the other request fields in alphabetized order + your own merchant-specific secret which is given to you by Checkout.
+
+```javascript
+/*
+ * Calculates SHA256 HMAC with given request parameters (which will be alphabetized for calculation)
+ * and given secret string.
+ *
+ * The calculation string will be formed by combining key and value separated by ':'
+ * and each key-value pair separated by newline.
+ *
+ * @param {[]} reqParams Array of request parameters.
+ * @param {string} secret Merchant specific secret string.
+ * @return {string} Calculated SHA256 HMAC string.
+ */
+function calculateHMAC(reqParams, secret) {
+    var toHMAC = function(key) {
+        return key + ':' + reqParams[key];
+    }
+
+    // separate the keys into a alphabetized array, leave out 'hmac'-field
+    var sortedKeys = Object.keys(reqParams).filter(function(key) { return key !== 'hmac'; }).sort();
+
+    var macString = sortedKeys.map(function(k) { return toHMAC(k); }).join('\n');
+
+    return Packages.fi.checkout.tools.HMac.sha256(macString, secret);
+}
+```
+
+Separate the key & value of the request parameters with ':' and separate each parameter with a linebreak '\n'.
+
+```
+# if the request fields are for example 'merchant', stamp' & 'amount, the final mac string used for calculation would be this:
+"amount:50
+merchant:375917
+stamp:1492599660"
+
+where the linebreaks are '\n'.
+
+The 'secret key' used will be merchant-specific.
+```
+
+Leave the hmac-parameter itself out of the calculation.
+
 # Example data and requests
-
-
 
 ## Payment API, usage example in PHP
 

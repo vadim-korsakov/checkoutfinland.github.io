@@ -378,7 +378,7 @@ merchant=375917&amp;provider_token=1296b3bc-407b-439b-9afd-c138e3ababa3
 </tr>
 <tr>
 <td>400</td>
-<td>Merchant with given ID not found</td>
+<td>Merchant with given ID not found.</td>
 </tr>
 <tr>
 <td>500</td>
@@ -1639,7 +1639,7 @@ Host: payment.checkout.fi
 Content-Type: application/x-www-form-urlencoded
 Cache-Control: no-cache
 
-merchant=375917&amp;stamp=1492081304
+stamp=1492599660&amp;hmac=3BB1330F9A90BBEBDB586EA58CDE70F2A1DB8870E5A71DF868384F14916377D2&amp;merchant=375917
 </code></pre>
 <p><code class="prettyprint">POST https://payment.checkout.fi/token/payment/retract</code></p>
 
@@ -1661,6 +1661,12 @@ merchant=375917&amp;stamp=1492081304
 <td>stamp</td>
 <td>AN 20</td>
 <td>Stamp id of the initial token payment</td>
+<td></td>
+</tr>
+<tr>
+<td>hmac</td>
+<td>AN</td>
+<td>Calculated HMAC, <a href="#hmac-calculation">instructions</a></td>
 <td></td>
 </tr>
 </tbody></table>
@@ -1705,14 +1711,18 @@ merchant=375917&amp;stamp=1492081304
 </tr>
 <tr>
 <td>400</td>
-<td>No trade with given merchant/stamp found.</td>
+<td>Merchant with given ID not found.</td>
 </tr>
 <tr>
 <td>401</td>
-<td>Payment has been committed.</td>
+<td>No trade with given merchant/stamp found.</td>
 </tr>
 <tr>
 <td>402</td>
+<td>Payment has been committed.</td>
+</tr>
+<tr>
+<td>403</td>
 <td>Authorization hold has already been reverted.</td>
 </tr>
 <tr>
@@ -1751,7 +1761,7 @@ Host: payment.checkout.fi
 Content-Type: application/x-www-form-urlencoded
 Cache-Control: no-cache
 
-merchant=375917&amp;stamp=1491980656&amp;amount=90
+stamp=1492599660&amp;hmac=104150D231401BDEB01F3E62B6FB32812C8314E3C0E9D10CB2749215FA0777D2&amp;merchant=375917&amp;amount=50
 </code></pre>
 <p><code class="prettyprint">POST https://payment.checkout.fi/token/payment/commit</code></p>
 
@@ -1780,6 +1790,12 @@ merchant=375917&amp;stamp=1491980656&amp;amount=90
 <td>N</td>
 <td>Amount of payment reservation to be committed (cents)</td>
 <td>1</td>
+</tr>
+<tr>
+<td>hmac</td>
+<td>AN</td>
+<td>Calculated HMAC, <a href="#hmac-calculation">instructions</a></td>
+<td></td>
 </tr>
 </tbody></table>
 
@@ -1825,14 +1841,18 @@ merchant=375917&amp;stamp=1491980656&amp;amount=90
 </tr>
 <tr>
 <td>400</td>
-<td>No trade with given merchant/stamp found.</td>
+<td>Merchant with given ID not found.</td>
 </tr>
 <tr>
 <td>401</td>
-<td>Payment has already been committed.</td>
+<td>No trade with given merchant/stamp found.</td>
 </tr>
 <tr>
 <td>402</td>
+<td>Payment has already been committed.</td>
+</tr>
+<tr>
+<td>403</td>
 <td>Commit amount larger than authorization hold.</td>
 </tr>
 <tr>
@@ -1861,120 +1881,146 @@ merchant=375917&amp;stamp=1491980656&amp;amount=90
 </tr>
 </tbody></table>
 
-<h1 id="polling">Polling</h1>
+<h2 id="fetch-trade-info">Fetch trade info</h2>
 
-<h2 id="url">URL</h2>
+<p>Fetches info &amp; status of trade.</p>
 
-<ul>
-<li><code class="prettyprint">POST</code>: https://rpcapi.checkout.fi/poll</li>
-</ul>
+<h3 id="http-request">HTTP Request</h3>
+<pre class="highlight plaintext"><code>POST /token/payment/info HTTP/1.1
+Host: payment.checkout.fi
+Content-Type: application/x-www-form-urlencoded
+Cache-Control: no-cache
 
-<h2 id="field-descriptions">Field descriptions</h2>
+stamp=1492599660&amp;merchant=375917&amp;hmac=3BB1330F9A90BBEBDB586EA58CDE70F2A1DB8870E5A71DF868384F14916377D2
+</code></pre>
+<p><code class="prettyprint">POST https://payment.checkout.fi/token/payment/info</code></p>
 
 <table><thead>
 <tr>
-<th> #</th>
-<th> Description</th>
-<th>Field</th>
-<th>Value</th>
-<th>Format</th>
-<th> Required</th>
+<th>Body field</th>
+<th>Type</th>
+<th>Description</th>
+<th>Notes</th>
 </tr>
 </thead><tbody>
 <tr>
-<td>1</td>
-<td>Payment version, always &ldquo;0001&rdquo;</td>
-<td>VERSION</td>
-<td>&ldquo;0001&rdquo;</td>
-<td>AN 4</td>
-<td>Yes</td>
+<td>merchant</td>
+<td>N</td>
+<td>Merchant id of which the initial reservation was done with</td>
+<td></td>
 </tr>
 <tr>
-<td>2</td>
-<td>Unique identifier for the payment in the context of the merchant. Has to be unique.</td>
-<td>STAMP</td>
-<td></td>
+<td>stamp</td>
 <td>AN 20</td>
-<td>Yes</td>
-</tr>
-<tr>
-<td>3</td>
-<td>Payment reference number for the payment from the merchant.</td>
-<td>REFERENCE</td>
+<td>Stamp id of the initial token payment</td>
 <td></td>
-<td>AN 20</td>
-<td>Yes</td>
 </tr>
 <tr>
-<td>4</td>
-<td>Payment archive id</td>
-<td>PAYMENT</td>
-<td>Checkouts unique ID for the payment.</td>
-<td></td>
-<td> AN</td>
-</tr>
-<tr>
-<td>5</td>
-<td>Payment amount in cents</td>
-<td>AMOUNT</td>
-<td>1000</td>
-<td>N 8</td>
-<td>Yes</td>
-</tr>
-<tr>
-<td>6</td>
-<td>Valuutta. Default, always use EUR.</td>
-<td>CURRENCY</td>
-<td>&ldquo;EUR&rdquo;</td>
-<td>AN 3</td>
-<td>Yes</td>
-</tr>
-<tr>
-<td>7</td>
-<td>Return message format. Default, always use 1. <code class="prettyprint">1 == xml</code>.</td>
-<td>FORMAT</td>
-<td>1</td>
-<td>N 1</td>
-<td>Yes</td>
-</tr>
-<tr>
-<td>8</td>
-<td>Algorithm used to validate. Default, always use 1. <code class="prettyprint">1 == MD5</code>.</td>
-<td>ALGORITHM</td>
-<td>1</td>
-<td>N 1</td>
-<td>Yes</td>
-</tr>
-<tr>
-<td>9</td>
-<td>Checksum is calculated by combining fields 1-8 and the secret key, separating them with a <code class="prettyprint">+</code>-sign</td>
-<td>MAC</td>
-<td></td>
-<td>MAC</td>
+<td>hmac</td>
+<td>AN</td>
+<td>Calculated HMAC, <a href="#hmac-calculation">instructions</a></td>
 <td></td>
 </tr>
 </tbody></table>
 
-<h2 id="calculating-the-checksum">Calculating the checksum</h2>
-
-<blockquote>
-<p>Example of calculating the MD5</p>
-</blockquote>
-<pre class="highlight php"><code>MD5(
-  VERSION+STAMP+REFERENCE+MERCHANT+
-  AMOUNT+CURRENCY+FORMAT+ALGORITHM+SECRET_KEY
-)
+<h3 id="http-response">HTTP Response</h3>
+<pre class="highlight xml"><code><span class="cp">&lt;?xml version="1.0" encoding="utf-8"?&gt;</span>
+<span class="nt">&lt;response&gt;</span>
+    <span class="nt">&lt;statusCode&gt;</span>200<span class="nt">&lt;/statusCode&gt;</span>
+    <span class="nt">&lt;statusText&gt;</span>Payment information fetched.<span class="nt">&lt;/statusText&gt;</span>
+    <span class="nt">&lt;payment&gt;</span>
+        <span class="nt">&lt;status&gt;</span>reverted<span class="nt">&lt;/status&gt;</span>
+        <span class="nt">&lt;currentAmount&gt;</span>0<span class="nt">&lt;/currentAmount&gt;</span>
+        <span class="nt">&lt;initialAmount&gt;</span>100<span class="nt">&lt;/initialAmount&gt;</span>
+        <span class="nt">&lt;createdTime&gt;</span>2017-04-19T11:01:01Z<span class="nt">&lt;/createdTime&gt;</span>
+        <span class="nt">&lt;modifiedTime&gt;</span>2017-04-19T11:13:34Z<span class="nt">&lt;/modifiedTime&gt;</span>
+        <span class="nt">&lt;currency&gt;</span>EUR<span class="nt">&lt;/currency&gt;</span>
+    <span class="nt">&lt;/payment&gt;</span>
+<span class="nt">&lt;/response&gt;</span>
 </code></pre>
-<h2 id="response">Response</h2>
+<table><thead>
+<tr>
+<th>Body field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>statusCode</td>
+<td>SCODE</td>
+<td>Checkout status code, described in table below</td>
+</tr>
+<tr>
+<td>statusText</td>
+<td>AN</td>
+<td>Status message</td>
+</tr>
+<tr>
+<td>payment</td>
+<td></td>
+<td>Object including info-fields</td>
+</tr>
+<tr>
+<td>payment.status</td>
+<td>AN</td>
+<td>Status of trade, e.g. &#39;committed&rsquo;, &#39;reverted&rsquo;</td>
+</tr>
+<tr>
+<td>payment.currentAmount</td>
+<td>AMOUNT</td>
+<td>Current amount of trade in cents (e.g. if committed with amount 50, then 50)</td>
+</tr>
+<tr>
+<td>payment.initialAmount</td>
+<td>AMOUNT</td>
+<td>Initial amount of trade in cents (amount which trade was originally created with)</td>
+</tr>
+<tr>
+<td>payment.createdTime</td>
+<td>N</td>
+<td>Timestamp of when trade was created</td>
+</tr>
+<tr>
+<td>payment.modifiedTime</td>
+<td>N</td>
+<td>Timestamp when trade was last modified</td>
+</tr>
+<tr>
+<td>payment.currency</td>
+<td>CURRENCY</td>
+<td>Currency with which trade was created, e.g. &ldquo;EUR&rdquo;</td>
+</tr>
+</tbody></table>
 
-<blockquote>
-<p>Example of a successfull query</p>
-</blockquote>
-<pre class="highlight xml"><code><span class="cp">&lt;?xml version=”1.0”?&gt;</span>
-<span class="nt">&lt;trade&gt;</span> <span class="nt">&lt;status&gt;</span>2<span class="nt">&lt;/status&gt;</span>
-<span class="nt">&lt;/trade&gt;</span>
-</code></pre>
-<p>If the MAC check fails or any of the fields are incorrect or do not correspond to the fields found in checkout the interface will simply return <code class="prettyprint">error</code>.</p>
+<h4 id="status-codes-amp-texts">Status codes &amp; -texts</h4>
+
+<table><thead>
+<tr>
+<th>Status Code</th>
+<th>Status Text</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>200</td>
+<td>Payment information fetched.</td>
+</tr>
+<tr>
+<td>400</td>
+<td>Merchant with given ID not found.</td>
+</tr>
+<tr>
+<td>401</td>
+<td>No trade with given merchant/stamp found.</td>
+</tr>
+<tr>
+<td>500</td>
+<td>No transactions found.</td>
+</tr>
+<tr>
+<td>501</td>
+<td>Information fetching failed.</td>
+</tr>
+</tbody></table>
 
 <h1 id="refund">Refund</h1>
 
@@ -2109,7 +2155,7 @@ merchant=375917&amp;stamp=1491980656&amp;amount=90
 <table><thead>
 <tr>
 <th>Type</th>
-<th>Format (regex)</th>
+<th>Format</th>
 <th>Example</th>
 </tr>
 </thead><tbody>
@@ -2149,6 +2195,11 @@ merchant=375917&amp;stamp=1491980656&amp;amount=90
 <td>9001</td>
 </tr>
 <tr>
+<td>TIMESTAMP</td>
+<td>\d{4}-[0-1]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d+\d{4}</td>
+<td>2017-04-19T11:01:01Z</td>
+</tr>
+<tr>
 <td>JSON</td>
 <td></td>
 <td>[{a:1,b:2},{data:&#39;some text&rsquo;}]</td>
@@ -2159,6 +2210,45 @@ merchant=375917&amp;stamp=1491980656&amp;amount=90
 <td>&lt;data&gt;Some data&lt;/data&gt;</td>
 </tr>
 </tbody></table>
+
+<h1 id="hmac-calculation">HMAC-calculation</h1>
+
+<p>If an API (e.g. <a href="#commit-payment">commit</a>, <a href="#retract-authorization-hold">retract</a>, <a href="#fetch-trade-info">trade info fetch</a>) requires the &#39;hmac&rsquo;-field, you must calculate it with SHA256 using the other request fields in alphabetized order + your own merchant-specific secret which is given to you by Checkout.</p>
+<pre class="highlight javascript"><code><span class="cm">/*
+ * Calculates SHA256 HMAC with given request parameters (which will be alphabetized for calculation)
+ * and given secret string.
+ *
+ * The calculation string will be formed by combining key and value separated by ':'
+ * and each key-value pair separated by newline.
+ *
+ * @param {[]} reqParams Array of request parameters.
+ * @param {string} secret Merchant specific secret string.
+ * @return {string} Calculated SHA256 HMAC string.
+ */</span>
+<span class="kd">function</span> <span class="nx">calculateHMAC</span><span class="p">(</span><span class="nx">reqParams</span><span class="p">,</span> <span class="nx">secret</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">toHMAC</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">key</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">key</span> <span class="o">+</span> <span class="s1">':'</span> <span class="o">+</span> <span class="nx">reqParams</span><span class="p">[</span><span class="nx">key</span><span class="p">];</span>
+    <span class="p">}</span>
+
+    <span class="c1">// separate the keys into a alphabetized array, leave out 'hmac'-field</span>
+    <span class="kd">var</span> <span class="nx">sortedKeys</span> <span class="o">=</span> <span class="nb">Object</span><span class="p">.</span><span class="nx">keys</span><span class="p">(</span><span class="nx">reqParams</span><span class="p">).</span><span class="nx">filter</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">key</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">key</span> <span class="o">!==</span> <span class="s1">'hmac'</span><span class="p">;</span> <span class="p">}).</span><span class="nx">sort</span><span class="p">();</span>
+
+    <span class="kd">var</span> <span class="nx">macString</span> <span class="o">=</span> <span class="nx">sortedKeys</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">k</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">toHMAC</span><span class="p">(</span><span class="nx">k</span><span class="p">);</span> <span class="p">}).</span><span class="nx">join</span><span class="p">(</span><span class="s1">'\n'</span><span class="p">);</span>
+
+    <span class="k">return</span> <span class="nb">Packages</span><span class="p">.</span><span class="nx">fi</span><span class="p">.</span><span class="nx">checkout</span><span class="p">.</span><span class="nx">tools</span><span class="p">.</span><span class="nx">HMac</span><span class="p">.</span><span class="nx">sha256</span><span class="p">(</span><span class="nx">macString</span><span class="p">,</span> <span class="nx">secret</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre>
+<p>Separate the key &amp; value of the request parameters with &rsquo;:&rsquo; and separate each parameter with a linebreak &rsquo;\n&rsquo;.</p>
+<pre class="highlight plaintext"><code># if the request fields are for example 'merchant', stamp' &amp; 'amount, the final mac string used for calculation would be this:
+"amount:50
+merchant:375917
+stamp:1492599660"
+
+where the linebreaks are '\n'.
+
+The 'secret key' used will be merchant-specific.
+</code></pre>
+<p>Leave the hmac-parameter itself out of the calculation.</p>
 
 <h1 id="example-data-and-requests">Example data and requests</h1>
 
