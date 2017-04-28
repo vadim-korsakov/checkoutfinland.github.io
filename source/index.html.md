@@ -1014,17 +1014,18 @@ function calculateHMAC(reqParams, secret) {
 }
 ```
 
+```
+// Node.js example:
+node -e "console.log(require('crypto').createHmac('sha256', 'merchantSecret').update('amount:50\nmerchant:375917\nstamp:1493200949').digest('hex'));"
+```
+
 Separate the key & value of the request parameters with ':' and separate each parameter with a linebreak '\n'.
 
 ```
 # if the request fields are for example 'merchant', 'stamp' & 'amount, the final mac string used for calculation would be this:
-"amount:50
-merchant:375917
-stamp:1492599660"
+"amount:50\nmerchant:375917\nstamp:1492599660"
 
-where the linebreaks are '\n'.
-
-The 'secret key' used will be merchant-specific.
+The secret key used will be merchant-specific.
 ```
 
 Leave the hmac-parameter itself out of the calculation.

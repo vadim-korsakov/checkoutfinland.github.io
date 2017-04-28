@@ -2261,16 +2261,14 @@ stamp=1492599660&amp;merchant=375917&amp;hmac=3BB1330F9A90BBEBDB586EA58CDE70F2A1
 
     <span class="k">return</span> <span class="nb">Packages</span><span class="p">.</span><span class="nx">fi</span><span class="p">.</span><span class="nx">checkout</span><span class="p">.</span><span class="nx">tools</span><span class="p">.</span><span class="nx">HMac</span><span class="p">.</span><span class="nx">sha256</span><span class="p">(</span><span class="nx">macString</span><span class="p">,</span> <span class="nx">secret</span><span class="p">);</span>
 <span class="p">}</span>
+</code></pre><pre class="highlight plaintext"><code>// Node.js example:
+node -e "console.log(require('crypto').createHmac('sha256', 'merchantSecret').update('amount:50\nmerchant:375917\nstamp:1493200949').digest('hex'));"
 </code></pre>
 <p>Separate the key &amp; value of the request parameters with &rsquo;:&rsquo; and separate each parameter with a linebreak &rsquo;\n&rsquo;.</p>
 <pre class="highlight plaintext"><code># if the request fields are for example 'merchant', 'stamp' &amp; 'amount, the final mac string used for calculation would be this:
-"amount:50
-merchant:375917
-stamp:1492599660"
+"amount:50\nmerchant:375917\nstamp:1492599660"
 
-where the linebreaks are '\n'.
-
-The 'secret key' used will be merchant-specific.
+The secret key used will be merchant-specific.
 </code></pre>
 <p>Leave the hmac-parameter itself out of the calculation.</p>
 
