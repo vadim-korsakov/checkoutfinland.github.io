@@ -235,43 +235,6 @@ Status Code | Status Text
 400 | Merchant with given ID not found.
 500 | General internal server error
 
-## Token removal
-
-Will remove a card tokenization from Checkouts system.
-
-### HTTP Request
-
-`DELETE /tokenization/<token>`
-
-where `<token>` is Checkout-card-token
-
-### HTTP Response
-
-Body field | Type | Description
--------------- | -------------- | --------------
-statusCode | SCODE | 200 if card removed
-statusText | AN | status message, e.g. 'card removed'
-
-## Tokenized card info fetch
-
-Will return info about the credit card if token is valid.
-
-### HTTP Request
-
-`GET /tokenization/<token>`
-
-where `<token>` is Checkout-card-token
-
-### HTTP Response
-
-Body field | Type | Description
--------------- | -------------- | --------------
-card.type | AN | credit card type, e.g. "Visa",
-card.partialPan | AN | last 4 digits of credit card, e.g. "0024",
-card.expireYear | AN | credit card expiration year, e.g. "2017",
-card.expireMonth | AN | credit card expiration month, e.g. "03"
-statusCode | SCODE | 200 if card exists and info is fetched, 404 if card token not found
-statusText | AN | status message, e.g. 'card info fetced'
 
 
 # Payment APIs
