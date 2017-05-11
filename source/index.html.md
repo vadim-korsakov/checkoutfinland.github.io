@@ -747,6 +747,8 @@ Status Code | Status Text
 401 | No trade with given merchant/stamp found.
 402 | Payment has already been committed.
 403 | Commit amount larger than authorization hold.
+404 | Cancelled payment cannot be committed.
+405 | Problem with commit : <detailed information>
 500 | No transactions found.
 501 | Error fetching trade status.
 502 | Error while fetching transaction ID.
