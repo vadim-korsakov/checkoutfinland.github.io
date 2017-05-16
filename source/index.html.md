@@ -748,13 +748,15 @@ Status Code | Status Text
 402 | Payment has already been committed.
 403 | Commit amount larger than authorization hold.
 404 | Cancelled payment cannot be committed.
-405 | Problem with commit : <detailed information>
+405 | Problem with commit : &lt;detailed information&gt;
+406 | Negative commit amount not allowed.
 500 | No transactions found.
 501 | Error fetching trade status.
 502 | Error while fetching transaction ID.
 503 | Error parsing response.
 504 | Error while fetching result.
 505 | Error while committing.
+506 | Error committing payment : &lt;detailed information&gt;
 600 | Missing required parameters.
 700 | Invalid HMAC.
 
