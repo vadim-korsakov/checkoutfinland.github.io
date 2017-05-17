@@ -738,7 +738,7 @@ Body field | Type | Description
 statusCode | SCODE | Checkout status code, described in table below
 statusText | AN | Status message
 
-#### Status codes & -texts
+### Status codes & -texts
 
 Status Code | Status Text
 ---- | -----------
@@ -816,7 +816,7 @@ payment.createdTime | N | Timestamp of when trade was created
 payment.modifiedTime | N | Timestamp when trade was last modified
 payment.currency | CURRENCY | Currency with which trade was created, e.g. "EUR"
 
-#### Status codes & -texts
+### Status codes & -texts
 
 Status Code | Status Text
 ---- | -----------
@@ -828,13 +828,28 @@ Status Code | Status Text
 600 | Missing required parameters.
 700 | Invalid HMAC.
 
-# Refund
+## Refund
 
-## URL
+Creates a refund for succeeded charge or already committed authorization hold.
+
+### HTTP request
 
 * `POST`: https://rpcapi.checkout.fi/refund2
 
-## Field descriptions
+<!--
+### HTTP Request
+
+```
+POST /token/payment/info HTTP/1.1
+Host: payment.checkout.fi
+Content-Type: application/x-www-form-urlencoded
+Cache-Control: no-cache
+
+stamp=1492599660&merchant=375917&hmac=3BB1330F9A90BBEBDB586EA58CDE70F2A1DB8870E5A71DF868384F14916377D2
+```
+-->
+
+### Field descriptions
 
 > Example of the sent XML that gets base64 encoded
 
@@ -864,14 +879,34 @@ Status Code | Status Text
 $messageMac=strtoupper(hash_hmac("sha256", base64_encode($message), $secretKey));
 ```
 
-| # | Description | Field | Value | Format | Required |
-|---|-------------|-------|-------|--------|----------|
-| 1 | Contains the base64 encoded XML. | DATA | | AN | Yes |
-| 2 | Mac checksum of the data. | MAC | | AN | Yes |
+Description | Field | Format | Required |
+------------|-------|--------|----------|
+Contains the base64 encoded XML. | DATA | AN | Yes |
+Mac checksum of the data. | MAC | AN | Yes |
 
+### Response status codes and messages
 
+code | message
+-----|--------
+2100 | REFUNDED
+1200 | CHECKSUM MISMATCH
+1201 | DATA FIELD IS MISSING
+1202 | MAC FIELD IS MISSING
+1203 | DATA NOT BASE64 ENCODED STRING
+1204 | MAC FORMAT ERROR
+2200 | TRADE NOT FOUND
+2201 | TRADE ALREADY REFUNDED
+2202 | REFUND AMOUNT TOO BIG
+2203 | MERCHANT BALANCE TOO LOW
+2204 | ACCOUNT NOT ACCEPTED
+2205 | REFUND AMOUNT TOO LOW
+2209 | AMOUNT NOT INTEGER
+2220 | GENERIC ERROR
+2221 | UNKNOWN ERROR
 
-> Example responses
+<!--12515 | COMPANY NOT FOUND-->
+
+> Example response
 
 ```
 <?xml version='1.0'?>
@@ -880,59 +915,7 @@ $messageMac=strtoupper(hash_hmac("sha256", base64_encode($message), $secretKey))
   <stamp>12345</stamp>
   <statusMessage>REFUNDED</statusMessage>
   <statusCode>2100</statusCode>
-
-
-  <statusMessage>CHECKSUM MISMATCH</statusMessage>
-  <statusCode>1200</statusCode>
-
-
-  <statusMessage>DATA FIELD IS MISSING</statusMessage>
-  <statusCode>1201</statusCode>
-
-
-  <statusMessage>MAC FIELD IS MISSING</statusMessage>
-  <statusCode>1202</statusCode>
-
-
-  <statusMessage>DATA NOT BASE64 ENCODED STRING</statusMessage>
-  <statusCode>1203</statusCode>
-
-
-  <statusMessage>MAC FORMAT ERROR</statusMessage>
-  <statusCode>1204</statusCode>
-
-
-  <statusMessage>TRADE NOT FOUND</statusMessage>
-  <statusCode>2200</statusCode>
-
-
-  <statusMessage>TRADE ALREADY REFUNDED</statusMessage>
-  <statusCode>2201</statusCode>
-
-
-  <statusMessage>REFUND AMOUNT TOO BIG</statusMessage>
-  <statusCode>2202</statusCode>
-
-
-  <statusMessage>MERCHANT BALANCE TOO LOW</statusMessage>
-  <statusCode>2203</statusCode>
-
-
-  <statusMessage>ACCOUNT NOT ACCEPTED</statusMessage>
-  <statusCode>2204</statusCode>
-
-
-  <statusMessage>REFUND AMOUNT TOO LOW</statusMessage>
-  <statusCode>2205</statusCode>
-
-
-  <statusMessage>GENERIC ERROR</statusMessage>
-  <statusCode>2220</statusCode>
-
-  <statusMessage>UNKNOWN ERROR</statusMessage>
-  <statusCode>2221</statusCode>
-
- </response>
+  </response>
 </checkout>";
 ```
 

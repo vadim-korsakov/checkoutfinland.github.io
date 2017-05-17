@@ -1753,7 +1753,7 @@ stamp=1492599660&amp;hmac=104150D231401BDEB01F3E62B6FB32812C8314E3C0E9D10CB27492
 </tr>
 </tbody></table>
 
-<h4 id="status-codes-amp-texts">Status codes &amp; -texts</h4>
+<h3 id="status-codes-amp-texts">Status codes &amp; -texts</h3>
 
 <table><thead>
 <tr>
@@ -1942,7 +1942,7 @@ stamp=1492599660&amp;merchant=375917&amp;hmac=3BB1330F9A90BBEBDB586EA58CDE70F2A1
 </tr>
 </tbody></table>
 
-<h4 id="status-codes-amp-texts">Status codes &amp; -texts</h4>
+<h3 id="status-codes-amp-texts">Status codes &amp; -texts</h3>
 
 <table><thead>
 <tr>
@@ -1980,15 +1980,30 @@ stamp=1492599660&amp;merchant=375917&amp;hmac=3BB1330F9A90BBEBDB586EA58CDE70F2A1
 </tr>
 </tbody></table>
 
-<h1 id="refund">Refund</h1>
+<h2 id="refund">Refund</h2>
 
-<h2 id="url">URL</h2>
+<p>Creates a refund for succeeded charge or already committed authorization hold.</p>
+
+<h3 id="http-request">HTTP request</h3>
 
 <ul>
 <li><code class="prettyprint">POST</code>: https://rpcapi.checkout.fi/refund2</li>
 </ul>
 
-<h2 id="field-descriptions">Field descriptions</h2>
+<!--
+### HTTP Request
+
+```
+POST /token/payment/info HTTP/1.1
+Host: payment.checkout.fi
+Content-Type: application/x-www-form-urlencoded
+Cache-Control: no-cache
+
+stamp=1492599660&merchant=375917&hmac=3BB1330F9A90BBEBDB586EA58CDE70F2A1DB8870E5A71DF868384F14916377D2
+```
+-->
+
+<h3 id="field-descriptions">Field descriptions</h3>
 
 <blockquote>
 <p>Example of the sent XML that gets base64 encoded</p>
@@ -2018,34 +2033,100 @@ stamp=1492599660&amp;merchant=375917&amp;hmac=3BB1330F9A90BBEBDB586EA58CDE70F2A1
 </code></pre>
 <table><thead>
 <tr>
-<th> #</th>
-<th> Description</th>
+<th>Description</th>
 <th>Field</th>
-<th>Value</th>
 <th>Format</th>
 <th> Required</th>
 </tr>
 </thead><tbody>
 <tr>
-<td>1</td>
 <td>Contains the base64 encoded XML.</td>
 <td>DATA</td>
-<td></td>
 <td>AN</td>
 <td>Yes</td>
 </tr>
 <tr>
-<td>2</td>
 <td>Mac checksum of the data.</td>
 <td>MAC</td>
-<td></td>
 <td>AN</td>
 <td>Yes</td>
 </tr>
 </tbody></table>
 
+<h3 id="response-status-codes-and-messages">Response status codes and messages</h3>
+
+<table><thead>
+<tr>
+<th>code</th>
+<th> message</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>2100</td>
+<td>REFUNDED</td>
+</tr>
+<tr>
+<td>1200</td>
+<td>CHECKSUM MISMATCH</td>
+</tr>
+<tr>
+<td>1201</td>
+<td>DATA FIELD IS MISSING</td>
+</tr>
+<tr>
+<td>1202</td>
+<td>MAC FIELD IS MISSING</td>
+</tr>
+<tr>
+<td>1203</td>
+<td>DATA NOT BASE64 ENCODED STRING</td>
+</tr>
+<tr>
+<td>1204</td>
+<td>MAC FORMAT ERROR</td>
+</tr>
+<tr>
+<td>2200</td>
+<td>TRADE NOT FOUND</td>
+</tr>
+<tr>
+<td>2201</td>
+<td>TRADE ALREADY REFUNDED</td>
+</tr>
+<tr>
+<td>2202</td>
+<td>REFUND AMOUNT TOO BIG</td>
+</tr>
+<tr>
+<td>2203</td>
+<td>MERCHANT BALANCE TOO LOW</td>
+</tr>
+<tr>
+<td>2204</td>
+<td>ACCOUNT NOT ACCEPTED</td>
+</tr>
+<tr>
+<td>2205</td>
+<td>REFUND AMOUNT TOO LOW</td>
+</tr>
+<tr>
+<td>2209</td>
+<td>AMOUNT NOT INTEGER</td>
+</tr>
+<tr>
+<td>2220</td>
+<td>GENERIC ERROR</td>
+</tr>
+<tr>
+<td>2221</td>
+<td>UNKNOWN ERROR</td>
+</tr>
+</tbody></table>
+
+<!--12515 | COMPANY NOT FOUND-->
+
 <blockquote>
-<p>Example responses</p>
+<p>Example response</p>
 </blockquote>
 <pre class="highlight xml"><code><span class="cp">&lt;?xml version='1.0'?&gt;</span>
 <span class="nt">&lt;checkout&gt;</span>
@@ -2053,59 +2134,7 @@ stamp=1492599660&amp;merchant=375917&amp;hmac=3BB1330F9A90BBEBDB586EA58CDE70F2A1
   <span class="nt">&lt;stamp&gt;</span>12345<span class="nt">&lt;/stamp&gt;</span>
   <span class="nt">&lt;statusMessage&gt;</span>REFUNDED<span class="nt">&lt;/statusMessage&gt;</span>
   <span class="nt">&lt;statusCode&gt;</span>2100<span class="nt">&lt;/statusCode&gt;</span>
-
-
-  <span class="nt">&lt;statusMessage&gt;</span>CHECKSUM MISMATCH<span class="nt">&lt;/statusMessage&gt;</span>
-  <span class="nt">&lt;statusCode&gt;</span>1200<span class="nt">&lt;/statusCode&gt;</span>
-
-
-  <span class="nt">&lt;statusMessage&gt;</span>DATA FIELD IS MISSING<span class="nt">&lt;/statusMessage&gt;</span>
-  <span class="nt">&lt;statusCode&gt;</span>1201<span class="nt">&lt;/statusCode&gt;</span>
-
-
-  <span class="nt">&lt;statusMessage&gt;</span>MAC FIELD IS MISSING<span class="nt">&lt;/statusMessage&gt;</span>
-  <span class="nt">&lt;statusCode&gt;</span>1202<span class="nt">&lt;/statusCode&gt;</span>
-
-
-  <span class="nt">&lt;statusMessage&gt;</span>DATA NOT BASE64 ENCODED STRING<span class="nt">&lt;/statusMessage&gt;</span>
-  <span class="nt">&lt;statusCode&gt;</span>1203<span class="nt">&lt;/statusCode&gt;</span>
-
-
-  <span class="nt">&lt;statusMessage&gt;</span>MAC FORMAT ERROR<span class="nt">&lt;/statusMessage&gt;</span>
-  <span class="nt">&lt;statusCode&gt;</span>1204<span class="nt">&lt;/statusCode&gt;</span>
-
-
-  <span class="nt">&lt;statusMessage&gt;</span>TRADE NOT FOUND<span class="nt">&lt;/statusMessage&gt;</span>
-  <span class="nt">&lt;statusCode&gt;</span>2200<span class="nt">&lt;/statusCode&gt;</span>
-
-
-  <span class="nt">&lt;statusMessage&gt;</span>TRADE ALREADY REFUNDED<span class="nt">&lt;/statusMessage&gt;</span>
-  <span class="nt">&lt;statusCode&gt;</span>2201<span class="nt">&lt;/statusCode&gt;</span>
-
-
-  <span class="nt">&lt;statusMessage&gt;</span>REFUND AMOUNT TOO BIG<span class="nt">&lt;/statusMessage&gt;</span>
-  <span class="nt">&lt;statusCode&gt;</span>2202<span class="nt">&lt;/statusCode&gt;</span>
-
-
-  <span class="nt">&lt;statusMessage&gt;</span>MERCHANT BALANCE TOO LOW<span class="nt">&lt;/statusMessage&gt;</span>
-  <span class="nt">&lt;statusCode&gt;</span>2203<span class="nt">&lt;/statusCode&gt;</span>
-
-
-  <span class="nt">&lt;statusMessage&gt;</span>ACCOUNT NOT ACCEPTED<span class="nt">&lt;/statusMessage&gt;</span>
-  <span class="nt">&lt;statusCode&gt;</span>2204<span class="nt">&lt;/statusCode&gt;</span>
-
-
-  <span class="nt">&lt;statusMessage&gt;</span>REFUND AMOUNT TOO LOW<span class="nt">&lt;/statusMessage&gt;</span>
-  <span class="nt">&lt;statusCode&gt;</span>2205<span class="nt">&lt;/statusCode&gt;</span>
-
-
-  <span class="nt">&lt;statusMessage&gt;</span>GENERIC ERROR<span class="nt">&lt;/statusMessage&gt;</span>
-  <span class="nt">&lt;statusCode&gt;</span>2220<span class="nt">&lt;/statusCode&gt;</span>
-
-  <span class="nt">&lt;statusMessage&gt;</span>UNKNOWN ERROR<span class="nt">&lt;/statusMessage&gt;</span>
-  <span class="nt">&lt;statusCode&gt;</span>2221<span class="nt">&lt;/statusCode&gt;</span>
-
- <span class="nt">&lt;/response&gt;</span>
+  <span class="nt">&lt;/response&gt;</span>
 <span class="nt">&lt;/checkout&gt;</span>";
 </code></pre>
 <h1 id="data-types">Data types</h1>
