@@ -1,408 +1,257 @@
-<!doctype html>
-<html>
-  <head>
-    <meta charset="utf-8">
-    <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <title>Checkout API Reference</title>
+---
+title: Checkout API Reference
 
-    <style>
-      .highlight table td { padding: 5px; }
-.highlight table pre { margin: 0; }
-.highlight, .highlight .w {
-  color: #f8f8f2;
-  background-color: #272822;
-}
-.highlight .err {
-  color: #272822;
-  background-color: #f92672;
-}
-.highlight .c, .highlight .cd, .highlight .cm, .highlight .c1, .highlight .cs {
-  color: #75715e;
-}
-.highlight .cp {
-  color: #f4bf75;
-}
-.highlight .nt {
-  color: #f4bf75;
-}
-.highlight .o, .highlight .ow {
-  color: #f8f8f2;
-}
-.highlight .p, .highlight .pi {
-  color: #f8f8f2;
-}
-.highlight .gi {
-  color: #a6e22e;
-}
-.highlight .gd {
-  color: #f92672;
-}
-.highlight .gh {
-  color: #66d9ef;
-  background-color: #272822;
-  font-weight: bold;
-}
-.highlight .k, .highlight .kn, .highlight .kp, .highlight .kr, .highlight .kv {
-  color: #ae81ff;
-}
-.highlight .kc {
-  color: #fd971f;
-}
-.highlight .kt {
-  color: #fd971f;
-}
-.highlight .kd {
-  color: #fd971f;
-}
-.highlight .s, .highlight .sb, .highlight .sc, .highlight .sd, .highlight .s2, .highlight .sh, .highlight .sx, .highlight .s1 {
-  color: #a6e22e;
-}
-.highlight .sr {
-  color: #a1efe4;
-}
-.highlight .si {
-  color: #cc6633;
-}
-.highlight .se {
-  color: #cc6633;
-}
-.highlight .nn {
-  color: #f4bf75;
-}
-.highlight .nc {
-  color: #f4bf75;
-}
-.highlight .no {
-  color: #f4bf75;
-}
-.highlight .na {
-  color: #66d9ef;
-}
-.highlight .m, .highlight .mf, .highlight .mh, .highlight .mi, .highlight .il, .highlight .mo, .highlight .mb, .highlight .mx {
-  color: #a6e22e;
-}
-.highlight .ss {
-  color: #a6e22e;
-}
-    </style>
-    <link href="stylesheets/screen.css" rel="stylesheet" media="screen" />
-    <link href="stylesheets/print.css" rel="stylesheet" media="print" />
-      <script src="javascripts/all.js"></script>
-  </head>
+language_tabs:
+  - code
 
-  <body class="index" data-languages="[&quot;code&quot;]">
-    <a href="#" id="nav-button">
-      <span>
-        NAV
-        <img src="images/navbar.png" alt="Navbar" />
-      </span>
-    </a>
-    <div class="tocify-wrapper">
-      <img src="images/logo.png" alt="Logo" />
-        <div class="lang-selector">
-              <a href="#" data-language-name="code">code</a>
-        </div>
-        <div class="search">
-          <input type="text" class="search" id="input-search" placeholder="Search">
-        </div>
-        <ul class="search-results"></ul>
-      <div id="toc">
-      </div>
-    </div>
-    <div class="page-wrapper">
-      <div class="dark-box"></div>
-      <div class="content">
-        <h1 id="introduction">Introduction</h1>
+toc_footers:
+#  - <a href='#'>Sign Up for a Developer Key</a>
+#  - <a href='https://github.com/tripit/slate'>Documentation Powered by Slate</a>
 
-<p>The following document describes the Checkout Finlands general public API in the context of payment buttons and making payments through the API.</p>
+includes:
 
-<p>To get started with the API, get in touch with Checkout Finland&rsquo;s customer support and you will be directed into the right direction from there. API is available for use for our merchants and partners.</p>
+search: true
+---
 
-<h1 id="testing">Testing</h1>
+# Introduction
 
-<blockquote>
-<p>Example class implementation that will be used in the later examples</p>
-</blockquote>
-<pre class="highlight php"><code><span class="cp">&lt;?php</span>
+The following document describes the Checkout Finlands general public API in the context of payment buttons and making payments through the API.
 
-<span class="k">class</span> <span class="nc">Checkout</span>
-<span class="p">{</span>
-    <span class="k">private</span> <span class="nv">$version</span> <span class="o">=</span> <span class="s2">"0001"</span><span class="p">;</span>
-    <span class="k">private</span> <span class="nv">$language</span> <span class="o">=</span> <span class="s2">"FI"</span><span class="p">;</span>
-    <span class="k">private</span> <span class="nv">$country</span> <span class="o">=</span> <span class="s2">"FIN"</span><span class="p">;</span>
-    <span class="k">private</span> <span class="nv">$currency</span> <span class="o">=</span> <span class="s2">"EUR"</span><span class="p">;</span>
-    <span class="k">private</span> <span class="nv">$device</span> <span class="o">=</span> <span class="s2">"1"</span><span class="p">;</span>
-    <span class="k">private</span> <span class="nv">$content</span> <span class="o">=</span> <span class="s2">"1"</span><span class="p">;</span>
-    <span class="k">private</span> <span class="nv">$type</span> <span class="o">=</span> <span class="s2">"0"</span><span class="p">;</span>
-    <span class="k">private</span> <span class="nv">$algorithm</span> <span class="o">=</span> <span class="s2">"3"</span><span class="p">;</span>
-    <span class="k">private</span> <span class="nv">$merchant</span> <span class="o">=</span> <span class="s2">""</span><span class="p">;</span>
-    <span class="k">private</span> <span class="nv">$password</span> <span class="o">=</span> <span class="s2">""</span><span class="p">;</span>
-    <span class="k">private</span> <span class="nv">$stamp</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
-    <span class="k">private</span> <span class="nv">$amount</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
-    <span class="k">private</span> <span class="nv">$reference</span> <span class="o">=</span> <span class="s2">""</span><span class="p">;</span>
-    <span class="k">private</span> <span class="nv">$message</span> <span class="o">=</span> <span class="s2">""</span><span class="p">;</span>
-    <span class="k">private</span> <span class="nv">$return</span> <span class="o">=</span> <span class="s2">""</span><span class="p">;</span>
-    <span class="k">private</span> <span class="nv">$cancel</span> <span class="o">=</span> <span class="s2">""</span><span class="p">;</span>
-    <span class="k">private</span> <span class="nv">$reject</span> <span class="o">=</span> <span class="s2">""</span><span class="p">;</span>
-    <span class="k">private</span> <span class="nv">$delayed</span> <span class="o">=</span> <span class="s2">""</span><span class="p">;</span>
-    <span class="k">private</span> <span class="nv">$delivery_date</span> <span class="o">=</span> <span class="s2">""</span><span class="p">;</span>
-    <span class="k">private</span> <span class="nv">$firstname</span> <span class="o">=</span> <span class="s2">""</span><span class="p">;</span>
-    <span class="k">private</span> <span class="nv">$familyname</span> <span class="o">=</span> <span class="s2">""</span><span class="p">;</span>
-    <span class="k">private</span> <span class="nv">$address</span> <span class="o">=</span> <span class="s2">""</span><span class="p">;</span>
-    <span class="k">private</span> <span class="nv">$postcode</span> <span class="o">=</span> <span class="s2">""</span><span class="p">;</span>
-    <span class="k">private</span> <span class="nv">$postoffice</span> <span class="o">=</span> <span class="s2">""</span><span class="p">;</span>
-    <span class="k">private</span> <span class="nv">$status</span> <span class="o">=</span> <span class="s2">""</span><span class="p">;</span>
-    <span class="k">private</span> <span class="nv">$email</span> <span class="o">=</span> <span class="s2">""</span><span class="p">;</span>
+To get started with the API, get in touch with Checkout Finland's customer support and you will be directed into the right direction from there. API is available for use for our merchants and partners.
 
-    <span class="k">public</span> <span class="k">function</span> <span class="nf">__construct</span><span class="p">(</span><span class="nv">$merchant</span><span class="p">,</span> <span class="nv">$password</span><span class="p">)</span>
-    <span class="p">{</span>
-        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">merchant</span> <span class="o">=</span> <span class="nv">$merchant</span><span class="p">;</span> <span class="c1">// merchant id
-</span>        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">password</span> <span class="o">=</span> <span class="nv">$password</span><span class="p">;</span> <span class="c1">// security key (about 80 chars)
-</span>    <span class="p">}</span>
+# Testing
 
-    <span class="cm">/*
-     * generates MAC and prepares values for creating payment
-     */</span>
-    <span class="k">public</span> <span class="k">function</span> <span class="nf">getCheckoutObject</span><span class="p">(</span><span class="nv">$data</span><span class="p">)</span>
-    <span class="p">{</span>
-        <span class="c1">// overwrite default values
-</span>        <span class="k">foreach</span> <span class="p">(</span><span class="nv">$data</span> <span class="k">as</span> <span class="nv">$key</span> <span class="o">=&gt;</span> <span class="nv">$value</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nv">$this</span><span class="o">-&gt;</span><span class="p">{</span><span class="nv">$key</span><span class="p">}</span> <span class="o">=</span> <span class="nv">$value</span><span class="p">;</span>
-        <span class="p">}</span>
+> Example class implementation that will be used in the later examples
 
-        <span class="nv">$mac</span> <span class="o">=</span> <span class="nb">strtoupper</span><span class="p">(</span><span class="nb">md5</span><span class="p">(</span><span class="s2">"</span><span class="si">{</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">version</span><span class="si">}</span><span class="s2">+</span><span class="si">{</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">stamp</span><span class="si">}</span><span class="s2">+</span><span class="si">{</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">amount</span><span class="si">}</span><span class="s2">+</span><span class="si">{</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">reference</span><span class="si">}</span><span class="s2">+</span><span class="si">{</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">message</span><span class="si">}</span><span class="s2">+</span><span class="si">{</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">language</span><span class="si">}</span><span class="s2">+</span><span class="si">{</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">merchant</span><span class="si">}</span><span class="s2">+</span><span class="si">{</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">return</span><span class="si">}</span><span class="s2">+</span><span class="si">{</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">cancel</span><span class="si">}</span><span class="s2">+</span><span class="si">{</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">reject</span><span class="si">}</span><span class="s2">+</span><span class="si">{</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">delayed</span><span class="si">}</span><span class="s2">+</span><span class="si">{</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">country</span><span class="si">}</span><span class="s2">+</span><span class="si">{</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">currency</span><span class="si">}</span><span class="s2">+</span><span class="si">{</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">device</span><span class="si">}</span><span class="s2">+</span><span class="si">{</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">content</span><span class="si">}</span><span class="s2">+</span><span class="si">{</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">type</span><span class="si">}</span><span class="s2">+</span><span class="si">{</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">algorithm</span><span class="si">}</span><span class="s2">+</span><span class="si">{</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">delivery_date</span><span class="si">}</span><span class="s2">+</span><span class="si">{</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">firstname</span><span class="si">}</span><span class="s2">+</span><span class="si">{</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">familyname</span><span class="si">}</span><span class="s2">+</span><span class="si">{</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">address</span><span class="si">}</span><span class="s2">+</span><span class="si">{</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">postcode</span><span class="si">}</span><span class="s2">+</span><span class="si">{</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">postoffice</span><span class="si">}</span><span class="s2">+</span><span class="si">{</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">password</span><span class="si">}</span><span class="s2">"</span><span class="p">));</span>
-        <span class="nv">$post</span><span class="p">[</span><span class="s1">'VERSION'</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">version</span><span class="p">;</span>
-        <span class="nv">$post</span><span class="p">[</span><span class="s1">'STAMP'</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">stamp</span><span class="p">;</span>
-        <span class="nv">$post</span><span class="p">[</span><span class="s1">'AMOUNT'</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">amount</span><span class="p">;</span>
-        <span class="nv">$post</span><span class="p">[</span><span class="s1">'REFERENCE'</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">reference</span><span class="p">;</span>
-        <span class="nv">$post</span><span class="p">[</span><span class="s1">'MESSAGE'</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">message</span><span class="p">;</span>
-        <span class="nv">$post</span><span class="p">[</span><span class="s1">'LANGUAGE'</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">language</span><span class="p">;</span>
-        <span class="nv">$post</span><span class="p">[</span><span class="s1">'MERCHANT'</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">merchant</span><span class="p">;</span>
-        <span class="nv">$post</span><span class="p">[</span><span class="s1">'RETURN'</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">return</span><span class="p">;</span>
-        <span class="nv">$post</span><span class="p">[</span><span class="s1">'CANCEL'</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">cancel</span><span class="p">;</span>
-        <span class="nv">$post</span><span class="p">[</span><span class="s1">'REJECT'</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">reject</span><span class="p">;</span>
-        <span class="nv">$post</span><span class="p">[</span><span class="s1">'DELAYED'</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">delayed</span><span class="p">;</span>
-        <span class="nv">$post</span><span class="p">[</span><span class="s1">'COUNTRY'</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">country</span><span class="p">;</span>
-        <span class="nv">$post</span><span class="p">[</span><span class="s1">'CURRENCY'</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">currency</span><span class="p">;</span>
-        <span class="nv">$post</span><span class="p">[</span><span class="s1">'DEVICE'</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">device</span><span class="p">;</span>
-        <span class="nv">$post</span><span class="p">[</span><span class="s1">'CONTENT'</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">content</span><span class="p">;</span>
-        <span class="nv">$post</span><span class="p">[</span><span class="s1">'TYPE'</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">type</span><span class="p">;</span>
-        <span class="nv">$post</span><span class="p">[</span><span class="s1">'ALGORITHM'</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">algorithm</span><span class="p">;</span>
-        <span class="nv">$post</span><span class="p">[</span><span class="s1">'DELIVERY_DATE'</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">delivery_date</span><span class="p">;</span>
-        <span class="nv">$post</span><span class="p">[</span><span class="s1">'FIRSTNAME'</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">firstname</span><span class="p">;</span>
-        <span class="nv">$post</span><span class="p">[</span><span class="s1">'FAMILYNAME'</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">familyname</span><span class="p">;</span>
-        <span class="nv">$post</span><span class="p">[</span><span class="s1">'ADDRESS'</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">address</span><span class="p">;</span>
-        <span class="nv">$post</span><span class="p">[</span><span class="s1">'POSTCODE'</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">postcode</span><span class="p">;</span>
-        <span class="nv">$post</span><span class="p">[</span><span class="s1">'POSTOFFICE'</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">postoffice</span><span class="p">;</span>
-        <span class="nv">$post</span><span class="p">[</span><span class="s1">'MAC'</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$mac</span><span class="p">;</span>
+```php
+<?php
 
-        <span class="nv">$post</span><span class="p">[</span><span class="s1">'EMAIL'</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">email</span><span class="p">;</span>
-        <span class="nv">$post</span><span class="p">[</span><span class="s1">'PHONE'</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">phone</span><span class="p">;</span>
+class Checkout
+{
+	private $version = "0001";
+	private $language = "FI";
+	private $country = "FIN";
+	private $currency = "EUR";
+	private $device	= "1";
+	private $content = "1";
+	private $type = "0";
+	private $algorithm = "3";
+	private $merchant = "";
+	private $password = "";
+	private $stamp = 0;
+	private $amount	= 0;
+	private $reference = "";
+	private $message = "";
+	private $return	= "";
+	private $cancel	= "";
+	private $reject	= "";
+	private $delayed = "";
+	private $delivery_date = "";
+	private $firstname = "";
+	private $familyname	= "";
+	private $address = "";
+	private $postcode = "";
+	private $postoffice	= "";
+	private $status	= "";
+	private $email = "";
 
-        <span class="k">return</span> <span class="nv">$post</span><span class="p">;</span>
-    <span class="p">}</span>
+	public function __construct($merchant, $password)
+	{
+		$this->merchant	= $merchant; // merchant id
+		$this->password	= $password; // security key (about 80 chars)
+	}
 
-    <span class="cm">/*
-     * returns payment information in XML
-     */</span>
-    <span class="k">public</span> <span class="k">function</span> <span class="nf">getCheckoutXML</span><span class="p">(</span><span class="nv">$data</span><span class="p">)</span>
-    <span class="p">{</span>
-        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">device</span> <span class="o">=</span> <span class="s2">"10"</span><span class="p">;</span>
-        <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">sendPost</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">getCheckoutObject</span><span class="p">(</span><span class="nv">$data</span><span class="p">));</span>
-    <span class="p">}</span>
+	/*
+ 	 * generates MAC and prepares values for creating payment
+	 */
+	public function getCheckoutObject($data)
+	{
+		// overwrite default values
+		foreach ($data as $key => $value) {
+			$this->{$key} = $value;
+		}
 
-    <span class="k">private</span> <span class="k">function</span> <span class="nf">sendPost</span><span class="p">(</span><span class="nv">$post</span><span class="p">)</span> 
-    <span class="p">{</span>
-        <span class="nv">$options</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span>
-                <span class="nx">CURLOPT_POST</span> <span class="o">=&gt;</span> <span class="mi">1</span><span class="p">,</span>
-                <span class="nx">CURLOPT_HEADER</span> <span class="o">=&gt;</span> <span class="mi">0</span><span class="p">,</span>
-                <span class="nx">CURLOPT_URL</span> <span class="o">=&gt;</span> <span class="s1">'https://payment.checkout.fi'</span><span class="p">,</span>
-                <span class="nx">CURLOPT_FRESH_CONNECT</span> <span class="o">=&gt;</span> <span class="mi">1</span><span class="p">,</span>
-                <span class="nx">CURLOPT_RETURNTRANSFER</span> <span class="o">=&gt;</span> <span class="mi">1</span><span class="p">,</span>
-                <span class="nx">CURLOPT_FORBID_REUSE</span> <span class="o">=&gt;</span> <span class="mi">1</span><span class="p">,</span>
-                <span class="nx">CURLOPT_TIMEOUT</span> <span class="o">=&gt;</span> <span class="mi">20</span><span class="p">,</span>
-                <span class="nx">CURLOPT_POSTFIELDS</span> <span class="o">=&gt;</span> <span class="nb">http_build_query</span><span class="p">(</span><span class="nv">$post</span><span class="p">)</span>
-        <span class="p">);</span>
+		$mac = strtoupper(md5("{$this->version}+{$this->stamp}+{$this->amount}+{$this->reference}+{$this->message}+{$this->language}+{$this->merchant}+{$this->return}+{$this->cancel}+{$this->reject}+{$this->delayed}+{$this->country}+{$this->currency}+{$this->device}+{$this->content}+{$this->type}+{$this->algorithm}+{$this->delivery_date}+{$this->firstname}+{$this->familyname}+{$this->address}+{$this->postcode}+{$this->postoffice}+{$this->password}"));
+		$post['VERSION'] = $this->version;
+		$post['STAMP'] = $this->stamp;
+		$post['AMOUNT']	= $this->amount;
+		$post['REFERENCE'] = $this->reference;
+		$post['MESSAGE'] = $this->message;
+		$post['LANGUAGE'] = $this->language;
+		$post['MERCHANT'] = $this->merchant;
+		$post['RETURN']	= $this->return;
+		$post['CANCEL']	= $this->cancel;
+		$post['REJECT']	= $this->reject;
+		$post['DELAYED'] = $this->delayed;
+		$post['COUNTRY'] = $this->country;
+		$post['CURRENCY'] = $this->currency;
+		$post['DEVICE']	= $this->device;
+		$post['CONTENT'] = $this->content;
+		$post['TYPE'] = $this->type;
+		$post['ALGORITHM'] = $this->algorithm;
+		$post['DELIVERY_DATE'] = $this->delivery_date;
+		$post['FIRSTNAME'] = $this->firstname;
+		$post['FAMILYNAME'] = $this->familyname;
+		$post['ADDRESS'] = $this->address;
+		$post['POSTCODE'] = $this->postcode;
+		$post['POSTOFFICE'] = $this->postoffice;
+		$post['MAC'] = $mac;
 
-        <span class="nv">$ch</span> <span class="o">=</span> <span class="nb">curl_init</span><span class="p">();</span>
-        <span class="nb">curl_setopt_array</span><span class="p">(</span><span class="nv">$ch</span><span class="p">,</span> <span class="nv">$options</span><span class="p">);</span>
-        <span class="nv">$result</span> <span class="o">=</span> <span class="nb">curl_exec</span><span class="p">(</span><span class="nv">$ch</span><span class="p">);</span>
-        <span class="nb">curl_close</span><span class="p">(</span><span class="nv">$ch</span><span class="p">);</span>
+		$post['EMAIL'] = $this->email;
+		$post['PHONE'] = $this->phone;
 
-        <span class="k">return</span> <span class="nv">$result</span><span class="p">;</span>
-    <span class="p">}</span>
+		return $post;
+	}
 
-    <span class="k">public</span> <span class="k">function</span> <span class="nf">validateCheckout</span><span class="p">(</span><span class="nv">$data</span><span class="p">)</span>
-    <span class="p">{</span>
-        <span class="nv">$generatedMac</span> <span class="o">=</span> <span class="nb">strtoupper</span><span class="p">(</span><span class="nb">hash_hmac</span><span class="p">(</span><span class="s2">"sha256"</span><span class="p">,</span> <span class="s2">"</span><span class="si">{</span><span class="nv">$data</span><span class="p">[</span><span class="s1">'VERSION'</span><span class="p">]</span><span class="si">}</span><span class="s2">&amp;</span><span class="si">{</span><span class="nv">$data</span><span class="p">[</span><span class="s1">'STAMP'</span><span class="p">]</span><span class="si">}</span><span class="s2">&amp;</span><span class="si">{</span><span class="nv">$data</span><span class="p">[</span><span class="s1">'REFERENCE'</span><span class="p">]</span><span class="si">}</span><span class="s2">&amp;</span><span class="si">{</span><span class="nv">$data</span><span class="p">[</span><span class="s1">'PAYMENT'</span><span class="p">]</span><span class="si">}</span><span class="s2">&amp;</span><span class="si">{</span><span class="nv">$data</span><span class="p">[</span><span class="s1">'STATUS'</span><span class="p">]</span><span class="si">}</span><span class="s2">&amp;</span><span class="si">{</span><span class="nv">$data</span><span class="p">[</span><span class="s1">'ALGORITHM'</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">password</span><span class="p">));</span>
-        <span class="k">return</span> <span class="p">(</span><span class="nv">$data</span><span class="p">[</span><span class="s1">'MAC'</span><span class="p">]</span> <span class="o">===</span> <span class="nv">$generatedMac</span><span class="p">);</span>
-    <span class="p">}</span>
+	/*
+	 * returns payment information in XML
+	 */
+	public function getCheckoutXML($data)
+	{
+		$this->device = "10";
+		return $this->sendPost($this->getCheckoutObject($data));
+	}
 
-    <span class="k">public</span> <span class="k">function</span> <span class="nf">isPaid</span><span class="p">(</span><span class="nv">$status</span><span class="p">)</span>
-    <span class="p">{</span>
-        <span class="k">return</span> <span class="p">(</span><span class="nb">in_array</span><span class="p">(</span><span class="nv">$status</span><span class="p">,</span> <span class="k">array</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">10</span><span class="p">)));</span>
-    <span class="p">}</span>
-<span class="p">}</span>  <span class="c1">// class Checkout
-</span></code></pre>
-<p>Test credentials</p>
+	private function sendPost($post) 
+	{
+		$options = array(
+				CURLOPT_POST => 1,
+				CURLOPT_HEADER => 0,
+				CURLOPT_URL => 'https://payment.checkout.fi',
+				CURLOPT_FRESH_CONNECT => 1,
+				CURLOPT_RETURNTRANSFER => 1,
+				CURLOPT_FORBID_REUSE => 1,
+				CURLOPT_TIMEOUT => 20,
+				CURLOPT_POSTFIELDS => http_build_query($post)
+		);
 
-<ul>
-<li>Merchant Id (MERCHANT): <code class="prettyprint">375917</code></li>
-<li>Secret Key: <code class="prettyprint">SAIPPUAKAUPPIAS</code></li>
-</ul>
+		$ch = curl_init();
+		curl_setopt_array($ch, $options);
+		$result = curl_exec($ch);
+	    curl_close($ch);
 
-<p>Please note that not all payment methods support testing. The payment methods are enabled that support testing payments. There might be some features that are not working as they are intended to work in the testing side due to limitations to external integrations.</p>
+	    return $result;
+	}
 
-<p>The whole test code is available at: <a href="http://demo1.checkout.fi/xml2.txt">http://demo1.checkout.fi/xml2.txt</a>.</p>
+	public function validateCheckout($data)
+	{
+		$generatedMac = strtoupper(hash_hmac("sha256", "{$data['VERSION']}&{$data['STAMP']}&{$data['REFERENCE']}&{$data['PAYMENT']}&{$data['STATUS']}&{$data['ALGORITHM']}", $this->password));
+		return ($data['MAC'] === $generatedMac);
+	}
 
-<h1 id="general-flow">General flow</h1>
+	public function isPaid($status)
+	{
+        return (in_array($status, array(2, 4, 5, 6, 7, 8, 9, 10)));
+	}
+}  // class Checkout
+```
 
-<h2 id="examples">Examples</h2>
+Test credentials
 
-<h3 id="payment-process">Payment process</h3>
+* Merchant Id (MERCHANT): `375917`
+* Secret Key: `SAIPPUAKAUPPIAS`
 
-<p>The following illustrates how the user moves in the payment process.</p>
+Please note that not all payment methods support testing. The payment methods are enabled that support testing payments. There might be some features that are not working as they are intended to work in the testing side due to limitations to external integrations.
 
-<p><img src="images/flow.png" alt="flow-diagram" /></p>
+The whole test code is available at: [http://demo1.checkout.fi/xml2.txt](http://demo1.checkout.fi/xml2.txt).
 
-<ol>
-<li>Buyer goes into Checkout.fi</li>
-<li>Chooses payment method</li>
-<li>Paid for the purchase</li>
-<li>Returns automatically to the merchant with the information of successful payment</li>
-<li>If for some reason the buyer did not return to the merchant, Checkout queries the payment method provider for the information of the payment</li>
-<li>Receive information from the payment method provider that the payment went through correctly</li>
-<li>Inform merchant of the successful payment.</li>
-<li>Merchant queries the payment status from Checkout</li>
-<li>Checkout replies with the status</li>
-</ol>
+# General flow
 
-<h1 id="tokenization-api">Tokenization API</h1>
+## Examples
 
-<h2 id="card-addition-tokenization">Card addition (tokenization)</h2>
+### Payment process
 
-<ol>
-<li>Use the Solinor card-addition described in the <a href="https://paymenthighway.fi/dev/#examples">Solinor &ldquo;STORE A CARD&rdquo; example</a> to fetch the Solinor-<code class="prettyprint">card_token</code>.</li>
-<li>Migrate the Solinor-<code class="prettyprint">card_token</code> to a Checkout-<code class="prettyprint">card_token</code> using the <a href="http://localhost:4567/#token-migration">Token migration API</a> described below.</li>
-<li>Use the Checkout-<code class="prettyprint">card_token</code> for making payments.</li>
-</ol>
+The following illustrates how the user moves in the payment process.
 
-<h2 id="token-migration">Token migration</h2>
+![flow-diagram](images/flow.png)
 
-<p>Will convert an external token (for example Solinor token) to a Checkout-token, which can then be used for making payments in Checkout Finland Payment API.</p>
+1. Buyer goes into Checkout.fi
+2. Chooses payment method
+3. Paid for the purchase
+4. Returns automatically to the merchant with the information of successful payment
+5. If for some reason the buyer did not return to the merchant, Checkout queries the payment method provider for the information of the payment
+6. Receive information from the payment method provider that the payment went through correctly
+7. Inform merchant of the successful payment.
+8. Merchant queries the payment status from Checkout
+9. Checkout replies with the status
 
-<p>If token has already been migrated earlier, statusCode &lsquo;201&rsquo; and Checkout-token will be returned.</p>
-<pre class="highlight plaintext"><code>POST /token/migrate HTTP/1.1
+# Tokenization API
+
+## Card addition (tokenization)
+
+1. Use the Solinor card-addition described in the [Solinor "STORE A CARD" example](https://paymenthighway.fi/dev/#examples) to fetch the Solinor-`card_token`.
+2. Migrate the Solinor-`card_token` to a Checkout-`card_token` using the [Token migration API](http://localhost:4567/#token-migration) described below.
+3. Use the Checkout-`card_token` for making payments.
+
+## Token migration
+
+Will convert an external token (for example Solinor token) to a Checkout-token, which can then be used for making payments in Checkout Finland Payment API.
+
+If token has already been migrated earlier, statusCode '201' and Checkout-token will be returned.
+
+```req
+POST /token/migrate HTTP/1.1
 Host: payment.checkout.fi
 Content-Type: application/x-www-form-urlencoded
 Cache-Control: no-cache
 
-merchant=375917&amp;provider_token=1296b3bc-407b-439b-9afd-c138e3ababa3
-</code></pre>
-<h3 id="http-request">HTTP Request</h3>
+merchant=375917&provider_token=1296b3bc-407b-439b-9afd-c138e3ababa3
+```
 
-<p><code class="prettyprint">POST https://payment.checkout.fi/token/migrate</code></p>
+### HTTP Request
 
-<table><thead>
-<tr>
-<th>Body field</th>
-<th>Type</th>
-<th>Description</th>
-<th>Notes</th>
-</tr>
-</thead><tbody>
-<tr>
-<td>provider_token</td>
-<td>UUID4</td>
-<td>External (e.g. Solinor) token</td>
-<td>1</td>
-</tr>
-<tr>
-<td>merchant</td>
-<td>N</td>
-<td>Merchant ID given by Checkout</td>
-<td></td>
-</tr>
-</tbody></table>
+`POST https://payment.checkout.fi/token/migrate`
 
-<p><em>Note 1.)</em> Must match ^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-(8|9|a|b)[a-f0-9]{3}-[a-f0-9]{12}$</p>
-<pre class="highlight xml"><code><span class="cp">&lt;?xml version="1.0" encoding="utf-8"?&gt;</span>
-<span class="nt">&lt;response&gt;</span>
-    <span class="nt">&lt;statusCode&gt;</span>200<span class="nt">&lt;/statusCode&gt;</span>
-    <span class="nt">&lt;statusText&gt;</span>Token was migrated successfully<span class="nt">&lt;/statusText&gt;</span>
-    <span class="nt">&lt;token&gt;</span>4c9705fd-c31d-4d2f-accf-f07b63eb80fe<span class="nt">&lt;/token&gt;</span>
-<span class="nt">&lt;/response&gt;</span>
-</code></pre>
-<h3 id="http-response-http-200">HTTP Response (HTTP 200)</h3>
+Body field     | Type  | Description                   | Notes
+---------------|-------|-------------------------------|-------
+provider_token | UUID4 | External (e.g. Solinor) token | 1
+merchant       | N     | Merchant ID given by Checkout |
 
-<table><thead>
-<tr>
-<th>Body field</th>
-<th>Type</th>
-<th>Description</th>
-</tr>
-</thead><tbody>
-<tr>
-<td>token</td>
-<td>UUID4</td>
-<td>Checkout-token</td>
-</tr>
-<tr>
-<td>statusCode</td>
-<td>SCODE</td>
-<td>Checkout status code, described in table below</td>
-</tr>
-<tr>
-<td>statusText</td>
-<td>AN</td>
-<td>status message, e.g. &#39;Token has already been migrated&hellip;&rsquo;</td>
-</tr>
-</tbody></table>
+*Note 1.)* Must match ^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-(8|9|a|b)[a-f0-9]{3}-[a-f0-9]{12}$
 
-<h4 id="status-codes-amp-texts">Status codes &amp; -texts</h4>
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<response>
+    <statusCode>200</statusCode>
+    <statusText>Token was migrated successfully</statusText>
+    <token>4c9705fd-c31d-4d2f-accf-f07b63eb80fe</token>
+</response>
+```
 
-<table><thead>
-<tr>
-<th>Status Code</th>
-<th>Status Text</th>
-</tr>
-</thead><tbody>
-<tr>
-<td>200</td>
-<td>Token was migrated successfully</td>
-</tr>
-<tr>
-<td>201</td>
-<td>Token has already been migrated, will return existing checkout-token</td>
-</tr>
-<tr>
-<td>400</td>
-<td>Merchant with given ID not found.</td>
-</tr>
-<tr>
-<td>500</td>
-<td>General internal server error</td>
-</tr>
-</tbody></table>
+### HTTP Response (HTTP 200)
 
-<h1 id="payment-apis">Payment APIs</h1>
+Body field | Type | Description
+-------------- | -------------- | --------------
+token | UUID4 | Checkout-token
+statusCode | SCODE | Checkout status code, described in table below
+statusText | AN | status message, e.g. 'Token has already been migrated...'
 
-<h2 id="payment">Payment</h2>
+#### Status codes & -texts
 
-<h3 id="url">URL</h3>
+Status Code | Status Text
+---- | -----------
+200 | Token was migrated successfully
+201 | Token has already been migrated, will return existing checkout-token
+400 | Merchant with given ID not found.
+500 | General internal server error
 
-<ul>
-<li><code class="prettyprint">POST</code>: https://payment.checkout.fi</li>
-</ul>
 
-<h3 id="field-descriptions">Field descriptions</h3>
 
-<blockquote>
-<p>Example uses the earlier created class (in testing stage)</p>
-</blockquote>
-<pre class="highlight php"><code>// Order information
-$coData = array();
+# Payment APIs
+
+## Payment
+
+### URL
+
+* `POST`: https://payment.checkout.fi
+
+### Field descriptions
+
+> Example uses the earlier created class (in testing stage)
+
+```php
+// Order information
+$coData	= array();
 $coData["stamp"] = time(); // unique timestamp
 $coData["reference"] = "12344";
 $coData["message"] = "Furniture materials\nSome wood, dust and magic fairies";
@@ -419,649 +268,240 @@ $coData["email"] = "support@checkout.fi";
 $coData["phone"] = "0800 552 010";
 
 // coObject for old method
-$coObject = $co-&gt;getCheckoutObject($coData);
+$coObject = $co->getCheckoutObject($coData);
 // change stamp for xml method so that the new call has unique stamp compared to the previous
 $coData['stamp'] = time() + 1;
-$response = $co-&gt;getCheckoutXML($coData); // get payment button data
+$response =	$co->getCheckoutXML($coData); // get payment button data
 $xml = simplexml_load_string($response);
-</code></pre>
-<table><thead>
-<tr>
-<th>#</th>
-<th>Description</th>
-<th>Name</th>
-<th>Value</th>
-<th>Format</th>
-<th>Required</th>
-</tr>
-</thead><tbody>
-<tr>
-<td>1</td>
-<td>Payment version. Always &ldquo;0001&rdquo;.</td>
-<td>VERSION</td>
-<td>&ldquo;0001&rdquo;</td>
-<td>AN 4</td>
-<td>Yes </td>
-</tr>
-<tr>
-<td>2</td>
-<td>Unique identifier for the payment in the context of the merchant. Has to be unique.</td>
-<td>STAMP</td>
-<td>unique_id</td>
-<td>AN 20</td>
-<td>Yes </td>
-</tr>
-<tr>
-<td>3</td>
-<td>Payment amount in cents.</td>
-<td>AMOUNT</td>
-<td>0</td>
-<td>N 8</td>
-<td>Yes </td>
-</tr>
-<tr>
-<td>4</td>
-<td>Payment reference number for the payment from the merchant.</td>
-<td>REFERENCE</td>
-<td>standard_reference</td>
-<td>AN 20</td>
-<td>Yes </td>
-</tr>
-<tr>
-<td>5</td>
-<td>Payment message from the Merchant to the buyer</td>
-<td>MESSAGE</td>
-<td>&ldquo;Hi, thanks for shopping.&rdquo;</td>
-<td>AN 1000</td>
-<td>No</td>
-</tr>
-<tr>
-<td>6</td>
-<td>Payment language. Options currently are: &ldquo;FI&rdquo;, &ldquo;EN&rdquo;, &ldquo;SE&rdquo;.</td>
-<td>LANGUAGE</td>
-<td>&ldquo;FI&rdquo;</td>
-<td>AN 2</td>
-<td>No</td>
-</tr>
-<tr>
-<td>7</td>
-<td>Merchant Id. Given identifier for the merchant (you get this from Checkout Finland), for testing: 375917</td>
-<td>MERCHANT</td>
-<td>375917</td>
-<td>AN 20</td>
-<td>Yes</td>
-</tr>
-<tr>
-<td>8</td>
-<td>Return callback. Called when the payment is successfully paid.</td>
-<td>RETURN</td>
-<td></td>
-<td>AN 300</td>
-<td>Yes</td>
-</tr>
-<tr>
-<td>9</td>
-<td>Cancel callback. Called when the payment is cancelled for some reason.</td>
-<td>CANCEL</td>
-<td></td>
-<td>AN 300</td>
-<td>Yes</td>
-</tr>
-<tr>
-<td>10</td>
-<td>Reject callback. Called when the payment is rejected. If not defined, on reject the cancel will be called.</td>
-<td>REJECT</td>
-<td></td>
-<td>AN 300</td>
-<td>No</td>
-</tr>
-<tr>
-<td>11</td>
-<td>Delayed callback. Called if the payment is delayed.</td>
-<td>DELAYED</td>
-<td></td>
-<td>AN 300</td>
-<td>No</td>
-</tr>
-<tr>
-<td>12</td>
-<td>Country, ISO-3166-1 alpha-3.</td>
-<td>COUNTRY</td>
-<td>&ldquo;FIN&rdquo;</td>
-<td>AN 3</td>
-<td>No</td>
-</tr>
-<tr>
-<td>13</td>
-<td>Valuutta. Currently always EUR.</td>
-<td>CURRENCY</td>
-<td>&ldquo;EUR&rdquo;</td>
-<td>AN 3</td>
-<td>Yes</td>
-</tr>
-<tr>
-<td>14</td>
-<td>Device type. <code class="prettyprint">1 = HTML</code>, <code class="prettyprint">10 = XML</code>.</td>
-<td>DEVICE</td>
-<td>1</td>
-<td>N 2</td>
-<td>Yes</td>
-</tr>
-<tr>
-<td>15</td>
-<td>Content of the purchase. <code class="prettyprint">1 = Normal</code>, <code class="prettyprint">2 = adult industry</code></td>
-<td>CONTENT</td>
-<td>1</td>
-<td>N 2</td>
-<td>Yes</td>
-</tr>
-<tr>
-<td>16</td>
-<td>Payment types.</td>
-<td>TYPE</td>
-<td>0</td>
-<td>N 1</td>
-<td>Yes</td>
-</tr>
-<tr>
-<td>17</td>
-<td>Checksum calculation algorithm. Use 3 commonly.</td>
-<td>ALGORITHM</td>
-<td>3</td>
-<td>N 1</td>
-<td>Yes</td>
-</tr>
-<tr>
-<td>18</td>
-<td>Delivery date. Format: YYYYMMDD.</td>
-<td>DELIVERY_DATE</td>
-<td>20171231</td>
-<td>N 8</td>
-<td>Yes</td>
-</tr>
-<tr>
-<td>19</td>
-<td>Required when using loaning services. First name of the buyer.</td>
-<td>FIRSTNAME</td>
-<td>&ldquo;Matti&rdquo;</td>
-<td>AN 40</td>
-<td>No</td>
-</tr>
-<tr>
-<td>20</td>
-<td>Required when using loaning services. Last name of the buyer.</td>
-<td>FAMILYNAME</td>
-<td>&ldquo;Meikäläinen&rdquo;</td>
-<td>AN 40</td>
-<td>No</td>
-</tr>
-<tr>
-<td>21</td>
-<td>Required when using loaning services. Delivery address.</td>
-<td>ADDRESS</td>
-<td>&ldquo;Maantie 123&rdquo;</td>
-<td>AN 40</td>
-<td>No</td>
-</tr>
-<tr>
-<td>22</td>
-<td>Required when using loaning services. Delivery post number.</td>
-<td>POSTCODE</td>
-<td>&ldquo;12345&rdquo;</td>
-<td>AN 14</td>
-<td>No</td>
-</tr>
-<tr>
-<td>23</td>
-<td>Required when using loaning services. Delivery postal office.</td>
-<td>POSTOFFICE</td>
-<td>&ldquo;&rdquo;</td>
-<td>AN 18</td>
-<td>No</td>
-</tr>
-<tr>
-<td>24</td>
-<td>Checksum is calculated by combining fields 1-23 and the secret key, separating them with a <code class="prettyprint">+</code>-sign</td>
-<td>MAC</td>
-<td></td>
-<td>AN 32</td>
-<td>Yes</td>
-</tr>
-<tr>
-<td>25</td>
-<td>Buyer email.</td>
-<td>EMAIL</td>
-<td></td>
-<td>AN 200</td>
-<td>No</td>
-</tr>
-<tr>
-<td>26</td>
-<td>Buyer phone number.</td>
-<td>PHONE</td>
-<td></td>
-<td>AN 30</td>
-<td>No</td>
-</tr>
-</tbody></table>
+```
 
-<p><em>Field 14</em>: If you want to use Checkouts payment wall, use HTML device type (end point). If the payment buttons are getting integrated as part of merchants online service, use XML. Checkout recommends using XML as it allows more tight integration and customization. HTTP POST is done by the integrating service and Checkout replies with XML payment wall that the service then can open and manipulate to render the payment wall.</p>
+| #  | Description | Name | Value | Format | Required |
+|----|-------------|------|-------|--------|----------|
+| 1 | Payment version. Always "0001". | VERSION | "0001" | AN 4 | Yes |
+| 2 | Unique identifier for the payment in the context of the merchant. Has to be unique. | STAMP | unique_id | AN 20 | Yes |
+| 3 | Payment amount in cents. | AMOUNT | 0 | N 8 | Yes |
+| 4 | Payment reference number for the payment from the merchant. | REFERENCE | standard_reference | AN 20 | Yes |
+| 5 | Payment message from the Merchant to the buyer | MESSAGE | "Hi, thanks for shopping." | AN 1000 | No |
+| 6 | Payment language. Options currently are: "FI", "EN", "SE". | LANGUAGE | "FI" | AN 2 | No |
+| 7 | Merchant Id. Given identifier for the merchant (you get this from Checkout Finland), for testing: 375917 | MERCHANT | 375917 | AN 20 | Yes |
+| 8 | Return callback. Called when the payment is successfully paid. | RETURN | | AN 300 | Yes |
+| 9 | Cancel callback. Called when the payment is cancelled for some reason. | CANCEL | | AN 300 | Yes |
+| 10 | Reject callback. Called when the payment is rejected. If not defined, on reject the cancel will be called. | REJECT | | AN 300 | No |
+| 11 | Delayed callback. Called if the payment is delayed. | DELAYED | | AN 300 | No |
+| 12 | Country, ISO-3166-1 alpha-3. | COUNTRY | "FIN" | AN 3 | No |
+| 13 | Valuutta. Currently always EUR. | CURRENCY | "EUR" | AN 3 | Yes |
+| 14 | Device type. `1 = HTML`, `10 = XML`. | DEVICE | 1 | N 2 | Yes |
+| 15 | Content of the purchase. `1 = Normal`, `2 = adult industry` | CONTENT | 1 | N 2 | Yes |
+| 16 | Payment types. | TYPE | 0 | N 1 | Yes |
+| 17 | Checksum calculation algorithm. Use 3 commonly. | ALGORITHM | 3 | N 1 | Yes |
+| 18 | Delivery date. Format: YYYYMMDD.  | DELIVERY_DATE | 20171231 | N 8 | Yes |
+| 19 | Required when using loaning services. First name of the buyer. | FIRSTNAME | "Matti" | AN 40 | No |
+| 20 | Required when using loaning services. Last name of the buyer. | FAMILYNAME | "Meikäläinen" | AN 40 | No |
+| 21 | Required when using loaning services. Delivery address. | ADDRESS | "Maantie 123" | AN 40 | No |
+| 22 | Required when using loaning services. Delivery post number. | POSTCODE | "12345" | AN 14 | No |
+| 23 | Required when using loaning services. Delivery postal office. | POSTOFFICE | "" | AN 18 | No |
+| 24 | Checksum is calculated by combining fields 1-23 and the secret key, separating them with a `+`-sign  | MAC |  | AN 32 | Yes |
+| 25 | Buyer email. | EMAIL | | AN 200 | No |
+| 26 | Buyer phone number. | PHONE | | AN 30 | No |
 
-<p><em>Field 17</em>: <code class="prettyprint">3 == sha256 and md5</code>. Payment is created with MD5 and the return checksum is calculated with SHA256.</p>
+*Field 14*: If you want to use Checkouts payment wall, use HTML device type (end point). If the payment buttons are getting integrated as part of merchants online service, use XML. Checkout recommends using XML as it allows more tight integration and customization. HTTP POST is done by the integrating service and Checkout replies with XML payment wall that the service then can open and manipulate to render the payment wall.
 
-<p><em>Field 18</em>: Best estimate of the delivery date of the product. If no date is known, use the latest possible date. Products that require loan are sent to the buyer by the delivery date.</p>
+*Field 17*: `3 == sha256 and md5`. Payment is created with MD5 and the return checksum is calculated with SHA256.
 
-<h3 id="calculating-the-checksum">Calculating the checksum</h3>
+*Field 18*: Best estimate of the delivery date of the product. If no date is known, use the latest possible date. Products that require loan are sent to the buyer by the delivery date.
 
-<p>When calculating the checksum use the fields 1 to 23 and the security key as the last field. The fields are separated from each other with <code class="prettyprint">+</code> -sign. If a field is empty, use empty string in the calculation. The calculated checksum needs to be transferred in capitalized characters. Check is done with the method defined in field 17.</p>
+### Calculating the checksum
 
-<blockquote>
-<p>Example of calculating the MD5</p>
-</blockquote>
-<pre class="highlight php"><code>MD5(
+When calculating the checksum use the fields 1 to 23 and the security key as the last field. The fields are separated from each other with `+` -sign. If a field is empty, use empty string in the calculation. The calculated checksum needs to be transferred in capitalized characters. Check is done with the method defined in field 17.
+
+> Example of calculating the MD5
+
+```php
+MD5(
   VERSION+STAMP+AMOUNT+REFERENCE+MESSAGE+
   LANGUAGE+MERCHANT+RETURN+CANCEL+REJECT+
   DELAYED+COUNTRY+CURRENCY+DEVICE+CONTENT+
   TYPE+ALGORITHM+DELIVERY_DATE+FIRSTNAME+
   FAMILYNAME+ADDRESS+POSTCODE+POSTOFFICE+SECRET_KEY
 )
-</code></pre>
-<h3 id="response">Response</h3>
+```
 
-<p>The response will arrive with the users browser, if the user returns to the service. If the for some reason this does not happen, Checkout will send a HTTP GET -request to the same address the browser was supposed to be redirected to, the service has to accept the incoming HTTP GET from Checkout even though it might lack cookies or a session. The message will be checked with MAC -check.</p>
+### Response
 
-<p>Additional information on how to do the check can be found from the example file:  <a href="http://demo1.checkout.fi/xml2.txt">http://demo1.checkout.fi/xml2.txt</a>.</p>
+The response will arrive with the users browser, if the user returns to the service. If the for some reason this does not happen, Checkout will send a HTTP GET -request to the same address the browser was supposed to be redirected to, the service has to accept the incoming HTTP GET from Checkout even though it might lack cookies or a session. The message will be checked with MAC -check.
 
-<table><thead>
-<tr>
-<th> #</th>
-<th> Description</th>
-<th> Field</th>
-<th>Value</th>
-</tr>
-</thead><tbody>
-<tr>
-<td>1</td>
-<td>Payment version. Always &ldquo;0001&rdquo;.</td>
-<td>VERSION</td>
-<td>&ldquo;0001&rdquo;</td>
-</tr>
-<tr>
-<td>2</td>
-<td>Unique identifier for the payment in the context of the merchant. Has to be unique.</td>
-<td>STAMP</td>
-<td>unique_id</td>
-</tr>
-<tr>
-<td>3</td>
-<td>Payment reference number for the payment from the merchant.</td>
-<td>REFERENCE</td>
-<td>standard_reference</td>
-</tr>
-<tr>
-<td>4</td>
-<td>Payment archive id</td>
-<td>PAYMENT</td>
-<td>Checkouts unique ID for the payment.</td>
-</tr>
-<tr>
-<td>5</td>
-<td>Payment status</td>
-<td>STATUS</td>
-<td>2 = success</td>
-</tr>
-<tr>
-<td>6 </td>
-<td> Used algorithm. Use 3.</td>
-<td>ALGORTH</td>
-<td> 3</td>
-</tr>
-<tr>
-<td>7</td>
-<td>MAC check</td>
-<td>MAC</td>
-<td></td>
-</tr>
-</tbody></table>
+Additional information on how to do the check can be found from the example file:  [http://demo1.checkout.fi/xml2.txt](http://demo1.checkout.fi/xml2.txt).
 
-<p>Responses checksum is calculated using HMAC SHA256 the following way:</p>
+| # | Description | Field | Value |
+|---|-------------|-------|-------|
+| 1 | Payment version. Always "0001". | VERSION | "0001" |
+| 2 | Unique identifier for the payment in the context of the merchant. Has to be unique. | STAMP | unique_id |
+| 3 | Payment reference number for the payment from the merchant. | REFERENCE | standard_reference |
+| 4 | Payment archive id | PAYMENT | Checkouts unique ID for the payment. |
+| 5 | Payment status | STATUS | 2 = success | 
+| 6 | Used algorithm. Use 3. | ALGORTH | 3 |
+| 7 | MAC check | MAC |
 
-<p><code class="prettyprint">HASH_HMAC_SHA256(SECURITY_KEY, &quot;VERSION&amp;STAMP&amp;REFERENCE&amp;PAYMENT&amp;STATUS&amp;ALGORITHM&quot;)</code></p>
+Responses checksum is calculated using HMAC SHA256 the following way:
 
-<p>Field separator is the <code class="prettyprint">&amp;</code>-sign.</p>
+`HASH_HMAC_SHA256(SECURITY_KEY, "VERSION&STAMP&REFERENCE&PAYMENT&STATUS&ALGORITHM")`
 
-<blockquote>
-<p>Example of implementing the check from the demo1.checkout.fi/xml2.txt</p>
-</blockquote>
-<pre class="highlight php"><code>$generatedMac=strtoupper(hash_hmac("sha256","{$data['VERSION']}<span class="ni">&amp;{$data['STAMP']}&amp;{$data['REFERENCE']}&amp;{$data['PAYMENT']}&amp;{$data['STATUS']}&amp;{$data['ALGORITHM']}",$this-&gt;password));</span>
-</code></pre>
-<h3 id="payment-statuses">Payment Statuses</h3>
+Field separator is the `&`-sign.
 
-<table><thead>
-<tr>
-<th>Status</th>
-<th> Description</th>
-</tr>
-</thead><tbody>
-<tr>
-<td>-10</td>
-<td>Payment refunded to the buyer</td>
-</tr>
-<tr>
-<td>-4</td>
-<td>Payment cannot be found</td>
-</tr>
-<tr>
-<td>-3</td>
-<td>Payment timeout</td>
-</tr>
-<tr>
-<td>-2</td>
-<td>Payment cancelled by Checkout or payment method provider</td>
-</tr>
-<tr>
-<td>-1</td>
-<td>Payment cancelled by buyer</td>
-</tr>
-<tr>
-<td>1 </td>
-<td>Payment pending</td>
-</tr>
-<tr>
-<td>2</td>
-<td> Payment approved</td>
-</tr>
-<tr>
-<td>3</td>
-<td>Payment delayed</td>
-</tr>
-<tr>
-<td>4</td>
-<td>This status is saved for future additions. Works like status 3.</td>
-</tr>
-<tr>
-<td>5</td>
-<td>This status is saved for future additions. Approved payment.</td>
-</tr>
-<tr>
-<td>6</td>
-<td>Payment frozen</td>
-</tr>
-<tr>
-<td>7</td>
-<td> Payment method provider has accepted payment and it required approval</td>
-</tr>
-<tr>
-<td> 8</td>
-<td> Payment method provider has accepted payment and it has been approved</td>
-</tr>
-<tr>
-<td>9</td>
-<td>This status is saved for future additions.</td>
-</tr>
-<tr>
-<td>10</td>
-<td>Payment settled</td>
-</tr>
-</tbody></table>
+> Example of implementing the check from the demo1.checkout.fi/xml2.txt
 
-<ul>
-<li>Payment has been charged or is approved when the payment is in statuses: 2, 4, 5, 6, 7, 8, 9, 10.</li>
-<li>Retailer or a merchant can approve the order when the status is 2, 5, 6, 7, 8, 9 or 10.</li>
-</ul>
+```php
+$generatedMac=strtoupper(hash_hmac("sha256","{$data['VERSION']}&{$data['STAMP']}&{$data['REFERENCE']}&{$data['PAYMENT']}&{$data['STATUS']}&{$data['ALGORITHM']}",$this->password));
+```
 
-<h2 id="shop-in-shop-payment">Shop-in-shop payment</h2>
 
-<p>Payments for shop-in-shop customers. Includes &ldquo;aggregate merchant&rdquo; (master merchant) and items with submerchants.
-Making SiS-payments with single items/submerchants is ok.</p>
+### Payment Statuses
 
-<p>If credit card token is sent to PaymentAPI, the API will use tokenized card for payment. If no token is sent, the user will be guided to credit card information input (payment).</p>
+| Status | Description |
+|---------------|-------------|
+| -10 | Payment refunded to the buyer |
+| -4 | Payment cannot be found |
+| -3 | Payment timeout |
+| -2 | Payment cancelled by Checkout or payment method provider |
+| -1 | Payment cancelled by buyer |
+| 1 | Payment pending |
+| 2 | Payment approved |
+| 3 | Payment delayed |
+| 4 | This status is saved for future additions. Works like status 3. |
+| 5 | This status is saved for future additions. Approved payment. |
+| 6 | Payment frozen |
+| 7 | Payment method provider has accepted payment and it required approval |
+| 8 | Payment method provider has accepted payment and it has been approved |
+| 9 | This status is saved for future additions.|
+| 10 | Payment settled |
 
-<p>Commit can be used with token-payments. If commit is true, the tokenized credit card will be charged. If commit is false, it will make a payment reservation (authorization hold) on the card. This authorization hold will be committed or retracted later through the &#39;commit payment&rsquo; or &#39;retract payment&rsquo; API&rsquo;s.</p>
+* Payment has been charged or is approved when the payment is in statuses: 2, 4, 5, 6, 7, 8, 9, 10.
+* Retailer or a merchant can approve the order when the status is 2, 5, 6, 7, 8, 9 or 10.
 
-<p>Actual HTTP request is made using two name/value pairs containing </p>
+## Shop-in-shop payment
 
-<blockquote>
-<p>HTTP-request</p>
-</blockquote>
-<pre class="highlight plaintext"><code>POST / HTTP/1.1
+Payments for shop-in-shop customers. Includes "aggregate merchant" (master merchant) and items with submerchants.
+Making SiS-payments with single items/submerchants is ok.
+
+If credit card token is sent to PaymentAPI, the API will use tokenized card for payment. If no token is sent, the user will be guided to credit card information input (payment).
+
+Commit can be used with token-payments. If commit is true, the tokenized credit card will be charged. If commit is false, it will make a payment reservation (authorization hold) on the card. This authorization hold will be committed or retracted later through the 'commit payment' or 'retract payment' API's.
+
+Actual HTTP request is made using two name/value pairs containing 
+
+>HTTP-request
+
+```req
+POST / HTTP/1.1
 Host: payment.checkout.fi
 Content-Type: application/x-www-form-urlencoded
 Cache-Control: no-cache
 
-CHECKOUT_XML=&lt;base64 encoded xml string&gt;&amp;CHECKOUT_MAC=&lt;string&gt;
-</code></pre>
-<h3 id="http-request">HTTP Request</h3>
+CHECKOUT_XML=<base64 encoded xml string>&CHECKOUT_MAC=<string>
+```
 
-<ul>
-<li><code class="prettyprint">POST</code>: https://payment.checkout.fi</li>
-</ul>
+### HTTP Request
 
-<table><thead>
-<tr>
-<th>Name</th>
-<th> Description</th>
-</tr>
-</thead><tbody>
-<tr>
-<td>CHECKOUT_MAC</td>
-<td>MD5 hash calculated from sent values</td>
-</tr>
-<tr>
-<td>CHECKOUT_XML</td>
-<td>Base64 encoded representation of the XML string. XML explained below</td>
-</tr>
-</tbody></table>
+* `POST`: https://payment.checkout.fi
 
-<p>Calculating MD5 hash for CHECKOUT_MAC field: </p>
 
-<p>md5( &lt;xml_string&gt; + &rsquo;+&rsquo; + &lt;aggregator_merchant_secret&gt; )</p>
 
-<p>! Note the plus sign between strings is part of a string not concatenating operator etc.</p>
+| Name | Description |
+|------|-------------|
+| CHECKOUT_MAC | MD5 hash calculated from sent values |
+| CHECKOUT_XML | Base64 encoded representation of the XML string. XML explained below |
 
-<blockquote>
-<p>Create SiS payment XML format</p>
-</blockquote>
-<pre class="highlight xml"><code><span class="cp">&lt;?xml version="1.0"?&gt;</span>
-<span class="nt">&lt;checkout</span> <span class="na">xmlns=</span><span class="s">"http://checkout.fi/request"</span><span class="nt">&gt;</span>
-  <span class="nt">&lt;request</span> <span class="na">type=</span><span class="s">"aggregator"</span> <span class="na">test=</span><span class="s">"false"</span><span class="nt">&gt;</span>
-      <span class="nt">&lt;aggregator&gt;&lt;/aggregator&gt;</span>
-      <span class="nt">&lt;version&gt;&lt;/version&gt;</span>
-      <span class="nt">&lt;stamp&gt;&lt;/stamp&gt;</span>
-      <span class="nt">&lt;reference&gt;&lt;/reference&gt;</span>
-      <span class="nt">&lt;description&gt;&lt;/description&gt;</span>
-      <span class="nt">&lt;device&gt;&lt;/device&gt;</span>
-      <span class="nt">&lt;content&gt;&lt;/content&gt;</span>
-      <span class="nt">&lt;type&gt;&lt;/type&gt;</span>
-      <span class="nt">&lt;algorithm&gt;&lt;/algorithm&gt;</span>
-      <span class="nt">&lt;currency&gt;&lt;/currency&gt;</span>
-      <span class="nt">&lt;token&gt;&lt;/token&gt;</span>
-      <span class="nt">&lt;commit&gt;&lt;/commit&gt;</span>
-      <span class="nt">&lt;items&gt;</span>
-          <span class="nt">&lt;item&gt;</span>
-              <span class="nt">&lt;code&gt;&lt;/code&gt;</span>
-              <span class="nt">&lt;stamp&gt;&lt;/stamp&gt;</span>
-              <span class="nt">&lt;description&gt;&lt;/description&gt;</span>
-              <span class="nt">&lt;price</span> <span class="na">currency=</span><span class="s">"EUR"</span> <span class="na">vat=</span><span class="s">"23"</span><span class="nt">&gt;&lt;/price&gt;</span>
-              <span class="nt">&lt;merchant&gt;&lt;/merchant&gt;</span>
-              <span class="nt">&lt;control&gt;&lt;/control&gt;</span>
-          <span class="nt">&lt;/item&gt;</span>
-          <span class="nt">&lt;amount</span> <span class="na">currency=</span><span class="s">"EUR"</span><span class="nt">&gt;&lt;/amount&gt;</span>
-      <span class="nt">&lt;/items&gt;</span>
-      <span class="nt">&lt;buyer&gt;</span>
-          <span class="nt">&lt;company</span> <span class="na">vatid=</span><span class="s">""</span><span class="nt">&gt;&lt;/company&gt;</span>
-          <span class="nt">&lt;firstname&gt;&lt;/firstname&gt;</span>
-          <span class="nt">&lt;familyname&gt;&lt;/familyname&gt;</span>
-          <span class="nt">&lt;address&gt;</span><span class="cp">&lt;![CDATA[ ]]&gt;</span><span class="nt">&lt;/address&gt;</span>
-          <span class="nt">&lt;postalcode&gt;&lt;/postalcode&gt;</span>
-          <span class="nt">&lt;postaloffice&gt;&lt;/postaloffice&gt;</span>
-          <span class="nt">&lt;country&gt;&lt;/country&gt;</span>
-          <span class="nt">&lt;email&gt;&lt;/email&gt;</span>
-          <span class="nt">&lt;gsm&gt;&lt;/gsm&gt;</span>
-          <span class="nt">&lt;language&gt;&lt;/language&gt;</span>
-      <span class="nt">&lt;/buyer&gt;</span>
-      <span class="nt">&lt;delivery&gt;</span>
-          <span class="nt">&lt;date&gt;&lt;/date&gt;</span>
-          <span class="nt">&lt;company</span> <span class="na">vatid=</span><span class="s">""</span><span class="nt">&gt;&lt;/company&gt;</span>
-          <span class="nt">&lt;firstname&gt;&lt;/firstname&gt;</span>
-          <span class="nt">&lt;familyname&gt;&lt;/familyname&gt;</span>
-          <span class="nt">&lt;address&gt;</span><span class="cp">&lt;![CDATA[ ]]&gt;</span><span class="nt">&lt;/address&gt;</span>
-          <span class="nt">&lt;postalcode&gt;&lt;/postalcode&gt;</span>
-          <span class="nt">&lt;postaloffice&gt;&lt;/postaloffice&gt;</span>
-          <span class="nt">&lt;country&gt;&lt;/country&gt;</span>
-          <span class="nt">&lt;email&gt;&lt;/email&gt;</span>
-          <span class="nt">&lt;gsm&gt;&lt;/gsm&gt;</span>
-          <span class="nt">&lt;language&gt;&lt;/language&gt;</span>
-      <span class="nt">&lt;/delivery&gt;</span>
-      <span class="nt">&lt;control</span> <span class="na">type=</span><span class="s">"default"</span><span class="nt">&gt;</span>
-          <span class="nt">&lt;return&gt;&lt;/return&gt;</span>
-          <span class="nt">&lt;reject&gt;&lt;/reject&gt;</span>
-          <span class="nt">&lt;cancel&gt;&lt;/cancel&gt;</span>
-      <span class="nt">&lt;/control&gt;</span>
-  <span class="nt">&lt;/request&gt;</span>
-<span class="nt">&lt;/checkout&gt;</span>
-</code></pre>
-<h3 id="xml-data">XML data</h3>
+Calculating MD5 hash for CHECKOUT_MAC field: 
 
-<table><thead>
-<tr>
-<th>Name</th>
-<th>Description</th>
-<th>Value</th>
-<th>Format</th>
-<th>Required</th>
-<th>Notes</th>
-</tr>
-</thead><tbody>
-<tr>
-<td>AGGREGATOR</td>
-<td>Merchant Id of aggregate merchant. Given identifier for the merchant (you get this from Checkout Finland), for testing: 375917</td>
-<td>375917</td>
-<td>AN 20</td>
-<td>&cross;</td>
-<td></td>
-</tr>
-<tr>
-<td>VERSION</td>
-<td>Payment version.<br /><code class="prettyprint">Always &quot;0002&quot;</code></td>
-<td>&ldquo;0002&rdquo;</td>
-<td>AN 4</td>
-<td>&cross; </td>
-<td></td>
-</tr>
-<tr>
-<td>STAMP</td>
-<td>Unique identifier for the payment in the context of the merchant. Has to be unique.</td>
-<td>unique_id</td>
-<td>AN 20</td>
-<td>&cross; </td>
-<td></td>
-</tr>
-<tr>
-<td>REFERENCE</td>
-<td>Payment reference number for the payment from the merchant.</td>
-<td>standard_reference</td>
-<td>AN 20</td>
-<td>&cross;</td>
-<td></td>
-</tr>
-<tr>
-<td>DESCRIPTION</td>
-<td>Description of payment/purchase</td>
-<td>&ldquo;Item 1#, Item #2&hellip;&rdquo;</td>
-<td>AN 1000</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td>DEVICE</td>
-<td>Device type<br /><code class="prettyprint">1 = HTML</code>, <code class="prettyprint">10 = XML</code></td>
-<td>1</td>
-<td>N 2</td>
-<td>&cross;</td>
-<td></td>
-</tr>
-<tr>
-<td>CONTENT</td>
-<td>Content of the purchase.<br /><code class="prettyprint">1 = Normal</code>, <code class="prettyprint">2 = adult industry</code></td>
-<td>1</td>
-<td>N 2</td>
-<td>(&cross;)</td>
-<td>1</td>
-</tr>
-<tr>
-<td>TYPE</td>
-<td>Payment types. See payment types below.</td>
-<td>0</td>
-<td>N 1</td>
-<td>(&cross;)</td>
-<td>1</td>
-</tr>
-<tr>
-<td>ALGORITHM</td>
-<td>Checksum calculation algorithm. Use 3 commonly.</td>
-<td>3</td>
-<td>N 1</td>
-<td>&cross;</td>
-<td></td>
-</tr>
-<tr>
-<td>CURRENCY</td>
-<td>Currency. Currently always EUR.</td>
-<td>&ldquo;EUR&rdquo;</td>
-<td>AN 3</td>
-<td>&cross;</td>
-<td></td>
-</tr>
-<tr>
-<td>TOKEN</td>
-<td>Token of credit card used on tokenized payments</td>
-<td>&ldquo;f47ac10b-58cc-4372-a567-0e02b2c3d479&rdquo;</td>
-<td>UUID4</td>
-<td>(&cross;)</td>
-<td>2, 4</td>
-</tr>
-<tr>
-<td>COMMIT</td>
-<td>Commit token payment (if false, makes a reservation). Field is ignored if not tokenized payment. Default value is TRUE.</td>
-<td>true/false</td>
-<td>BOOL</td>
-<td>(&cross;)</td>
-<td>2</td>
-</tr>
-<tr>
-<td>ITEMS</td>
-<td><code class="prettyprint">Items</code> XML element</td>
-<td>XML</td>
-<td>XML</td>
-<td>&cross;</td>
-<td></td>
-</tr>
-<tr>
-<td>BUYER</td>
-<td><code class="prettyprint">Buyer</code> XML element</td>
-<td>XML</td>
-<td>XML</td>
-<td>&cross;</td>
-<td></td>
-</tr>
-<tr>
-<td>DELIVERY</td>
-<td><code class="prettyprint">Delivery</code> XML element</td>
-<td>XML</td>
-<td>XML</td>
-<td>&cross;</td>
-<td></td>
-</tr>
-<tr>
-<td>CONTROL</td>
-<td><code class="prettyprint">Control</code> XML element</td>
-<td>XML</td>
-<td>XML</td>
-<td>&cross;</td>
-<td></td>
-</tr>
-</tbody></table>
+md5( &lt;xml_string&gt; + '+' + &lt;aggregator_merchant_secret&gt; )
+
+! Note the plus sign between strings is part of a string not concatenating operator etc.
+
+>Create SiS payment XML format
+
+```xml
+<?xml version="1.0"?>
+<checkout xmlns="http://checkout.fi/request">
+  <request type="aggregator" test="false">
+      <aggregator></aggregator>
+      <version></version>
+      <stamp></stamp>
+      <reference></reference>
+      <description></description>
+      <device></device>
+      <content></content>
+      <type></type>
+      <algorithm></algorithm>
+      <currency></currency>
+      <token></token>
+      <commit></commit>
+      <items>
+          <item>
+              <code></code>
+              <stamp></stamp>
+              <description></description>
+              <price currency="EUR" vat="23"></price>
+              <merchant></merchant>
+              <control></control>
+          </item>
+          <amount currency="EUR"></amount>
+      </items>
+      <buyer>
+          <company vatid=""></company>
+          <firstname></firstname>
+          <familyname></familyname>
+          <address><![CDATA[ ]]></address>
+          <postalcode></postalcode>
+          <postaloffice></postaloffice>
+          <country></country>
+          <email></email>
+          <gsm></gsm>
+          <language></language>
+      </buyer>
+      <delivery>
+          <date></date>
+          <company vatid=""></company>
+          <firstname></firstname>
+          <familyname></familyname>
+          <address><![CDATA[ ]]></address>
+          <postalcode></postalcode>
+          <postaloffice></postaloffice>
+          <country></country>
+          <email></email>
+          <gsm></gsm>
+          <language></language>
+      </delivery>
+      <control type="default">
+          <return></return>
+          <reject></reject>
+          <cancel></cancel>
+      </control>
+  </request>
+</checkout>
+```
+
+
+
+### XML data
+
+| Name        | Description  | Value | Format | Required | Notes |
+|-------------|------|-------|--------|----------|-------|
+| AGGREGATOR  | Merchant Id of aggregate merchant. Given identifier for the merchant (you get this from Checkout Finland), for testing: 375917 | 375917 | AN 20 | &cross; | |
+| VERSION     | Payment version.<br />`Always "0002"` |  "0002" | AN 4 | &cross; | |
+| STAMP       | Unique identifier for the payment in the context of the merchant. Has to be unique. | unique_id | AN 20 | &cross; | |
+| REFERENCE   | Payment reference number for the payment from the merchant. |  standard_reference | AN 20 | &cross; | |
+| DESCRIPTION | Description of payment/purchase |  "Item 1#, Item #2..." | AN 1000 |  | |
+| DEVICE      | Device type<br />`1 = HTML`, `10 = XML` |  1 | N 2 | &cross; | |
+| CONTENT     | Content of the purchase.<br />`1 = Normal`, `2 = adult industry` |  1 | N 2 | (&cross;) | 1 |
+| TYPE        | Payment types. See payment types below. |  0 | N 1 | (&cross;) | 1 |
+| ALGORITHM   | Checksum calculation algorithm. Use 3 commonly. |  3 | N 1 | &cross; | |
+| CURRENCY    | Currency. Currently always EUR. | "EUR" | AN 3 | &cross; | |
+| TOKEN       | Token of credit card used on tokenized payments | "f47ac10b-58cc-4372-a567-0e02b2c3d479" | UUID4 | (&cross;) |  2, 4 |
+| COMMIT      | Commit token payment (if false, makes a reservation). Field is ignored if not tokenized payment. Default value is TRUE. | true/false | BOOL | (&cross;) |  2 |
+| ITEMS       | `Items` XML element | XML | XML | &cross;  | |
+| BUYER       | `Buyer` XML element | XML | XML | &cross;  | |
+| DELIVERY    | `Delivery` XML element | XML | XML | &cross;  | |
+| CONTROL     | `Control` XML element | XML | XML | &cross;  | |
 
 <!-- 
 Are these relevat to this API???
@@ -1069,926 +509,332 @@ Are these relevat to this API???
 | Checksum is calculated by combining fields 1-23 and the secret key, separating them with a `+`-sign  | MAC |  | AN 32 | &cross; | 2 |
 -->
 
-<p><em>Note 1.)</em> Required only with non-token -payments.</p>
+*Note 1.)* Required only with non-token -payments.
 
-<p><em>Note 2.)</em> Required only on tokenized payments</p>
+*Note 2.)* Required only on tokenized payments
 
-<p><em>Note 3.)</em> For calculating checksum, check above on Payment-API.</p>
+*Note 3.)* For calculating checksum, check above on Payment-API.
 
-<p><em>Note 4.)</em> Must match ^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-(8|9|a|b)[a-f0-9]{3}-[a-f0-9]{12}$</p>
+*Note 4.)* Must match ^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-(8|9|a|b)[a-f0-9]{3}-[a-f0-9]{12}$
 
-<h3 id="xml-element-items">XML-element : Items</h3>
+### XML-element : Items
 
-<table><thead>
-<tr>
-<th>Name</th>
-<th>Description</th>
-<th>Value</th>
-<th>Format</th>
-<th>Required</th>
-<th>Notes</th>
-</tr>
-</thead><tbody>
-<tr>
-<td>ITEM</td>
-<td>1 to n <code class="prettyprint">Item</code> XML elements</td>
-<td>XML</td>
-<td>XML</td>
-<td>&cross;</td>
-<td></td>
-</tr>
-<tr>
-<td>AMOUNT</td>
-<td>Amount in cents. Has to be exact total from sum of the items prices</td>
-<td>1000</td>
-<td>N</td>
-<td>&cross;</td>
-<td></td>
-</tr>
-</tbody></table>
+| Name   | Description  | Value | Format | Required | Notes |
+|--------|------|-------|--------|----------|-------|
+| ITEM   | 1 to n `Item` XML elements | XML | XML | &cross;  | |
+| AMOUNT | Amount in cents. Has to be exact total from sum of the items prices | 1000 | N | &cross; | |
 
-<h3 id="xml-element-item">XML-element : Item</h3>
+### XML-element : Item
 
-<table><thead>
-<tr>
-<th>Name</th>
-<th>Description</th>
-<th>Value</th>
-<th>Format</th>
-<th>Required</th>
-<th>Notes</th>
-</tr>
-</thead><tbody>
-<tr>
-<td>DESCRIPTION</td>
-<td>Description of payment/purchase</td>
-<td>&ldquo;Product #1&rdquo;</td>
-<td>AN</td>
-<td>&cross;</td>
-<td></td>
-</tr>
-<tr>
-<td>PRICE</td>
-<td>Price of item in cents</td>
-<td>50</td>
-<td>N</td>
-<td>&cross;</td>
-<td></td>
-</tr>
-<tr>
-<td>MERCHANT</td>
-<td>Merchant id of the shop selling the item (SiS-shop)</td>
-<td>585858</td>
-<td>N</td>
-<td>&cross;</td>
-<td></td>
-</tr>
-<tr>
-<td>CONTROL</td>
-<td>Holds a list of JSON objects that define the commission which SiS-merchant will receive. Not required if no commission given to SiS-merchant</td>
-<td></td>
-<td>JSON</td>
-<td>(&cross;)</td>
-<td>1</td>
-</tr>
-<tr>
-<td>CODE</td>
-<td>Product id/sku/code</td>
-<td></td>
-<td>AN</td>
-<td></td>
-<td></td>
-</tr>
-</tbody></table>
+| Name        | Description  | Value | Format | Required | Notes |
+|-------------|------|-------|--------|----------|-------|
+| DESCRIPTION | Description of payment/purchase | "Product #1" | AN | &cross; | |
+| PRICE       | Price of item in cents |  50 | N | &cross; | |
+| MERCHANT    | Merchant id of the shop selling the item (SiS-shop) |  585858 | N | &cross; | |
+| CONTROL     | Holds a list of JSON objects that define the commission which SiS-merchant will receive. Not required if no commission given to SiS-merchant |  | JSON | (&cross;) | 1 |
+| CODE        | Product id/sku/code |  | AN |  | |
 
-<p><em>Note 1.)</em> Required if commissions are to be deducted</p>
+*Note 1.)* Required if commissions are to be deducted
 
-<h3 id="json-object-in-item-control-field">JSON object in Item.control field</h3>
+### JSON object in Item.control field
 
-<blockquote>
-<p>JSON data in ITEMS.ITEM.CONTROL field</p>
-</blockquote>
-<pre class="highlight plaintext"><code>[
+>JSON data in ITEMS.ITEM.CONTROL field
+
+```JSON
+[
     {
-    a : &lt;amountm in euro cents&gt;,
-    m : &lt;merchant id&gt;,
-    d : &lt;description&gt;
+    a : <amountm in euro cents>,
+    m : <merchant id>,
+    d : <description>
     }
 ]
-</code></pre>
-<table><thead>
-<tr>
-<th>Name</th>
-<th>Description</th>
-<th>Value</th>
-<th>Format</th>
-<th>Required</th>
-<th>Notes</th>
-</tr>
-</thead><tbody>
-<tr>
-<td>a</td>
-<td>Amount of commission in cents</td>
-<td>48</td>
-<td>N</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td>m</td>
-<td>Merchant ID, that will receive the commission from the payment (usually same as ITEM.MERCHANT)</td>
-<td>585858</td>
-<td>N</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td>d</td>
-<td>Message/description of payment</td>
-<td>&ldquo;commission for item #1&rdquo;</td>
-<td>AN</td>
-<td></td>
-<td></td>
-</tr>
-</tbody></table>
+```
 
-<h3 id="payment-types">Payment types</h3>
+| Name| Description  | Value | Format | Required | Notes |
+|-------------|------|-------|--------|----------|-------|
+|   a | Amount of commission in cents | 48 | N | | |
+|   m | Merchant ID, that will receive the commission from the payment (usually same as ITEM.MERCHANT) | 585858 | N | | |
+|   d | Message/description of payment | "commission for item #1" | AN | | |
 
-<table><thead>
-<tr>
-<th>Type</th>
-<th>Description</th>
-<th>Notes</th>
-</tr>
-</thead><tbody>
-<tr>
-<td>0</td>
-<td>Normal payment</td>
-<td></td>
-</tr>
-<tr>
-<td>9</td>
-<td>Shop in shop payment</td>
-<td></td>
-</tr>
-</tbody></table>
+### Payment types
 
-<h3 id="xml-element-buyer">XML-element : Buyer</h3>
+ Type| Description          | Notes 
+-----|----------------------|-------
+   0 | Normal payment       |
+   9 | Shop in shop payment | 
 
-<table><thead>
-<tr>
-<th>Name</th>
-<th>Description</th>
-<th>Value</th>
-<th>Format</th>
-<th>Required</th>
-<th>Notes</th>
-</tr>
-</thead><tbody>
-<tr>
-<td>FIRSTNAME</td>
-<td>Required when using loaning services. First name of the buyer.</td>
-<td>&ldquo;Matti&rdquo;</td>
-<td>AN 40</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td>FAMILYNAME</td>
-<td>Required when using loaning services. Last name of the buyer.</td>
-<td>&ldquo;Meikäläinen&rdquo;</td>
-<td>AN 40</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td>ADDRESS</td>
-<td>Required when using loaning services. Delivery address.</td>
-<td>&ldquo;Maantie 123&rdquo;</td>
-<td>AN 40</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td>POSTCODE</td>
-<td>Required when using loaning services. Delivery post number.</td>
-<td>&ldquo;12345&rdquo;</td>
-<td>AN 14</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td>POSTOFFICE</td>
-<td>Required when using loaning services. Delivery postal office.</td>
-<td>&ldquo;&rdquo;</td>
-<td>AN 18</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td>COUNTRY</td>
-<td>Country, ISO-3166-1 alpha-3.</td>
-<td>&ldquo;FIN&rdquo;</td>
-<td>AN 3</td>
-<td>No</td>
-<td></td>
-</tr>
-<tr>
-<td>EMAIL</td>
-<td>Buyer email</td>
-<td></td>
-<td>AN 200</td>
-<td>No</td>
-<td></td>
-</tr>
-<tr>
-<td>PHONE</td>
-<td>Buyer phone number</td>
-<td></td>
-<td>AN 30</td>
-<td>No</td>
-<td></td>
-</tr>
-<tr>
-<td>LANGUAGE</td>
-<td>Payment language. Options currently are: &ldquo;FI&rdquo;, &ldquo;EN&rdquo;, &ldquo;SE&rdquo;.</td>
-<td>&ldquo;FI&rdquo;</td>
-<td>AN 2</td>
-<td></td>
-<td></td>
-</tr>
-</tbody></table>
+### XML-element : Buyer
 
-<h3 id="xml-element-delivery">XML-element : Delivery</h3>
+| Name       | Description | Value | Format | Required | Notes |
+|------------|------|-------|--------|----------|-------|
+| FIRSTNAME  | Required when using loaning services. First name of the buyer. |  "Matti" | AN 40 |  | |
+| FAMILYNAME | Required when using loaning services. Last name of the buyer. |  "Meikäläinen" | AN 40 |  | |
+| ADDRESS    | Required when using loaning services. Delivery address. |  "Maantie 123" | AN 40 |  | |
+| POSTCODE   | Required when using loaning services. Delivery post number. | "12345" | AN 14 |  | |
+| POSTOFFICE | Required when using loaning services. Delivery postal office. |  "" | AN 18 |  | |
+| COUNTRY    | Country, ISO-3166-1 alpha-3. | "FIN" | AN 3 | No | |
+| EMAIL      | Buyer email |  | AN 200 | No | |
+| PHONE      | Buyer phone number |  | AN 30 | No | |
+| LANGUAGE   | Payment language. Options currently are: "FI", "EN", "SE". | "FI" | AN 2 |  | |
 
-<table><thead>
-<tr>
-<th>Name</th>
-<th>Description</th>
-<th>Value</th>
-<th>Format</th>
-<th>Required</th>
-<th>Notes</th>
-</tr>
-</thead><tbody>
-<tr>
-<td>DATE</td>
-<td>Delivery date. Format: YYYYMMDD.</td>
-<td>20171231</td>
-<td>N 8</td>
-<td>&cross;</td>
-<td></td>
-</tr>
-<tr>
-<td>FIRSTNAME</td>
-<td>Required when using loaning services. First name of the buyer.</td>
-<td>&ldquo;Matti&rdquo;</td>
-<td>AN 40</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td>FAMILYNAME</td>
-<td>Required when using loaning services. Last name of the buyer.</td>
-<td>&ldquo;Meikäläinen&rdquo;</td>
-<td>AN 40</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td>ADDRESS</td>
-<td>Required when using loaning services. Delivery address.</td>
-<td>&ldquo;Maantie 123&rdquo;</td>
-<td>AN 40</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td>POSTCODE</td>
-<td>Required when using loaning services. Delivery post number.</td>
-<td>&ldquo;12345&rdquo;</td>
-<td>AN 14</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td>POSTOFFICE</td>
-<td>Required when using loaning services. Delivery postal office.</td>
-<td>&ldquo;&rdquo;</td>
-<td>AN 18</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td>COUNTRY</td>
-<td>Country, ISO-3166-1 alpha-3.</td>
-<td>&ldquo;FIN&rdquo;</td>
-<td>AN 3</td>
-<td>No</td>
-<td></td>
-</tr>
-<tr>
-<td>EMAIL</td>
-<td>Buyer email</td>
-<td></td>
-<td>AN 200</td>
-<td>No</td>
-<td></td>
-</tr>
-<tr>
-<td>PHONE</td>
-<td>Buyer phone number</td>
-<td></td>
-<td>AN 30</td>
-<td>No</td>
-<td></td>
-</tr>
-<tr>
-<td>LANGUAGE</td>
-<td>Payment language. Options currently are: &ldquo;FI&rdquo;, &ldquo;EN&rdquo;, &ldquo;SE&rdquo;.</td>
-<td>&ldquo;FI&rdquo;</td>
-<td>AN 2</td>
-<td></td>
-<td></td>
-</tr>
-</tbody></table>
+### XML-element : Delivery
 
-<h3 id="xml-element-control">XML-element : Control</h3>
+| Name        | Description  | Value | Format | Required | Notes |
+|-------------|------|-------|--------|----------|-------|
+| DATE        | Delivery date. Format: YYYYMMDD.  |  20171231 | N 8 | &cross; | |
+| FIRSTNAME   | Required when using loaning services. First name of the buyer. |  "Matti" | AN 40 |  | |
+| FAMILYNAME  | Required when using loaning services. Last name of the buyer. |  "Meikäläinen" | AN 40 |  | |
+| ADDRESS     | Required when using loaning services. Delivery address. |  "Maantie 123" | AN 40 |  | |
+| POSTCODE    | Required when using loaning services. Delivery post number. | "12345" | AN 14 |  | |
+| POSTOFFICE  | Required when using loaning services. Delivery postal office. |  "" | AN 18 |  | |
+| COUNTRY     | Country, ISO-3166-1 alpha-3. | "FIN" | AN 3 | No | |
+| EMAIL       | Buyer email |  | AN 200 | No | |
+| PHONE       | Buyer phone number |  | AN 30 | No | |
+| LANGUAGE    | Payment language. Options currently are: "FI", "EN", "SE". | "FI" | AN 2 |  | |   
 
-<table><thead>
-<tr>
-<th>Name</th>
-<th>Description</th>
-<th>Value</th>
-<th>Format</th>
-<th>Required</th>
-<th>Notes</th>
-</tr>
-</thead><tbody>
-<tr>
-<td>RETURN</td>
-<td>Return callback. Called when the payment is successfully paid.</td>
-<td></td>
-<td>AN 300</td>
-<td>&cross; *</td>
-<td>1</td>
-</tr>
-<tr>
-<td>CANCEL</td>
-<td>Cancel callback. Called when the payment is cancelled for some reason.</td>
-<td></td>
-<td>AN 300</td>
-<td>&cross; *</td>
-<td>1</td>
-</tr>
-<tr>
-<td>REJECT</td>
-<td>Reject callback. Called when the payment is rejected. If not defined, on reject the cancel will be called.</td>
-<td></td>
-<td>AN 300</td>
-<td></td>
-<td></td>
-</tr>
-</tbody></table>
+### XML-element : Control
 
-<blockquote>
-<p>Response XML</p>
-</blockquote>
-<pre class="highlight xml"><code><span class="cp">&lt;?xml version="1.0" encoding="utf-8"?&gt;</span>
-<span class="nt">&lt;response&gt;</span>
-    <span class="nt">&lt;statusCode&gt;&lt;/statusCode&gt;</span>
-    <span class="nt">&lt;statusText&gt;&lt;/statusText&gt;</span>
-<span class="nt">&lt;/response&gt;</span>
-</code></pre>
-<h3 id="response-body-xml">Response body (XML)</h3>
+Name   | Description  | Value | Format | Required | Notes
+-------|------|-------|--------|----------|-------
+RETURN | Return callback. Called when the payment is successfully paid. |  | AN 300 | &cross; * | 1
+CANCEL | Cancel callback. Called when the payment is cancelled for some reason. |  | AN 300 | &cross; * | 1
+REJECT | Reject callback. Called when the payment is rejected. If not defined, on reject the cancel will be called. |  | AN 300 |  |
 
-<table><thead>
-<tr>
-<th>Name</th>
-<th>Description</th>
-<th>Format</th>
-</tr>
-</thead><tbody>
-<tr>
-<td>statusCode</td>
-<td>HTTP Status code (200 if payment/reservation successful)</td>
-<td>N</td>
-</tr>
-<tr>
-<td>statusText</td>
-<td>Status text (e.g. &#39;payment done&rsquo;)</td>
-<td>AN</td>
-</tr>
-</tbody></table>
+>Response XML
 
-<h3 id="response-status-codes">Response status codes</h3>
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<response>
+    <statusCode></statusCode>
+    <statusText></statusText>
+</response>
+```
 
-<table><thead>
-<tr>
-<th>Code</th>
-<th>Description</th>
-</tr>
-</thead><tbody>
-<tr>
-<td>200</td>
-<td>OK, payment committed</td>
-</tr>
-<tr>
-<td>201</td>
-<td>OK, authorization hold created</td>
-</tr>
-<tr>
-<td>400</td>
-<td>Aggregator not found</td>
-</tr>
-<tr>
-<td>401</td>
-<td>Merchant has no aggregator status</td>
-</tr>
-<tr>
-<td>402</td>
-<td>Invalid merchant id</td>
-</tr>
-<tr>
-<td>403</td>
-<td>Merchant not found</td>
-</tr>
-<tr>
-<td>404</td>
-<td>Amounts wont match</td>
-</tr>
-<tr>
-<td>405</td>
-<td>Trade amount is 0 or less</td>
-</tr>
-<tr>
-<td>406</td>
-<td>Token not found</td>
-</tr>
-<tr>
-<td>500</td>
-<td>Error parsing XML</td>
-</tr>
-<tr>
-<td>502</td>
-<td>Creating a trade failed (&lt;errcode&gt;)</td>
-</tr>
-<tr>
-<td>503</td>
-<td>Failed creating new trade</td>
-</tr>
-<tr>
-<td>504</td>
-<td>Aggregate can&rsquo;t buy from self</td>
-</tr>
-<tr>
-<td>505</td>
-<td>Failed to get payment archive ID</td>
-</tr>
-</tbody></table>
+### Response body (XML)
 
-<h2 id="retract-authorization-hold">Retract authorization hold</h2>
+ Name      | Description | Format
+-----------|-------------|-------
+statusCode | HTTP Status code (200 if payment/reservation successful) | N
+statusText | Status text (e.g. 'payment done') |  AN
 
-<p>Retracts (deletes) an existing authorization hold.</p>
 
-<h3 id="http-request">HTTP Request</h3>
-<pre class="highlight plaintext"><code>POST /token/payment/retract HTTP/1.1
+### Response status codes
+
+Code | Description
+-----|-------------
+ 200 | OK, payment committed
+ 201 | OK, authorization hold created
+ 400 | Aggregator not found
+ 401 | Merchant has no aggregator status
+ 402 | Invalid merchant id
+ 403 | Merchant not found
+ 404 | Amounts wont match
+ 405 | Trade amount is 0 or less
+ 406 | Token not found
+ 500 | Error parsing XML
+ 502 | Creating a trade failed (&lt;errcode&gt;)
+ 503 | Failed creating new trade
+ 504 | Aggregate can't buy from self
+ 505 | Failed to get payment archive ID : &lt;detailed information&gt;
+ 506 | Authorization failed or unable to create a debit transaction
+ 507 | Failed : &lt;detailed information&gt;
+
+## Retract authorization hold
+
+Retracts (deletes) an existing authorization hold.
+
+### HTTP Request
+
+```
+POST /token/payment/retract HTTP/1.1
 Host: payment.checkout.fi
 Content-Type: application/x-www-form-urlencoded
 Cache-Control: no-cache
 
-stamp=1492599660&amp;hmac=3BB1330F9A90BBEBDB586EA58CDE70F2A1DB8870E5A71DF868384F14916377D2&amp;merchant=375917
-</code></pre>
-<p><code class="prettyprint">POST https://payment.checkout.fi/token/payment/retract</code></p>
+stamp=1492599660&hmac=3BB1330F9A90BBEBDB586EA58CDE70F2A1DB8870E5A71DF868384F14916377D2&merchant=375917
+```
 
-<table><thead>
-<tr>
-<th>Body field</th>
-<th>Type</th>
-<th>Description</th>
-<th>Notes</th>
-</tr>
-</thead><tbody>
-<tr>
-<td>merchant</td>
-<td>N</td>
-<td>Merchant id of which the initial reservation was done with</td>
-<td></td>
-</tr>
-<tr>
-<td>stamp</td>
-<td>AN 20</td>
-<td>Stamp id of the initial token payment</td>
-<td></td>
-</tr>
-<tr>
-<td>hmac</td>
-<td>AN</td>
-<td>Calculated HMAC, <a href="#hmac-calculation">instructions</a></td>
-<td></td>
-</tr>
-</tbody></table>
+`POST https://payment.checkout.fi/token/payment/retract`
 
-<h3 id="http-response">HTTP Response</h3>
-<pre class="highlight xml"><code><span class="cp">&lt;?xml version="1.0" encoding="utf-8"?&gt;</span>
-<span class="nt">&lt;response&gt;</span>
-    <span class="nt">&lt;statusCode&gt;</span>200<span class="nt">&lt;/statusCode&gt;</span>
-    <span class="nt">&lt;statusText&gt;</span>Authorization hold retracted.<span class="nt">&lt;/statusText&gt;</span>
-<span class="nt">&lt;/response&gt;</span>
-</code></pre>
-<table><thead>
-<tr>
-<th>Body field</th>
-<th>Type</th>
-<th>Description</th>
-</tr>
-</thead><tbody>
-<tr>
-<td>statusCode</td>
-<td>SCODE</td>
-<td>Checkout status code, described in table below</td>
-</tr>
-<tr>
-<td>statusText</td>
-<td>AN</td>
-<td>Status message</td>
-</tr>
-</tbody></table>
+Body field     | Type  | Description                   | Notes |
+---------------|-------|-------------------------------|-------|
+merchant       | N     | Merchant id of which the initial reservation was done with |
+stamp          | AN 20 | Stamp id of the initial token payment |
+hmac           | AN    | Calculated HMAC, [instructions](#hmac-calculation) |
 
-<h4 id="status-codes-amp-texts">Status codes &amp; -texts</h4>
 
-<table><thead>
-<tr>
-<th>Status Code</th>
-<th>Status Text</th>
-</tr>
-</thead><tbody>
-<tr>
-<td>200</td>
-<td>Authorization hold retracted.</td>
-</tr>
-<tr>
-<td>400</td>
-<td>Merchant with given ID not found.</td>
-</tr>
-<tr>
-<td>401</td>
-<td>No trade with given merchant/stamp found.</td>
-</tr>
-<tr>
-<td>402</td>
-<td>Payment has been committed.</td>
-</tr>
-<tr>
-<td>403</td>
-<td>Authorization hold has already been reverted.</td>
-</tr>
-<tr>
-<td>500</td>
-<td>No transactions found.</td>
-</tr>
-<tr>
-<td>501</td>
-<td>Error fetching trade status.</td>
-</tr>
-<tr>
-<td>502</td>
-<td>Error while fetching transaction ID.</td>
-</tr>
-<tr>
-<td>503</td>
-<td>Error parsing response.</td>
-</tr>
-<tr>
-<td>504</td>
-<td>Error while fetching result.</td>
-</tr>
-<tr>
-<td>505</td>
-<td>Error while reverting.</td>
-</tr>
-<tr>
-<td>600</td>
-<td>Missing required parameters.</td>
-</tr>
-<tr>
-<td>700</td>
-<td>Invalid HMAC.</td>
-</tr>
-</tbody></table>
+### HTTP Response
 
-<h2 id="commit-payment">Commit payment</h2>
+```
+<?xml version="1.0" encoding="utf-8"?>
+<response>
+    <statusCode>200</statusCode>
+    <statusText>Authorization hold retracted.</statusText>
+</response>
+```
 
-<p>Commits an existing credit card reservation.</p>
 
-<h3 id="http-request">HTTP Request</h3>
-<pre class="highlight plaintext"><code>POST /token/payment/commit HTTP/1.1
+Body field | Type | Description
+---------- | ---- | -----------
+statusCode | SCODE | Checkout status code, described in table below
+statusText | AN | Status message
+
+#### Status codes & -texts
+
+Status Code | Status Text
+---- | -----------
+200 | Authorization hold retracted.
+400 | Merchant with given ID not found.
+401 | No trade with given merchant/stamp found.
+402 | Payment has been committed.
+403 | Authorization hold has already been reverted.
+500 | No transactions found.
+501 | Error fetching trade status.
+502 | Error while fetching transaction ID.
+503 | Error parsing response.
+504 | Error while fetching result.
+505 | Error while reverting.
+600 | Missing required parameters.
+700 | Invalid HMAC.
+
+## Commit payment
+
+Commits an existing credit card reservation.
+
+### HTTP Request
+
+```code
+POST /token/payment/commit HTTP/1.1
 Host: payment.checkout.fi
 Content-Type: application/x-www-form-urlencoded
 Cache-Control: no-cache
 
-stamp=1492599660&amp;hmac=104150D231401BDEB01F3E62B6FB32812C8314E3C0E9D10CB2749215FA0777D2&amp;merchant=375917&amp;amount=50
-</code></pre>
-<p><code class="prettyprint">POST https://payment.checkout.fi/token/payment/commit</code></p>
+stamp=1492599660&hmac=104150D231401BDEB01F3E62B6FB32812C8314E3C0E9D10CB2749215FA0777D2&merchant=375917&amount=50
+```
 
-<table><thead>
-<tr>
-<th>Body field</th>
-<th>Type</th>
-<th>Description</th>
-<th>Notes</th>
-</tr>
-</thead><tbody>
-<tr>
-<td>merchant</td>
-<td>N</td>
-<td>Merchant id of which the initial reservation was done with</td>
-<td></td>
-</tr>
-<tr>
-<td>stamp</td>
-<td>AN 20</td>
-<td>Stamp id of the initial token payment</td>
-<td></td>
-</tr>
-<tr>
-<td>amount</td>
-<td>N</td>
-<td>Amount of payment reservation to be committed (cents)</td>
-<td>1</td>
-</tr>
-<tr>
-<td>hmac</td>
-<td>AN</td>
-<td>Calculated HMAC, <a href="#hmac-calculation">instructions</a></td>
-<td></td>
-</tr>
-</tbody></table>
+`POST https://payment.checkout.fi/token/payment/commit`
 
-<p><em>Note 1.)</em> Must be less than or equal to initial authorization hold amount</p>
+Body field     | Type  | Description                   | Notes |
+---------------|-------|-------------------------------|-------|
+merchant       | N     | Merchant id of which the initial reservation was done with |
+stamp          | AN 20 | Stamp id of the initial token payment |
+amount         | N     | Amount of payment reservation to be committed (cents) | 1
+hmac           | AN    | Calculated HMAC, [instructions](#hmac-calculation) |
 
-<h3 id="http-response">HTTP Response</h3>
-<pre class="highlight xml"><code><span class="cp">&lt;?xml version="1.0" encoding="utf-8"?&gt;</span>
-<span class="nt">&lt;response&gt;</span>
-    <span class="nt">&lt;statusCode&gt;</span>200<span class="nt">&lt;/statusCode&gt;</span>
-    <span class="nt">&lt;statusText&gt;</span>Payment committed.<span class="nt">&lt;/statusText&gt;</span>
-<span class="nt">&lt;/response&gt;</span>
-</code></pre>
-<table><thead>
-<tr>
-<th>Body field</th>
-<th>Type</th>
-<th>Description</th>
-</tr>
-</thead><tbody>
-<tr>
-<td>statusCode</td>
-<td>SCODE</td>
-<td>Checkout status code, described in table below</td>
-</tr>
-<tr>
-<td>statusText</td>
-<td>AN</td>
-<td>Status message</td>
-</tr>
-</tbody></table>
+*Note 1.)* Must be less than or equal to initial authorization hold amount
 
-<h3 id="status-codes-amp-texts">Status codes &amp; -texts</h3>
+### HTTP Response
 
-<table><thead>
-<tr>
-<th>Status Code</th>
-<th>Status Text</th>
-</tr>
-</thead><tbody>
-<tr>
-<td>200</td>
-<td>Payment committed.</td>
-</tr>
-<tr>
-<td>400</td>
-<td>Merchant with given ID not found.</td>
-</tr>
-<tr>
-<td>401</td>
-<td>No trade with given merchant/stamp found.</td>
-</tr>
-<tr>
-<td>402</td>
-<td>Payment has already been committed.</td>
-</tr>
-<tr>
-<td>403</td>
-<td>Commit amount larger than authorization hold.</td>
-</tr>
-<tr>
-<td>404</td>
-<td>Cancelled payment cannot be committed.</td>
-</tr>
-<tr>
-<td>405</td>
-<td>Problem with commit : &lt;detailed information&gt;</td>
-</tr>
-<tr>
-<td>406</td>
-<td>Negative commit amount not allowed.</td>
-</tr>
-<tr>
-<td>500</td>
-<td>No transactions found.</td>
-</tr>
-<tr>
-<td>501</td>
-<td>Error fetching trade status.</td>
-</tr>
-<tr>
-<td>502</td>
-<td>Error while fetching transaction ID.</td>
-</tr>
-<tr>
-<td>503</td>
-<td>Error parsing response.</td>
-</tr>
-<tr>
-<td>504</td>
-<td>Error while fetching result.</td>
-</tr>
-<tr>
-<td>505</td>
-<td>Error while committing.</td>
-</tr>
-<tr>
-<td>506</td>
-<td>Error committing payment : &lt;detailed information&gt;</td>
-</tr>
-<tr>
-<td>600</td>
-<td>Missing required parameters.</td>
-</tr>
-<tr>
-<td>700</td>
-<td>Invalid HMAC.</td>
-</tr>
-</tbody></table>
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<response>
+    <statusCode>200</statusCode>
+    <statusText>Payment committed.</statusText>
+</response>
+```
 
-<h2 id="fetch-trade-info">Fetch trade info</h2>
+Body field | Type | Description
+-------------- | -------------- | --------------
+statusCode | SCODE | Checkout status code, described in table below
+statusText | AN | Status message
 
-<p>Fetches info &amp; status of trade.</p>
+### Status codes & -texts
 
-<h3 id="http-request">HTTP Request</h3>
-<pre class="highlight plaintext"><code>POST /token/payment/info HTTP/1.1
+Status Code | Status Text
+---- | -----------
+200 | Payment committed.
+400 | Merchant with given ID not found.
+401 | No trade with given merchant/stamp found.
+402 | Payment has already been committed.
+403 | Commit amount larger than authorization hold.
+404 | Cancelled payment cannot be committed.
+405 | Problem with commit : &lt;detailed information&gt;
+406 | Negative commit amount not allowed.
+500 | No transactions found.
+501 | Error fetching trade status.
+502 | Error while fetching transaction ID.
+503 | Error parsing response.
+504 | Error while fetching result.
+505 | Error while committing.
+506 | Error committing payment : &lt;detailed information&gt;
+600 | Missing required parameters.
+700 | Invalid HMAC.
+
+
+## Fetch trade info
+
+Fetches info & status of trade.
+
+### HTTP Request
+
+```
+POST /token/payment/info HTTP/1.1
 Host: payment.checkout.fi
 Content-Type: application/x-www-form-urlencoded
 Cache-Control: no-cache
 
-stamp=1492599660&amp;merchant=375917&amp;hmac=3BB1330F9A90BBEBDB586EA58CDE70F2A1DB8870E5A71DF868384F14916377D2
-</code></pre>
-<p><code class="prettyprint">POST https://payment.checkout.fi/token/payment/info</code></p>
+stamp=1492599660&merchant=375917&hmac=3BB1330F9A90BBEBDB586EA58CDE70F2A1DB8870E5A71DF868384F14916377D2
+```
 
-<table><thead>
-<tr>
-<th>Body field</th>
-<th>Type</th>
-<th>Description</th>
-<th>Notes</th>
-</tr>
-</thead><tbody>
-<tr>
-<td>merchant</td>
-<td>N</td>
-<td>Merchant id of which the initial reservation was done with</td>
-<td></td>
-</tr>
-<tr>
-<td>stamp</td>
-<td>AN 20</td>
-<td>Stamp id of the initial token payment</td>
-<td></td>
-</tr>
-<tr>
-<td>hmac</td>
-<td>AN</td>
-<td>Calculated HMAC, <a href="#hmac-calculation">instructions</a></td>
-<td></td>
-</tr>
-</tbody></table>
+`POST https://payment.checkout.fi/token/payment/info`
 
-<h3 id="http-response">HTTP Response</h3>
-<pre class="highlight xml"><code><span class="cp">&lt;?xml version="1.0" encoding="utf-8"?&gt;</span>
-<span class="nt">&lt;response&gt;</span>
-    <span class="nt">&lt;statusCode&gt;</span>200<span class="nt">&lt;/statusCode&gt;</span>
-    <span class="nt">&lt;statusText&gt;</span>Payment information fetched.<span class="nt">&lt;/statusText&gt;</span>
-    <span class="nt">&lt;payment&gt;</span>
-        <span class="nt">&lt;status&gt;</span>reverted<span class="nt">&lt;/status&gt;</span>
-        <span class="nt">&lt;currentAmount&gt;</span>0<span class="nt">&lt;/currentAmount&gt;</span>
-        <span class="nt">&lt;initialAmount&gt;</span>100<span class="nt">&lt;/initialAmount&gt;</span>
-        <span class="nt">&lt;createdTime&gt;</span>2017-04-19T11:01:01Z<span class="nt">&lt;/createdTime&gt;</span>
-        <span class="nt">&lt;modifiedTime&gt;</span>2017-04-19T11:13:34Z<span class="nt">&lt;/modifiedTime&gt;</span>
-        <span class="nt">&lt;currency&gt;</span>EUR<span class="nt">&lt;/currency&gt;</span>
-    <span class="nt">&lt;/payment&gt;</span>
-<span class="nt">&lt;/response&gt;</span>
-</code></pre>
-<table><thead>
-<tr>
-<th>Body field</th>
-<th>Type</th>
-<th>Description</th>
-</tr>
-</thead><tbody>
-<tr>
-<td>statusCode</td>
-<td>SCODE</td>
-<td>Checkout status code, described in table below</td>
-</tr>
-<tr>
-<td>statusText</td>
-<td>AN</td>
-<td>Status message</td>
-</tr>
-<tr>
-<td>payment</td>
-<td></td>
-<td>Object including info-fields</td>
-</tr>
-<tr>
-<td>payment.status</td>
-<td>AN</td>
-<td>Status of trade, e.g. &#39;committed&rsquo;, &#39;reverted&rsquo;</td>
-</tr>
-<tr>
-<td>payment.currentAmount</td>
-<td>AMOUNT</td>
-<td>Current amount of trade in cents (e.g. if committed with amount 50, then 50)</td>
-</tr>
-<tr>
-<td>payment.initialAmount</td>
-<td>AMOUNT</td>
-<td>Initial amount of trade in cents (amount which trade was originally created with)</td>
-</tr>
-<tr>
-<td>payment.createdTime</td>
-<td>N</td>
-<td>Timestamp of when trade was created</td>
-</tr>
-<tr>
-<td>payment.modifiedTime</td>
-<td>N</td>
-<td>Timestamp when trade was last modified</td>
-</tr>
-<tr>
-<td>payment.currency</td>
-<td>CURRENCY</td>
-<td>Currency with which trade was created, e.g. &ldquo;EUR&rdquo;</td>
-</tr>
-</tbody></table>
+Body field     | Type  | Description                   | Notes |
+---------------|-------|-------------------------------|-------|
+merchant       | N     | Merchant id of which the initial reservation was done with |
+stamp          | AN 20 | Stamp id of the initial token payment |
+hmac           | AN    | Calculated HMAC, [instructions](#hmac-calculation) |
 
-<h3 id="status-codes-amp-texts">Status codes &amp; -texts</h3>
 
-<table><thead>
-<tr>
-<th>Status Code</th>
-<th>Status Text</th>
-</tr>
-</thead><tbody>
-<tr>
-<td>200</td>
-<td>Payment information fetched.</td>
-</tr>
-<tr>
-<td>400</td>
-<td>Merchant with given ID not found.</td>
-</tr>
-<tr>
-<td>401</td>
-<td>No trade with given merchant/stamp found.</td>
-</tr>
-<tr>
-<td>500</td>
-<td>No transactions found.</td>
-</tr>
-<tr>
-<td>501</td>
-<td>Information fetching failed.</td>
-</tr>
-<tr>
-<td>600</td>
-<td>Missing required parameters.</td>
-</tr>
-<tr>
-<td>700</td>
-<td>Invalid HMAC.</td>
-</tr>
-</tbody></table>
+### HTTP Response
 
-<h2 id="refund">Refund</h2>
+```
+<?xml version="1.0" encoding="utf-8"?>
+<response>
+    <statusCode>200</statusCode>
+    <statusText>Payment information fetched.</statusText>
+    <payment>
+        <status>reverted</status>
+        <currentAmount>0</currentAmount>
+        <initialAmount>100</initialAmount>
+        <createdTime>2017-04-19T11:01:01Z</createdTime>
+        <modifiedTime>2017-04-19T11:13:34Z</modifiedTime>
+        <currency>EUR</currency>
+    </payment>
+</response>
+```
 
-<p>Creates a refund for succeeded charge or already committed authorization hold.</p>
 
-<h3 id="http-request">HTTP request</h3>
+Body field | Type | Description
+-------------- | -------------- | --------------
+statusCode | SCODE | Checkout status code, described in table below
+statusText | AN | Status message
+payment    || Object including info-fields|
+payment.status | AN | Status of trade, e.g. 'committed', 'reverted'
+payment.currentAmount | AMOUNT | Current amount of trade in cents (e.g. if committed with amount 50, then 50)
+payment.initialAmount | AMOUNT | Initial amount of trade in cents (amount which trade was originally created with)
+payment.createdTime | N | Timestamp of when trade was created
+payment.modifiedTime | N | Timestamp when trade was last modified
+payment.currency | CURRENCY | Currency with which trade was created, e.g. "EUR"
 
-<ul>
-<li><code class="prettyprint">POST</code>: https://rpcapi.checkout.fi/refund2</li>
-</ul>
+### Status codes & -texts
+
+Status Code | Status Text
+---- | -----------
+200 | Payment information fetched.
+400 | Merchant with given ID not found.
+401 | No trade with given merchant/stamp found.
+500 | No transactions found.
+501 | Information fetching failed.
+600 | Missing required parameters.
+700 | Invalid HMAC.
+
+## Refund
+
+Creates a refund for succeeded charge or already committed authorization hold.
+
+### HTTP request
+
+* `POST`: https://rpcapi.checkout.fi/refund2
 
 <!--
 ### HTTP Request
@@ -2003,205 +849,97 @@ stamp=1492599660&merchant=375917&hmac=3BB1330F9A90BBEBDB586EA58CDE70F2A1DB8870E5
 ```
 -->
 
-<h3 id="field-descriptions">Field descriptions</h3>
+### Field descriptions
 
-<blockquote>
-<p>Example of the sent XML that gets base64 encoded</p>
-</blockquote>
-<pre class="highlight xml"><code><span class="cp">&lt;?xml version='1.0'?&gt;</span>
-<span class="nt">&lt;checkout&gt;</span>
- <span class="nt">&lt;identification&gt;</span>
-  <span class="nt">&lt;merchant&gt;</span>1234<span class="nt">&lt;/merchant&gt;</span> <span class="c">&lt;!-- merchant id --&gt;</span>
-  <span class="nt">&lt;stamp&gt;</span>123456<span class="nt">&lt;/stamp&gt;</span> <span class="c">&lt;!-- message unique identifier --&gt;</span>
- <span class="nt">&lt;/identification&gt;</span>
- <span class="nt">&lt;message&gt;</span>
-  <span class="nt">&lt;refund&gt;</span>
-   <span class="nt">&lt;stamp&gt;</span>12345<span class="nt">&lt;/stamp&gt;</span> <span class="c">&lt;!-- refund payment unique identifier  --&gt;</span>
-   <span class="nt">&lt;reference&gt;</span>12345<span class="nt">&lt;/reference&gt;</span> <span class="c">&lt;!-- reference for the payment refund --&gt;</span>
-   <span class="nt">&lt;amount&gt;</span>1245<span class="nt">&lt;/amount&gt;</span> <span class="c">&lt;!-- sum in cents --&gt;</span>
-   <span class="nt">&lt;receiver&gt;</span>
-     <span class="nt">&lt;email&gt;</span>email@osoi.te<span class="nt">&lt;/email&gt;</span>
-   <span class="nt">&lt;/receiver&gt;</span>
-  <span class="nt">&lt;/refund&gt;</span>
- <span class="nt">&lt;/message&gt;</span>
-<span class="nt">&lt;/checkout&gt;</span>
-</code></pre>
-<blockquote>
-<p>Example of calculating the MD5</p>
-</blockquote>
-<pre class="highlight php"><code>$messageMac=strtoupper(hash_hmac("sha256", base64_encode($message), $secretKey));
-</code></pre>
-<table><thead>
-<tr>
-<th>Description</th>
-<th>Field</th>
-<th>Format</th>
-<th> Required</th>
-</tr>
-</thead><tbody>
-<tr>
-<td>Contains the base64 encoded XML.</td>
-<td>DATA</td>
-<td>AN</td>
-<td>Yes</td>
-</tr>
-<tr>
-<td>Mac checksum of the data.</td>
-<td>MAC</td>
-<td>AN</td>
-<td>Yes</td>
-</tr>
-</tbody></table>
+> Example of the sent XML that gets base64 encoded
 
-<h3 id="response-status-codes-and-messages">Response status codes and messages</h3>
+```
+<?xml version='1.0'?>
+<checkout>
+ <identification>
+  <merchant>1234</merchant> <!-- merchant id -->
+  <stamp>123456</stamp> <!-- message unique identifier -->
+ </identification>
+ <message>
+  <refund>
+   <stamp>12345</stamp> <!-- refund payment unique identifier  -->
+   <reference>12345</reference> <!-- reference for the payment refund -->
+   <amount>1245</amount> <!-- sum in cents -->
+   <receiver>
+     <email>email@osoi.te</email>
+   </receiver>
+  </refund>
+ </message>
+</checkout>
+```
 
-<table><thead>
-<tr>
-<th>code</th>
-<th> message</th>
-</tr>
-</thead><tbody>
-<tr>
-<td>2100</td>
-<td>REFUNDED</td>
-</tr>
-<tr>
-<td>1200</td>
-<td>CHECKSUM MISMATCH</td>
-</tr>
-<tr>
-<td>1201</td>
-<td>DATA FIELD IS MISSING</td>
-</tr>
-<tr>
-<td>1202</td>
-<td>MAC FIELD IS MISSING</td>
-</tr>
-<tr>
-<td>1203</td>
-<td>DATA NOT BASE64 ENCODED STRING</td>
-</tr>
-<tr>
-<td>1204</td>
-<td>MAC FORMAT ERROR</td>
-</tr>
-<tr>
-<td>2200</td>
-<td>TRADE NOT FOUND</td>
-</tr>
-<tr>
-<td>2201</td>
-<td>TRADE ALREADY REFUNDED</td>
-</tr>
-<tr>
-<td>2202</td>
-<td>REFUND AMOUNT TOO BIG</td>
-</tr>
-<tr>
-<td>2203</td>
-<td>MERCHANT BALANCE TOO LOW</td>
-</tr>
-<tr>
-<td>2204</td>
-<td>ACCOUNT NOT ACCEPTED</td>
-</tr>
-<tr>
-<td>2205</td>
-<td>REFUND AMOUNT TOO LOW</td>
-</tr>
-<tr>
-<td>2209</td>
-<td>AMOUNT NOT INTEGER</td>
-</tr>
-<tr>
-<td>2220</td>
-<td>GENERIC ERROR</td>
-</tr>
-<tr>
-<td>2221</td>
-<td>UNKNOWN ERROR</td>
-</tr>
-</tbody></table>
+> Example of calculating the MD5
+
+```php
+$messageMac=strtoupper(hash_hmac("sha256", base64_encode($message), $secretKey));
+```
+
+Description | Field | Format | Required |
+------------|-------|--------|----------|
+Contains the base64 encoded XML. | DATA | AN | Yes |
+Mac checksum of the data. | MAC | AN | Yes |
+
+### Response status codes and messages
+
+code | message
+-----|--------
+2100 | REFUNDED
+1200 | CHECKSUM MISMATCH
+1201 | DATA FIELD IS MISSING
+1202 | MAC FIELD IS MISSING
+1203 | DATA NOT BASE64 ENCODED STRING
+1204 | MAC FORMAT ERROR
+2200 | TRADE NOT FOUND
+2201 | TRADE ALREADY REFUNDED
+2202 | REFUND AMOUNT TOO BIG
+2203 | MERCHANT BALANCE TOO LOW
+2204 | ACCOUNT NOT ACCEPTED
+2205 | REFUND AMOUNT TOO LOW
+2209 | AMOUNT NOT INTEGER
+2220 | GENERIC ERROR
+2221 | UNKNOWN ERROR
 
 <!--12515 | COMPANY NOT FOUND-->
 
-<blockquote>
-<p>Example response</p>
-</blockquote>
-<pre class="highlight xml"><code><span class="cp">&lt;?xml version='1.0'?&gt;</span>
-<span class="nt">&lt;checkout&gt;</span>
- <span class="nt">&lt;response&gt;</span>
-  <span class="nt">&lt;stamp&gt;</span>12345<span class="nt">&lt;/stamp&gt;</span>
-  <span class="nt">&lt;statusMessage&gt;</span>REFUNDED<span class="nt">&lt;/statusMessage&gt;</span>
-  <span class="nt">&lt;statusCode&gt;</span>2100<span class="nt">&lt;/statusCode&gt;</span>
-  <span class="nt">&lt;/response&gt;</span>
-<span class="nt">&lt;/checkout&gt;</span>";
-</code></pre>
-<h1 id="data-types">Data types</h1>
+> Example response
 
-<table><thead>
-<tr>
-<th>Type</th>
-<th>Format</th>
-<th>Example</th>
-</tr>
-</thead><tbody>
-<tr>
-<td>N</td>
-<td>^[0-9]+$</td>
-<td>505050</td>
-</tr>
-<tr>
-<td>AN</td>
-<td>^[.,’-=/\w;\s]{0,1023}$</td>
-<td>Alph4num3r1c</td>
-</tr>
-<tr>
-<td>BOOL</td>
-<td>true/false</td>
-<td>true</td>
-</tr>
-<tr>
-<td>AMOUNT</td>
-<td>^\d{1,12}$</td>
-<td>9000</td>
-</tr>
-<tr>
-<td>CURRENCY</td>
-<td>^(EUR)$</td>
-<td>EUR</td>
-</tr>
-<tr>
-<td>UUID4</td>
-<td>^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$</td>
-<td>f47ac10b-58cc-4372-a567-0e02b2c3d479</td>
-</tr>
-<tr>
-<td>SCODE</td>
-<td>^\d{1,6}$</td>
-<td>9001</td>
-</tr>
-<tr>
-<td>TIMESTAMP</td>
-<td>\d{4}-[0-1]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d+\d{4}</td>
-<td>2017-04-19T11:01:01Z</td>
-</tr>
-<tr>
-<td>JSON</td>
-<td></td>
-<td>[{a:1,b:2},{data:&#39;some text&rsquo;}]</td>
-</tr>
-<tr>
-<td>XML</td>
-<td></td>
-<td>&lt;data&gt;Some data&lt;/data&gt;</td>
-</tr>
-</tbody></table>
+```
+<?xml version='1.0'?>
+<checkout>
+ <response>
+  <stamp>12345</stamp>
+  <statusMessage>REFUNDED</statusMessage>
+  <statusCode>2100</statusCode>
+  </response>
+</checkout>";
+```
 
-<h1 id="hmac-calculation">HMAC-calculation</h1>
+# Data types
 
-<p>If an API (e.g. <a href="#commit-payment">commit</a>, <a href="#retract-authorization-hold">retract</a>, <a href="#fetch-trade-info">trade info fetch</a>) requires the &#39;hmac&rsquo;-field, you must calculate it with SHA256 using the other request fields in alphabetized order + your own merchant-specific secret which is given to you by Checkout.</p>
-<pre class="highlight javascript"><code><span class="cm">/*
+Type | Format | Example
+-------------- | -------------- | --------------
+N | ^[0-9]+$ | 505050
+AN | ^[.,’-=/\w;\s]{0,1023}$ | Alph4num3r1c
+BOOL | true/false | true
+AMOUNT | ^\d{1,12}$ | 9000
+CURRENCY | ^(EUR)$ | EUR
+UUID4 | ^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$ | f47ac10b-58cc-4372-a567-0e02b2c3d479
+SCODE | ^\d{1,6}$ | 9001
+TIMESTAMP | \d{4}-[0-1]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d\+\d{4} | 2017-04-19T11:01:01Z
+JSON | | [{a:1,b:2},{data:'some text'}]
+XML | | &lt;data&gt;Some data&lt;/data&gt;
+
+# HMAC-calculation
+
+If an API (e.g. [commit](#commit-payment), [retract](#retract-authorization-hold), [trade info fetch](#fetch-trade-info)) requires the 'hmac'-field, you must calculate it with SHA256 using the other request fields in alphabetized order + your own merchant-specific secret which is given to you by Checkout.
+
+```javascript
+/*
  * Calculates SHA256 HMAC with given request parameters (which will be alphabetized for calculation)
  * and given secret string.
  *
@@ -2211,129 +949,127 @@ stamp=1492599660&merchant=375917&hmac=3BB1330F9A90BBEBDB586EA58CDE70F2A1DB8870E5
  * @param {[]} reqParams Array of request parameters.
  * @param {string} secret Merchant specific secret string.
  * @return {string} Calculated SHA256 HMAC string.
- */</span>
-<span class="kd">function</span> <span class="nx">calculateHMAC</span><span class="p">(</span><span class="nx">reqParams</span><span class="p">,</span> <span class="nx">secret</span><span class="p">)</span> <span class="p">{</span>
-    <span class="kd">var</span> <span class="nx">toHMAC</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">key</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">return</span> <span class="nx">key</span> <span class="o">+</span> <span class="s1">':'</span> <span class="o">+</span> <span class="nx">reqParams</span><span class="p">[</span><span class="nx">key</span><span class="p">];</span>
-    <span class="p">}</span>
+ */
+function calculateHMAC(reqParams, secret) {
+    var toHMAC = function(key) {
+        return key + ':' + reqParams[key];
+    }
 
-    <span class="c1">// separate the keys into a alphabetized array, leave out 'hmac'-field</span>
-    <span class="kd">var</span> <span class="nx">sortedKeys</span> <span class="o">=</span> <span class="nb">Object</span><span class="p">.</span><span class="nx">keys</span><span class="p">(</span><span class="nx">reqParams</span><span class="p">).</span><span class="nx">filter</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">key</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">key</span> <span class="o">!==</span> <span class="s1">'hmac'</span><span class="p">;</span> <span class="p">}).</span><span class="nx">sort</span><span class="p">();</span>
+    // separate the keys into a alphabetized array, leave out 'hmac'-field
+    var sortedKeys = Object.keys(reqParams).filter(function(key) { return key !== 'hmac'; }).sort();
 
-    <span class="kd">var</span> <span class="nx">macString</span> <span class="o">=</span> <span class="nx">sortedKeys</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">k</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">toHMAC</span><span class="p">(</span><span class="nx">k</span><span class="p">);</span> <span class="p">}).</span><span class="nx">join</span><span class="p">(</span><span class="s1">'\n'</span><span class="p">);</span>
+    var macString = sortedKeys.map(function(k) { return toHMAC(k); }).join('\n');
 
-    <span class="k">return</span> <span class="nb">Packages</span><span class="p">.</span><span class="nx">fi</span><span class="p">.</span><span class="nx">checkout</span><span class="p">.</span><span class="nx">tools</span><span class="p">.</span><span class="nx">HMac</span><span class="p">.</span><span class="nx">sha256</span><span class="p">(</span><span class="nx">macString</span><span class="p">,</span> <span class="nx">secret</span><span class="p">);</span>
-<span class="p">}</span>
-</code></pre><pre class="highlight plaintext"><code>// Node.js example:
+    return Packages.fi.checkout.tools.HMac.sha256(macString, secret);
+}
+```
+
+```
+// Node.js example:
 node -e "console.log(require('crypto').createHmac('sha256', 'merchantSecret').update('amount:50\nmerchant:375917\nstamp:1493200949').digest('hex'));"
-</code></pre>
-<p>Separate the key &amp; value of the request parameters with &rsquo;:&rsquo; and separate each parameter with a linebreak &rsquo;\n&rsquo;.</p>
-<pre class="highlight plaintext"><code># if the request fields are for example 'merchant', 'stamp' &amp; 'amount, the final mac string used for calculation would be this:
+```
+
+Separate the key & value of the request parameters with ':' and separate each parameter with a linebreak '\n'.
+
+```
+# if the request fields are for example 'merchant', 'stamp' & 'amount, the final mac string used for calculation would be this:
 "amount:50\nmerchant:375917\nstamp:1492599660"
 
 The secret key used will be merchant-specific.
-</code></pre>
-<p>Leave the hmac-parameter itself out of the calculation.</p>
+```
 
-<h1 id="example-data-and-requests">Example data and requests</h1>
+Leave the hmac-parameter itself out of the calculation.
 
-<h2 id="payment-api-usage-example-in-php">Payment API, usage example in PHP</h2>
+# Example data and requests
 
-<ul>
-<li>https://payment.checkout.fi</li>
-</ul>
+## Payment API, usage example in PHP
 
-<blockquote>
-<p>Sample &#39;payment.xml&rsquo; file</p>
-</blockquote>
-<pre class="highlight xml"><code><span class="cp">&lt;?xml version="1.0"?&gt;</span>
-<span class="nt">&lt;checkout</span> <span class="na">xmlns=</span><span class="s">"http://checkout.fi/request"</span><span class="nt">&gt;</span>
-    <span class="nt">&lt;request</span> <span class="na">type=</span><span class="s">"aggregator"</span> <span class="na">test=</span><span class="s">"false"</span><span class="nt">&gt;</span>
-        <span class="nt">&lt;aggregator&gt;</span>375917<span class="nt">&lt;/aggregator&gt;</span>
-        <span class="nt">&lt;token&gt;</span>feeba684-f35a-4c98-a846-14d0b1a02024<span class="nt">&lt;/token&gt;</span>
-        <span class="nt">&lt;version&gt;</span>0002<span class="nt">&lt;/version&gt;</span>
-        <span class="nt">&lt;stamp&gt;</span>1491913443<span class="nt">&lt;/stamp&gt;</span>
-        <span class="nt">&lt;reference&gt;</span>1123123<span class="nt">&lt;/reference&gt;</span>
-        <span class="nt">&lt;device&gt;</span>10<span class="nt">&lt;/device&gt;</span>
-        <span class="nt">&lt;content&gt;</span>1<span class="nt">&lt;/content&gt;</span>
-        <span class="nt">&lt;type&gt;</span>0<span class="nt">&lt;/type&gt;</span>
-        <span class="nt">&lt;algorithm&gt;</span>3<span class="nt">&lt;/algorithm&gt;</span>
-        <span class="nt">&lt;currency&gt;</span>EUR<span class="nt">&lt;/currency&gt;</span>
-        <span class="nt">&lt;commit&gt;</span>false<span class="nt">&lt;/commit&gt;</span>
-        <span class="nt">&lt;items&gt;</span>
-            <span class="nt">&lt;item&gt;</span>
-                <span class="nt">&lt;description/&gt;</span>
-                <span class="nt">&lt;price</span> <span class="na">currency=</span><span class="s">"EUR"</span> <span class="na">vat=</span><span class="s">"23"</span><span class="nt">&gt;</span>2500<span class="nt">&lt;/price&gt;</span>
-                <span class="nt">&lt;merchant&gt;</span>391830<span class="nt">&lt;/merchant&gt;</span>
-            <span class="nt">&lt;/item&gt;</span>
-            <span class="nt">&lt;amount</span> <span class="na">currency=</span><span class="s">"EUR"</span><span class="nt">&gt;</span>2500<span class="nt">&lt;/amount&gt;</span>
-        <span class="nt">&lt;/items&gt;</span>
-        <span class="nt">&lt;buyer&gt;</span>
-            <span class="nt">&lt;country&gt;</span>FIN<span class="nt">&lt;/country&gt;</span>
-            <span class="nt">&lt;language&gt;</span>FI<span class="nt">&lt;/language&gt;</span>
-        <span class="nt">&lt;/buyer&gt;</span>
-        <span class="nt">&lt;delivery&gt;</span>
-            <span class="nt">&lt;date&gt;</span>20110303<span class="nt">&lt;/date&gt;</span>
-        <span class="nt">&lt;/delivery&gt;</span>
-    <span class="nt">&lt;description&gt;</span>SiS tokenized payment test request : 11.04.2017 12:37:29<span class="nt">&lt;/description&gt;&lt;/request&gt;</span>
-<span class="nt">&lt;/checkout&gt;</span>
-</code></pre>
-<blockquote>
-<p>PHP used to generate valid query from XML file (above)</p>
-</blockquote>
-<pre class="highlight php"><code><span class="cp">&lt;?php</span>
-<span class="nv">$aggregatorMerchantSecret</span> <span class="o">=</span> <span class="s2">"SAIPPUAKAUPPIAS"</span><span class="p">;</span>
+* https://payment.checkout.fi
 
-<span class="nv">$xml</span> <span class="o">=</span> <span class="nb">simplexml_load_file</span><span class="p">(</span><span class="s2">"payment.xml"</span><span class="p">);</span>
-<span class="nv">$checkoutXML</span> <span class="o">=</span> <span class="nb">base64_encode</span><span class="p">(</span><span class="nv">$xml</span><span class="o">-&gt;</span><span class="na">asXML</span><span class="p">());</span>
-<span class="nv">$checkoutMac</span> <span class="o">=</span> <span class="nb">strtoupper</span><span class="p">(</span><span class="nb">md5</span><span class="p">(</span><span class="s2">"</span><span class="si">{</span><span class="nv">$checkoutXML</span><span class="si">}</span><span class="s2">+</span><span class="si">{</span><span class="nv">$aggregatorMerchantSecret</span><span class="si">}</span><span class="s2">"</span><span class="p">));</span>
+>Sample 'payment.xml' file
 
-<span class="nv">$streamContext</span> <span class="o">=</span> <span class="nb">stream_context_create</span><span class="p">(</span><span class="k">array</span><span class="p">(</span>
-  <span class="s1">'http'</span> <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(</span>
-    <span class="s1">'method'</span> <span class="o">=&gt;</span> <span class="s1">'POST'</span><span class="p">,</span>
-    <span class="s1">'header'</span> <span class="o">=&gt;</span> <span class="s1">'Content-Type: application/x-www-form-urlencoded'</span><span class="p">,</span>
-    <span class="s1">'content'</span> <span class="o">=&gt;</span> <span class="nb">http_build_query</span><span class="p">(</span><span class="k">array</span><span class="p">(</span>
-        <span class="s1">'CHECKOUT_XML'</span> <span class="o">=&gt;</span> <span class="nv">$checkoutXML</span><span class="p">,</span>
-        <span class="s1">'CHECKOUT_MAC'</span> <span class="o">=&gt;</span> <span class="nv">$checkoutMac</span>
-      <span class="p">)</span>
-    <span class="p">)</span>
-  <span class="p">),</span>
-  <span class="s2">"ssl"</span> <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(</span>
-      <span class="s2">"verify_peer"</span> <span class="o">=&gt;</span> <span class="kc">false</span><span class="p">,</span>
-      <span class="s2">"verify_peer_name"</span> <span class="o">=&gt;</span> <span class="kc">false</span><span class="p">,</span>
-  <span class="p">)</span>
-<span class="p">));</span>
+```xml
+<?xml version="1.0"?>
+<checkout xmlns="http://checkout.fi/request">
+    <request type="aggregator" test="false">
+        <aggregator>375917</aggregator>
+        <token>feeba684-f35a-4c98-a846-14d0b1a02024</token>
+        <version>0002</version>
+        <stamp>1491913443</stamp>
+        <reference>1123123</reference>
+        <device>10</device>
+        <content>1</content>
+        <type>0</type>
+        <algorithm>3</algorithm>
+        <currency>EUR</currency>
+        <commit>false</commit>
+        <items>
+            <item>
+                <description/>
+                <price currency="EUR" vat="23">2500</price>
+                <merchant>391830</merchant>
+            </item>
+            <amount currency="EUR">2500</amount>
+        </items>
+        <buyer>
+            <country>FIN</country>
+            <language>FI</language>
+        </buyer>
+        <delivery>
+            <date>20110303</date>
+        </delivery>
+    <description>SiS tokenized payment test request : 11.04.2017 12:37:29</description></request>
+</checkout>
+```
+>PHP used to generate valid query from XML file (above)
 
-<span class="nv">$response</span> <span class="o">=</span> <span class="nb">file_get_contents</span><span class="p">(</span><span class="s1">'https://payment.checkout.fi/'</span><span class="p">,</span> <span class="kc">false</span><span class="p">,</span> <span class="nv">$streamContext</span><span class="p">);</span>
-</code></pre>
-<blockquote>
-<p>Raw HTTP request sent to server</p>
-</blockquote>
-<pre class="highlight plaintext"><code>Host: payment.checkout.fi
+```php
+<?php
+$aggregatorMerchantSecret = "SAIPPUAKAUPPIAS";
+
+$xml = simplexml_load_file("payment.xml");
+$checkoutXML = base64_encode($xml->asXML());
+$checkoutMac = strtoupper(md5("{$checkoutXML}+{$aggregatorMerchantSecret}"));
+
+$streamContext = stream_context_create(array(
+  'http' => array(
+    'method' => 'POST',
+    'header' => 'Content-Type: application/x-www-form-urlencoded',
+    'content' => http_build_query(array(
+        'CHECKOUT_XML' => $checkoutXML,
+        'CHECKOUT_MAC' => $checkoutMac
+      )
+    )
+  ),
+  "ssl" => array(
+      "verify_peer" => false,
+      "verify_peer_name" => false,
+  )
+));
+
+$response = file_get_contents('https://payment.checkout.fi/', false, $streamContext);
+```
+>Raw HTTP request sent to server
+
+```plaintext
+Host: payment.checkout.fi
 Connection: close
 Content-Length: 1473
 Content-Type: application/x-www-form-urlencoded
-CHECKOUT_XML=PD94bWwgdmVyc2lvbj0iMS4wIj8%2BCjxjaGVja291dCB4bWxucz0iaHR0cDovL2NoZWNrb3V0LmZpL3JlcXVlc3QiPgogICAgPHJlcXVlc3QgdHlwZT0iYWdncmVnYXRvciIgdGVzdD0iZmFsc2UiPgogICAgICAgIDxhZ2dyZWdhdG9yPjM3NTkxNzwvYWdncmVnYXRvcj4KICAgICAgICA8dG9rZW4%2BZmVlYmE2ODQtZjM1YS00Yzk4LWE4NDYtMTRkMGIxYTAyMDI0PC90b2tlbj4KICAgICAgICA8dmVyc2lvbj4wMDAyPC92ZXJzaW9uPgogICAgICAgIDxzdGFtcD4xNDkxOTEzNDQzPC9zdGFtcD4KICAgICAgICA8cmVmZXJlbmNlPjExMjMxMjM8L3JlZmVyZW5jZT4KICAgICAgICA8ZGV2aWNlPjEwPC9kZXZpY2U%2BCiAgICAgICAgPGNvbnRlbnQ%2BMTwvY29udGVudD4KICAgICAgICA8dHlwZT45PC90eXBlPgogICAgICAgIDxhbGdvcml0aG0%2BMzwvYWxnb3JpdGhtPgogICAgICAgIDxjdXJyZW5jeT5FVVI8L2N1cnJlbmN5PgogICAgICAgIDxjb21taXQ%2BZmFsc2U8L2NvbW1pdD4KICAgICAgICA8aXRlbXM%2BCiAgICAgICAgICAgIDxpdGVtPgogICAgICAgICAgICAgICAgPGRlc2NyaXB0aW9uLz4KICAgICAgICAgICAgICAgIDxwcmljZSBjdXJyZW5jeT0iRVVSIiB2YXQ9IjIzIj4yNTAwPC9wcmljZT4KICAgICAgICAgICAgICAgIDxtZXJjaGFudD4zOTE4MzA8L21lcmNoYW50PgogICAgICAgICAgICA8L2l0ZW0%2BCiAgICAgICAgICAgIDxhbW91bnQgY3VycmVuY3k9IkVVUiI%2BMjUwMDwvYW1vdW50PgogICAgICAgIDwvaXRlbXM%2BCiAgICAgICAgPGJ1eWVyPgogICAgICAgICAgICA8Y291bnRyeT5GSU48L2NvdW50cnk%2BCiAgICAgICAgICAgIDxsYW5ndWFnZT5GSTwvbGFuZ3VhZ2U%2BCiAgICAgICAgPC9idXllcj4KICAgICAgICA8ZGVsaXZlcnk%2BCiAgICAgICAgICAgIDxkYXRlPjIwMTEwMzAzPC9kYXRlPgogICAgICAgIDwvZGVsaXZlcnk%2BCiAgICA8ZGVzY3JpcHRpb24%2BU2lTIHRva2VuaXplZCBwYXltZW50IHRlc3QgcmVxdWVzdCA6IDExLjA0LjIwMTcgMTI6Mzc6Mjk8L2Rlc2NyaXB0aW9uPjwvcmVxdWVzdD4KPC9jaGVja291dD4K&amp;CHECKOUT_MAC=FB0145FD7FD9AC7516AD60F94C4590D4
-</code></pre>
-<blockquote>
-<p>Respose XML</p>
-</blockquote>
-<pre class="highlight xml"><code><span class="cp">&lt;?xml version="1.0" encoding="utf-8"?&gt;</span>
-<span class="nt">&lt;response&gt;</span>
- <span class="nt">&lt;statusCode&gt;</span>201<span class="nt">&lt;/statusCode&gt;</span>
- <span class="nt">&lt;statusText&gt;</span>OK, authorization hold created<span class="nt">&lt;/statusText&gt;</span>
-<span class="nt">&lt;/response&gt;</span>
-</code></pre>
-<h3 id="tokenized-sis-payment-using-minimum-required-fields">Tokenized SiS payment using minimum required fields</h3>
+CHECKOUT_XML=PD94bWwgdmVyc2lvbj0iMS4wIj8%2BCjxjaGVja291dCB4bWxucz0iaHR0cDovL2NoZWNrb3V0LmZpL3JlcXVlc3QiPgogICAgPHJlcXVlc3QgdHlwZT0iYWdncmVnYXRvciIgdGVzdD0iZmFsc2UiPgogICAgICAgIDxhZ2dyZWdhdG9yPjM3NTkxNzwvYWdncmVnYXRvcj4KICAgICAgICA8dG9rZW4%2BZmVlYmE2ODQtZjM1YS00Yzk4LWE4NDYtMTRkMGIxYTAyMDI0PC90b2tlbj4KICAgICAgICA8dmVyc2lvbj4wMDAyPC92ZXJzaW9uPgogICAgICAgIDxzdGFtcD4xNDkxOTEzNDQzPC9zdGFtcD4KICAgICAgICA8cmVmZXJlbmNlPjExMjMxMjM8L3JlZmVyZW5jZT4KICAgICAgICA8ZGV2aWNlPjEwPC9kZXZpY2U%2BCiAgICAgICAgPGNvbnRlbnQ%2BMTwvY29udGVudD4KICAgICAgICA8dHlwZT45PC90eXBlPgogICAgICAgIDxhbGdvcml0aG0%2BMzwvYWxnb3JpdGhtPgogICAgICAgIDxjdXJyZW5jeT5FVVI8L2N1cnJlbmN5PgogICAgICAgIDxjb21taXQ%2BZmFsc2U8L2NvbW1pdD4KICAgICAgICA8aXRlbXM%2BCiAgICAgICAgICAgIDxpdGVtPgogICAgICAgICAgICAgICAgPGRlc2NyaXB0aW9uLz4KICAgICAgICAgICAgICAgIDxwcmljZSBjdXJyZW5jeT0iRVVSIiB2YXQ9IjIzIj4yNTAwPC9wcmljZT4KICAgICAgICAgICAgICAgIDxtZXJjaGFudD4zOTE4MzA8L21lcmNoYW50PgogICAgICAgICAgICA8L2l0ZW0%2BCiAgICAgICAgICAgIDxhbW91bnQgY3VycmVuY3k9IkVVUiI%2BMjUwMDwvYW1vdW50PgogICAgICAgIDwvaXRlbXM%2BCiAgICAgICAgPGJ1eWVyPgogICAgICAgICAgICA8Y291bnRyeT5GSU48L2NvdW50cnk%2BCiAgICAgICAgICAgIDxsYW5ndWFnZT5GSTwvbGFuZ3VhZ2U%2BCiAgICAgICAgPC9idXllcj4KICAgICAgICA8ZGVsaXZlcnk%2BCiAgICAgICAgICAgIDxkYXRlPjIwMTEwMzAzPC9kYXRlPgogICAgICAgIDwvZGVsaXZlcnk%2BCiAgICA8ZGVzY3JpcHRpb24%2BU2lTIHRva2VuaXplZCBwYXltZW50IHRlc3QgcmVxdWVzdCA6IDExLjA0LjIwMTcgMTI6Mzc6Mjk8L2Rlc2NyaXB0aW9uPjwvcmVxdWVzdD4KPC9jaGVja291dD4K&CHECKOUT_MAC=FB0145FD7FD9AC7516AD60F94C4590D4
+```
+> Respose XML
 
-<p>Creates an authorization hold for 25.00 euros.</p>
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<response>
+ <statusCode>201</statusCode>
+ <statusText>OK, authorization hold created</statusText>
+</response>
+```
 
-      </div>
-      <div class="dark-box">
-          <div class="lang-selector">
-                <a href="#" data-language-name="code">code</a>
-          </div>
-      </div>
-    </div>
-  </body>
-</html>
+
+### Tokenized SiS payment using minimum required fields
+
+Creates an authorization hold for 25.00 euros.
+

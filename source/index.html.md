@@ -635,9 +635,9 @@ Code | Description
  502 | Creating a trade failed (&lt;errcode&gt;)
  503 | Failed creating new trade
  504 | Aggregate can't buy from self
- 505 | Failed to get payment archive ID
-
-
+ 505 | Failed to get payment archive ID : &lt;detailed information&gt;
+ 506 | Authorization failed or unable to create a debit transaction
+ 507 | Failed : &lt;detailed information&gt;
 
 ## Retract authorization hold
 
