@@ -239,7 +239,7 @@ Status Code | Status Text
 
 
 
-# Payment APIs
+# Payment API
 
 ## Payment
 
@@ -921,7 +921,7 @@ code | message
 </checkout>";
 ```
 
-# Polling and reporting APIs
+# Polling API
 
 ## Polling
 
