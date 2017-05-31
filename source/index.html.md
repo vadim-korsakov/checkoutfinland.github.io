@@ -114,7 +114,7 @@ class Checkout
 		return $this->sendPost($this->getCheckoutObject($data));
 	}
 
-	private function sendPost($post) 
+	private function sendPost($post)
 	{
 		$options = array(
 				CURLOPT_POST => 1,
@@ -389,7 +389,7 @@ If credit card token is sent to PaymentAPI, the API will use tokenized card for 
 
 Commit can be used with token-payments. If commit is true, the tokenized credit card will be charged. If commit is false, it will make a payment reservation (authorization hold) on the card. This authorization hold will be committed or retracted later through the 'commit payment' or 'retract payment' API's.
 
-Actual HTTP request is made using two name/value pairs containing 
+Actual HTTP request is made using two name/value pairs containing
 
 >HTTP-request
 
@@ -413,7 +413,7 @@ CHECKOUT_XML=<base64 encoded xml string>&CHECKOUT_MAC=<string>
 | CHECKOUT_MAC | MD5 hash calculated from sent values |
 | CHECKOUT_XML | Base64 encoded representation of the XML string. XML explained below |
 
-Calculating MD5 hash for CHECKOUT_MAC field: 
+Calculating MD5 hash for CHECKOUT_MAC field:
 
 md5( &lt;xml_string&gt; + '+' + &lt;aggregator_merchant_secret&gt; )
 
@@ -505,7 +505,7 @@ md5( &lt;xml_string&gt; + '+' + &lt;aggregator_merchant_secret&gt; )
 | DELIVERY    | `Delivery` XML element | XML | XML | &cross;  | |
 | CONTROL     | `Control` XML element | XML | XML | &cross;  | |
 
-<!-- 
+<!--
 Are these relevat to this API???
 | Delayed callback. Called if the payment is delayed. | DELAYED | | AN 300 | | |
 | Checksum is calculated by combining fields 1-23 and the secret key, separating them with a `+`-sign  | MAC |  | AN 32 | &cross; | 2 |
@@ -560,10 +560,10 @@ Are these relevat to this API???
 
 ### Payment types
 
- Type| Description          | Notes 
+ Type| Description          | Notes
 -----|----------------------|-------
    0 | Normal payment       |
-   9 | Shop in shop payment | 
+   9 | Shop in shop payment |
 
 ### XML-element : Buyer
 
@@ -923,7 +923,7 @@ code | message
 
 # Polling and reporting APIs
 
-##Polling
+## Polling
 
 ```
 <?php
@@ -962,7 +962,7 @@ $options = array(
     CURLOPT_TIMEOUT         => 4,
     CURLOPT_POSTFIELDS      => http_build_query($formdata)
 );
-        
+
 $ch = curl_init();
 curl_setopt_array($ch, $options);
 $result = curl_exec($ch);
@@ -978,16 +978,11 @@ echo strtoupper(md5(implode('+', $formdata) . "+{$secret}"));
 echo "\n";
 ```
 
-###Polling request
-
-pandakarhu
-
-Responds with the current status of the payment, can be used to verify success or failure of a payment when 
+Responds with the current status of the payment, can be used to verify success or failure of a payment when
 
 request URL: https://rpcapi.checkout.fi/poll
 
 method = post
-
 
 
 Field values
@@ -1004,17 +999,14 @@ Field values
 |Algorithm|ALGORITHM|1 (always "1" meaning MD5 algorithm)
 |Security hash|MAC|calculated using security key provided by Checkout Finland
 
-###Poll MD5 hash calculation
-MD5 checksum calculation takes into account the fields 1-8 and secret key (aka merchant secret).
-Fields are separated with +-sign and text must be uppercase.
+## Poll MD5 hash calculation
+
+MD5 checksum calculation takes into account the fields 1-8 and secret key (aka merchant secret). Fields are separated with +-sign and text must be uppercase.
 
 ***MD5(VERSION+STAMP+REFERENCE+MERCHANT+AMOUNT+CURRENCY+
 FORMAT+ALGORITHM+security key)***
 
-
-
-
-###Poll response
+## Poll response
 
 A successful poll request will receive a XML file response.
 
@@ -1029,10 +1021,6 @@ A successful poll request will receive a XML file response.
 ```
 
 If the security hash or checksum of field values does not match Checkout Finlands database the API will respond with "Error".
-
-
-
-
 
 # Data types
 
