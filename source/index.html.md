@@ -202,7 +202,7 @@ merchant=375917&provider_token=1296b3bc-407b-439b-9afd-c138e3ababa3
 
 ### HTTP Request
 
-`POST https://payment.checkout.fi/token/migrate`
+* `POST`: https://payment.checkout.fi/token/migrate
 
 Body field     | Type  | Description                   | Notes
 ---------------|-------|-------------------------------|-------
