@@ -445,6 +445,7 @@ md5( &lt;xml_string&gt; + '+' + &lt;aggregator_merchant_secret&gt; )
               <price currency="EUR" vat="23"></price>
               <merchant></merchant>
               <control></control>
+              <reference></reference>
           </item>
           <amount currency="EUR"></amount>
       </items>
@@ -504,6 +505,8 @@ md5( &lt;xml_string&gt; + '+' + &lt;aggregator_merchant_secret&gt; )
 | BUYER       | `Buyer` XML element | XML | XML | &cross;  | |
 | DELIVERY    | `Delivery` XML element | XML | XML | &cross;  | |
 | CONTROL     | `Control` XML element | XML | XML | &cross;  | |
+| REFERENCE   | Item level `Reference`. Used when refunding payments, must be unique if used. | ABCDE1234 | AN | (&cross;)  | |
+
 
 <!--
 Are these relevat to this API???
