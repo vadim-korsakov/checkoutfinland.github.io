@@ -886,8 +886,8 @@ $messageMac=strtoupper(hash_hmac("sha256", base64_encode($message), $secretKey))
 
 Description | Field | Format | Required |
 ------------|-------|--------|----------|
-Contains the base64 encoded XML. | DATA | AN | Yes |
-Mac checksum of the data. | MAC | AN | Yes |
+Contains the base64 encoded XML. | data | AN | Yes |
+Mac checksum of the data. | mac | AN | Yes |
 
 ### Response status codes and messages
 
