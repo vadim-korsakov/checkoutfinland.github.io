@@ -1096,36 +1096,39 @@ Leave the hmac-parameter itself out of the calculation.
 
 ```xml
 <?xml version="1.0"?>
-<checkout xmlns="http://checkout.fi/request">
-    <request type="aggregator" test="false">
-        <aggregator>375917</aggregator>
-        <token>feeba684-f35a-4c98-a846-14d0b1a02024</token>
-        <version>0002</version>
-        <stamp>1491913443</stamp>
-        <reference>1123123</reference>
-        <device>10</device>
-        <content>1</content>
-        <type>0</type>
-        <algorithm>3</algorithm>
-        <currency>EUR</currency>
-        <commit>false</commit>
-        <items>
-            <item>
-                <description/>
-                <price currency="EUR" vat="23">2500</price>
-                <merchant>391830</merchant>
-            </item>
-            <amount currency="EUR">2500</amount>
-        </items>
-        <buyer>
-            <country>FIN</country>
-            <language>FI</language>
-        </buyer>
-        <delivery>
-            <date>20110303</date>
-        </delivery>
-    <description>SiS tokenized payment test request : 11.04.2017 12:37:29</description></request>
-</checkout>
+    <checkout xmlns="http://checkout.fi/request">
+        <request type="aggregator" test="false">
+            <aggregator>375917</aggregator>
+            <token>02343287-1e1a-4b92-8008-367e6ce35221</token>
+            <version>0002</version>
+            <stamp>123456789</stamp>
+            <reference>123456</reference>
+            <device>10</device>
+            <content>1</content>
+            <type>0</type>
+            <algorithm>3</algorithm>
+            <currency>EUR</currency>
+            <commit>false</commit>
+            <description>SiS tokenized payment test request</description>
+            <items>
+                <item>
+                    <code/>
+                    <description>sub trade</description>
+                    <price currency="EUR" vat="23">2500</price>
+                    <merchant>391830</merchant>
+                    <control/>
+                </item>
+                <amount currency="EUR">2500</amount>
+            </items>
+            <buyer>
+                <country>FIN</country>
+                <language>FI</language>
+            </buyer>
+            <delivery>
+                <date>20170619</date>
+            </delivery>
+        </request>
+    </checkout>
 ```
 >PHP used to generate valid query from XML file (above)
 
@@ -1160,9 +1163,10 @@ $response = file_get_contents('https://payment.checkout.fi/', false, $streamCont
 ```plaintext
 Host: payment.checkout.fi
 Connection: close
-Content-Length: 1473
+Content-Length: 1567
 Content-Type: application/x-www-form-urlencoded
-CHECKOUT_XML=PD94bWwgdmVyc2lvbj0iMS4wIj8%2BCjxjaGVja291dCB4bWxucz0iaHR0cDovL2NoZWNrb3V0LmZpL3JlcXVlc3QiPgogICAgPHJlcXVlc3QgdHlwZT0iYWdncmVnYXRvciIgdGVzdD0iZmFsc2UiPgogICAgICAgIDxhZ2dyZWdhdG9yPjM3NTkxNzwvYWdncmVnYXRvcj4KICAgICAgICA8dG9rZW4%2BZmVlYmE2ODQtZjM1YS00Yzk4LWE4NDYtMTRkMGIxYTAyMDI0PC90b2tlbj4KICAgICAgICA8dmVyc2lvbj4wMDAyPC92ZXJzaW9uPgogICAgICAgIDxzdGFtcD4xNDkxOTEzNDQzPC9zdGFtcD4KICAgICAgICA8cmVmZXJlbmNlPjExMjMxMjM8L3JlZmVyZW5jZT4KICAgICAgICA8ZGV2aWNlPjEwPC9kZXZpY2U%2BCiAgICAgICAgPGNvbnRlbnQ%2BMTwvY29udGVudD4KICAgICAgICA8dHlwZT45PC90eXBlPgogICAgICAgIDxhbGdvcml0aG0%2BMzwvYWxnb3JpdGhtPgogICAgICAgIDxjdXJyZW5jeT5FVVI8L2N1cnJlbmN5PgogICAgICAgIDxjb21taXQ%2BZmFsc2U8L2NvbW1pdD4KICAgICAgICA8aXRlbXM%2BCiAgICAgICAgICAgIDxpdGVtPgogICAgICAgICAgICAgICAgPGRlc2NyaXB0aW9uLz4KICAgICAgICAgICAgICAgIDxwcmljZSBjdXJyZW5jeT0iRVVSIiB2YXQ9IjIzIj4yNTAwPC9wcmljZT4KICAgICAgICAgICAgICAgIDxtZXJjaGFudD4zOTE4MzA8L21lcmNoYW50PgogICAgICAgICAgICA8L2l0ZW0%2BCiAgICAgICAgICAgIDxhbW91bnQgY3VycmVuY3k9IkVVUiI%2BMjUwMDwvYW1vdW50PgogICAgICAgIDwvaXRlbXM%2BCiAgICAgICAgPGJ1eWVyPgogICAgICAgICAgICA8Y291bnRyeT5GSU48L2NvdW50cnk%2BCiAgICAgICAgICAgIDxsYW5ndWFnZT5GSTwvbGFuZ3VhZ2U%2BCiAgICAgICAgPC9idXllcj4KICAgICAgICA8ZGVsaXZlcnk%2BCiAgICAgICAgICAgIDxkYXRlPjIwMTEwMzAzPC9kYXRlPgogICAgICAgIDwvZGVsaXZlcnk%2BCiAgICA8ZGVzY3JpcHRpb24%2BU2lTIHRva2VuaXplZCBwYXltZW50IHRlc3QgcmVxdWVzdCA6IDExLjA0LjIwMTcgMTI6Mzc6Mjk8L2Rlc2NyaXB0aW9uPjwvcmVxdWVzdD4KPC9jaGVja291dD4K&CHECKOUT_MAC=FB0145FD7FD9AC7516AD60F94C4590D4
+
+CHECKOUT_XML=PD94bWwgdmVyc2lvbj0iMS4wIj8%2BCjxjaGVja291dCB4bWxucz0iaHR0cDovL2NoZWNrb3V0LmZpL3JlcXVlc3QiPgogICAgPHJlcXVlc3QgdHlwZT0iYWdncmVnYXRvciIgdGVzdD0iZmFsc2UiPgogICAgICAgIDxhZ2dyZWdhdG9yPjM3NTkxNzwvYWdncmVnYXRvcj4KICAgICAgICA8dG9rZW4%2BMDIzNDMyODctMWUxYS00YjkyLTgwMDgtMzY3ZTZjZTM1MjIxPC90b2tlbj4KICAgICAgICA8dmVyc2lvbj4wMDAyPC92ZXJzaW9uPgogICAgICAgIDxzdGFtcD4xMjM0NTY3ODk8L3N0YW1wPgogICAgICAgIDxyZWZlcmVuY2U%2BMTIzNDU2PC9yZWZlcmVuY2U%2BCiAgICAgICAgPGRldmljZT4xMDwvZGV2aWNlPgogICAgICAgIDxjb250ZW50PjE8L2NvbnRlbnQ%2BCiAgICAgICAgPHR5cGU%2BMDwvdHlwZT4KICAgICAgICA8YWxnb3JpdGhtPjM8L2FsZ29yaXRobT4KICAgICAgICA8Y3VycmVuY3k%2BRVVSPC9jdXJyZW5jeT4KICAgICAgICA8Y29tbWl0PmZhbHNlPC9jb21taXQ%2BCiAgICAgICAgPGRlc2NyaXB0aW9uPlNpUyB0b2tlbml6ZWQgcGF5bWVudCB0ZXN0IHJlcXVlc3Q8L2Rlc2NyaXB0aW9uPgogICAgICAgIDxpdGVtcz4KICAgICAgICAgICAgPGl0ZW0%2BCiAgICAgICAgICAgICAgICA8Y29kZS8%2BCiAgICAgICAgICAgICAgICA8ZGVzY3JpcHRpb24%2Bc3ViIHRyYWRlPC9kZXNjcmlwdGlvbj4KICAgICAgICAgICAgICAgIDxwcmljZSBjdXJyZW5jeT0iRVVSIiB2YXQ9IjIzIj4yNTAwPC9wcmljZT4KICAgICAgICAgICAgICAgIDxtZXJjaGFudD4zOTE4MzA8L21lcmNoYW50PgogICAgICAgICAgICAgICAgPGNvbnRyb2wvPgogICAgICAgICAgICA8L2l0ZW0%2BCiAgICAgICAgICAgIDxhbW91bnQgY3VycmVuY3k9IkVVUiI%2BMjUwMDwvYW1vdW50PgogICAgICAgIDwvaXRlbXM%2BCiAgICAgICAgPGJ1eWVyPgogICAgICAgICAgICA8Y291bnRyeT5GSU48L2NvdW50cnk%2BCiAgICAgICAgICAgIDxsYW5ndWFnZT5GSTwvbGFuZ3VhZ2U%2BCiAgICAgICAgPC9idXllcj4KICAgICAgICA8ZGVsaXZlcnk%2BCiAgICAgICAgICAgIDxkYXRlPjIwMTcwNjE5PC9kYXRlPgogICAgICAgIDwvZGVsaXZlcnk%2BCiAgICA8L3JlcXVlc3Q%2BCjwvY2hlY2tvdXQ%2BCg%3D%3D&CHECKOUT_MAC=ECC3A796D38A2050C31CD841A593488F
 ```
 > Respose XML
 

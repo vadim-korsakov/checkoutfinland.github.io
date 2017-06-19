@@ -2404,36 +2404,39 @@ The secret key used will be merchant-specific.
 <p>Sample &#39;payment.xml&rsquo; file</p>
 </blockquote>
 <pre class="highlight xml"><code><span class="cp">&lt;?xml version="1.0"?&gt;</span>
-<span class="nt">&lt;checkout</span> <span class="na">xmlns=</span><span class="s">"http://checkout.fi/request"</span><span class="nt">&gt;</span>
-    <span class="nt">&lt;request</span> <span class="na">type=</span><span class="s">"aggregator"</span> <span class="na">test=</span><span class="s">"false"</span><span class="nt">&gt;</span>
-        <span class="nt">&lt;aggregator&gt;</span>375917<span class="nt">&lt;/aggregator&gt;</span>
-        <span class="nt">&lt;token&gt;</span>feeba684-f35a-4c98-a846-14d0b1a02024<span class="nt">&lt;/token&gt;</span>
-        <span class="nt">&lt;version&gt;</span>0002<span class="nt">&lt;/version&gt;</span>
-        <span class="nt">&lt;stamp&gt;</span>1491913443<span class="nt">&lt;/stamp&gt;</span>
-        <span class="nt">&lt;reference&gt;</span>1123123<span class="nt">&lt;/reference&gt;</span>
-        <span class="nt">&lt;device&gt;</span>10<span class="nt">&lt;/device&gt;</span>
-        <span class="nt">&lt;content&gt;</span>1<span class="nt">&lt;/content&gt;</span>
-        <span class="nt">&lt;type&gt;</span>0<span class="nt">&lt;/type&gt;</span>
-        <span class="nt">&lt;algorithm&gt;</span>3<span class="nt">&lt;/algorithm&gt;</span>
-        <span class="nt">&lt;currency&gt;</span>EUR<span class="nt">&lt;/currency&gt;</span>
-        <span class="nt">&lt;commit&gt;</span>false<span class="nt">&lt;/commit&gt;</span>
-        <span class="nt">&lt;items&gt;</span>
-            <span class="nt">&lt;item&gt;</span>
-                <span class="nt">&lt;description/&gt;</span>
-                <span class="nt">&lt;price</span> <span class="na">currency=</span><span class="s">"EUR"</span> <span class="na">vat=</span><span class="s">"23"</span><span class="nt">&gt;</span>2500<span class="nt">&lt;/price&gt;</span>
-                <span class="nt">&lt;merchant&gt;</span>391830<span class="nt">&lt;/merchant&gt;</span>
-            <span class="nt">&lt;/item&gt;</span>
-            <span class="nt">&lt;amount</span> <span class="na">currency=</span><span class="s">"EUR"</span><span class="nt">&gt;</span>2500<span class="nt">&lt;/amount&gt;</span>
-        <span class="nt">&lt;/items&gt;</span>
-        <span class="nt">&lt;buyer&gt;</span>
-            <span class="nt">&lt;country&gt;</span>FIN<span class="nt">&lt;/country&gt;</span>
-            <span class="nt">&lt;language&gt;</span>FI<span class="nt">&lt;/language&gt;</span>
-        <span class="nt">&lt;/buyer&gt;</span>
-        <span class="nt">&lt;delivery&gt;</span>
-            <span class="nt">&lt;date&gt;</span>20110303<span class="nt">&lt;/date&gt;</span>
-        <span class="nt">&lt;/delivery&gt;</span>
-    <span class="nt">&lt;description&gt;</span>SiS tokenized payment test request : 11.04.2017 12:37:29<span class="nt">&lt;/description&gt;&lt;/request&gt;</span>
-<span class="nt">&lt;/checkout&gt;</span>
+    <span class="nt">&lt;checkout</span> <span class="na">xmlns=</span><span class="s">"http://checkout.fi/request"</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;request</span> <span class="na">type=</span><span class="s">"aggregator"</span> <span class="na">test=</span><span class="s">"false"</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;aggregator&gt;</span>375917<span class="nt">&lt;/aggregator&gt;</span>
+            <span class="nt">&lt;token&gt;</span>02343287-1e1a-4b92-8008-367e6ce35221<span class="nt">&lt;/token&gt;</span>
+            <span class="nt">&lt;version&gt;</span>0002<span class="nt">&lt;/version&gt;</span>
+            <span class="nt">&lt;stamp&gt;</span>123456789<span class="nt">&lt;/stamp&gt;</span>
+            <span class="nt">&lt;reference&gt;</span>123456<span class="nt">&lt;/reference&gt;</span>
+            <span class="nt">&lt;device&gt;</span>10<span class="nt">&lt;/device&gt;</span>
+            <span class="nt">&lt;content&gt;</span>1<span class="nt">&lt;/content&gt;</span>
+            <span class="nt">&lt;type&gt;</span>0<span class="nt">&lt;/type&gt;</span>
+            <span class="nt">&lt;algorithm&gt;</span>3<span class="nt">&lt;/algorithm&gt;</span>
+            <span class="nt">&lt;currency&gt;</span>EUR<span class="nt">&lt;/currency&gt;</span>
+            <span class="nt">&lt;commit&gt;</span>false<span class="nt">&lt;/commit&gt;</span>
+            <span class="nt">&lt;description&gt;</span>SiS tokenized payment test request<span class="nt">&lt;/description&gt;</span>
+            <span class="nt">&lt;items&gt;</span>
+                <span class="nt">&lt;item&gt;</span>
+                    <span class="nt">&lt;code/&gt;</span>
+                    <span class="nt">&lt;description&gt;</span>sub trade<span class="nt">&lt;/description&gt;</span>
+                    <span class="nt">&lt;price</span> <span class="na">currency=</span><span class="s">"EUR"</span> <span class="na">vat=</span><span class="s">"23"</span><span class="nt">&gt;</span>2500<span class="nt">&lt;/price&gt;</span>
+                    <span class="nt">&lt;merchant&gt;</span>391830<span class="nt">&lt;/merchant&gt;</span>
+                    <span class="nt">&lt;control/&gt;</span>
+                <span class="nt">&lt;/item&gt;</span>
+                <span class="nt">&lt;amount</span> <span class="na">currency=</span><span class="s">"EUR"</span><span class="nt">&gt;</span>2500<span class="nt">&lt;/amount&gt;</span>
+            <span class="nt">&lt;/items&gt;</span>
+            <span class="nt">&lt;buyer&gt;</span>
+                <span class="nt">&lt;country&gt;</span>FIN<span class="nt">&lt;/country&gt;</span>
+                <span class="nt">&lt;language&gt;</span>FI<span class="nt">&lt;/language&gt;</span>
+            <span class="nt">&lt;/buyer&gt;</span>
+            <span class="nt">&lt;delivery&gt;</span>
+                <span class="nt">&lt;date&gt;</span>20170619<span class="nt">&lt;/date&gt;</span>
+            <span class="nt">&lt;/delivery&gt;</span>
+        <span class="nt">&lt;/request&gt;</span>
+    <span class="nt">&lt;/checkout&gt;</span>
 </code></pre>
 <blockquote>
 <p>PHP used to generate valid query from XML file (above)</p>
@@ -2468,9 +2471,10 @@ The secret key used will be merchant-specific.
 </blockquote>
 <pre class="highlight plaintext"><code>Host: payment.checkout.fi
 Connection: close
-Content-Length: 1473
+Content-Length: 1567
 Content-Type: application/x-www-form-urlencoded
-CHECKOUT_XML=PD94bWwgdmVyc2lvbj0iMS4wIj8%2BCjxjaGVja291dCB4bWxucz0iaHR0cDovL2NoZWNrb3V0LmZpL3JlcXVlc3QiPgogICAgPHJlcXVlc3QgdHlwZT0iYWdncmVnYXRvciIgdGVzdD0iZmFsc2UiPgogICAgICAgIDxhZ2dyZWdhdG9yPjM3NTkxNzwvYWdncmVnYXRvcj4KICAgICAgICA8dG9rZW4%2BZmVlYmE2ODQtZjM1YS00Yzk4LWE4NDYtMTRkMGIxYTAyMDI0PC90b2tlbj4KICAgICAgICA8dmVyc2lvbj4wMDAyPC92ZXJzaW9uPgogICAgICAgIDxzdGFtcD4xNDkxOTEzNDQzPC9zdGFtcD4KICAgICAgICA8cmVmZXJlbmNlPjExMjMxMjM8L3JlZmVyZW5jZT4KICAgICAgICA8ZGV2aWNlPjEwPC9kZXZpY2U%2BCiAgICAgICAgPGNvbnRlbnQ%2BMTwvY29udGVudD4KICAgICAgICA8dHlwZT45PC90eXBlPgogICAgICAgIDxhbGdvcml0aG0%2BMzwvYWxnb3JpdGhtPgogICAgICAgIDxjdXJyZW5jeT5FVVI8L2N1cnJlbmN5PgogICAgICAgIDxjb21taXQ%2BZmFsc2U8L2NvbW1pdD4KICAgICAgICA8aXRlbXM%2BCiAgICAgICAgICAgIDxpdGVtPgogICAgICAgICAgICAgICAgPGRlc2NyaXB0aW9uLz4KICAgICAgICAgICAgICAgIDxwcmljZSBjdXJyZW5jeT0iRVVSIiB2YXQ9IjIzIj4yNTAwPC9wcmljZT4KICAgICAgICAgICAgICAgIDxtZXJjaGFudD4zOTE4MzA8L21lcmNoYW50PgogICAgICAgICAgICA8L2l0ZW0%2BCiAgICAgICAgICAgIDxhbW91bnQgY3VycmVuY3k9IkVVUiI%2BMjUwMDwvYW1vdW50PgogICAgICAgIDwvaXRlbXM%2BCiAgICAgICAgPGJ1eWVyPgogICAgICAgICAgICA8Y291bnRyeT5GSU48L2NvdW50cnk%2BCiAgICAgICAgICAgIDxsYW5ndWFnZT5GSTwvbGFuZ3VhZ2U%2BCiAgICAgICAgPC9idXllcj4KICAgICAgICA8ZGVsaXZlcnk%2BCiAgICAgICAgICAgIDxkYXRlPjIwMTEwMzAzPC9kYXRlPgogICAgICAgIDwvZGVsaXZlcnk%2BCiAgICA8ZGVzY3JpcHRpb24%2BU2lTIHRva2VuaXplZCBwYXltZW50IHRlc3QgcmVxdWVzdCA6IDExLjA0LjIwMTcgMTI6Mzc6Mjk8L2Rlc2NyaXB0aW9uPjwvcmVxdWVzdD4KPC9jaGVja291dD4K&amp;CHECKOUT_MAC=FB0145FD7FD9AC7516AD60F94C4590D4
+
+CHECKOUT_XML=PD94bWwgdmVyc2lvbj0iMS4wIj8%2BCjxjaGVja291dCB4bWxucz0iaHR0cDovL2NoZWNrb3V0LmZpL3JlcXVlc3QiPgogICAgPHJlcXVlc3QgdHlwZT0iYWdncmVnYXRvciIgdGVzdD0iZmFsc2UiPgogICAgICAgIDxhZ2dyZWdhdG9yPjM3NTkxNzwvYWdncmVnYXRvcj4KICAgICAgICA8dG9rZW4%2BMDIzNDMyODctMWUxYS00YjkyLTgwMDgtMzY3ZTZjZTM1MjIxPC90b2tlbj4KICAgICAgICA8dmVyc2lvbj4wMDAyPC92ZXJzaW9uPgogICAgICAgIDxzdGFtcD4xMjM0NTY3ODk8L3N0YW1wPgogICAgICAgIDxyZWZlcmVuY2U%2BMTIzNDU2PC9yZWZlcmVuY2U%2BCiAgICAgICAgPGRldmljZT4xMDwvZGV2aWNlPgogICAgICAgIDxjb250ZW50PjE8L2NvbnRlbnQ%2BCiAgICAgICAgPHR5cGU%2BMDwvdHlwZT4KICAgICAgICA8YWxnb3JpdGhtPjM8L2FsZ29yaXRobT4KICAgICAgICA8Y3VycmVuY3k%2BRVVSPC9jdXJyZW5jeT4KICAgICAgICA8Y29tbWl0PmZhbHNlPC9jb21taXQ%2BCiAgICAgICAgPGRlc2NyaXB0aW9uPlNpUyB0b2tlbml6ZWQgcGF5bWVudCB0ZXN0IHJlcXVlc3Q8L2Rlc2NyaXB0aW9uPgogICAgICAgIDxpdGVtcz4KICAgICAgICAgICAgPGl0ZW0%2BCiAgICAgICAgICAgICAgICA8Y29kZS8%2BCiAgICAgICAgICAgICAgICA8ZGVzY3JpcHRpb24%2Bc3ViIHRyYWRlPC9kZXNjcmlwdGlvbj4KICAgICAgICAgICAgICAgIDxwcmljZSBjdXJyZW5jeT0iRVVSIiB2YXQ9IjIzIj4yNTAwPC9wcmljZT4KICAgICAgICAgICAgICAgIDxtZXJjaGFudD4zOTE4MzA8L21lcmNoYW50PgogICAgICAgICAgICAgICAgPGNvbnRyb2wvPgogICAgICAgICAgICA8L2l0ZW0%2BCiAgICAgICAgICAgIDxhbW91bnQgY3VycmVuY3k9IkVVUiI%2BMjUwMDwvYW1vdW50PgogICAgICAgIDwvaXRlbXM%2BCiAgICAgICAgPGJ1eWVyPgogICAgICAgICAgICA8Y291bnRyeT5GSU48L2NvdW50cnk%2BCiAgICAgICAgICAgIDxsYW5ndWFnZT5GSTwvbGFuZ3VhZ2U%2BCiAgICAgICAgPC9idXllcj4KICAgICAgICA8ZGVsaXZlcnk%2BCiAgICAgICAgICAgIDxkYXRlPjIwMTcwNjE5PC9kYXRlPgogICAgICAgIDwvZGVsaXZlcnk%2BCiAgICA8L3JlcXVlc3Q%2BCjwvY2hlY2tvdXQ%2BCg%3D%3D&amp;CHECKOUT_MAC=ECC3A796D38A2050C31CD841A593488F
 </code></pre>
 <blockquote>
 <p>Respose XML</p>
