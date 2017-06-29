@@ -110,6 +110,7 @@ class Checkout
 	 */
 	public function getCheckoutXML($data)
 	{
+	{
 		$this->device = "10";
 		return $this->sendPost($this->getCheckoutObject($data));
 	}
@@ -179,11 +180,134 @@ The following illustrates how the user moves in the payment process.
 
 # Tokenization API
 
-## Card addition (tokenization)
+## Add and tokenize a new card
 
-1. Use the Solinor card-addition described in the [Solinor "STORE A CARD" example](https://paymenthighway.fi/dev/#examples) to fetch the Solinor-`card_token`.
-2. Migrate the Solinor-`card_token` to a Checkout-`card_token` using the [Token migration API](http://localhost:4567/#token-migration) described below.
-3. Use the Checkout-`card_token` for making payments.
+API for adding and tokenizing credit cards. Cards are automatically tokenized and migrated - the provider-token is 
+migrated with checkout's tokens and the checkout token is responded. API uses redirections to handle information and 
+moving between services. Requests are secured using hmac calculation using shared secret between message sender and
+receiver.
+
+The card adding flow has two phases :
+
+1 - Request for the form
+
+* On succeeded request the form is shown otherwise redirected to failure URL (or error shown see more below)
+
+2 - Submit OR Cancel the form
+
+* On succeeded request token is created and redirected to success URL with parameters (containg the token)
+* On failure/error cases redirected to failure URL
+* On cancelling the form redirected to cancel URL
+
+### Simplified flow of adding a card
+
+See detailed flow [here](images/add_card_flow_full.svg).
+
+![Simplified add card flow](images/add_card_flow_simplified.svg)
+
+### API endpoint
+
+* `POST`: https://payment.checkout.fi/token/card/add
+
+###Test merchant and secret :
+
+* merchant id : 375917
+* merchant secret : SAIPPUAKAUPPIAS
+
+### Request parameters
+
+>Sample request to initiate card add form
+
+```HTTP
+POST /token/card/add HTTP/1.1
+Host: payment.checkout.fi
+Connection: keep-alive
+Content-Length: 317
+Pragma: no-cache
+Cache-Control: no-cache
+Content-Type: application/x-www-form-urlencoded
+DNT: 1
+
+merchant=375917&failure_url=https%3A%2F%2Fdemo.checkout.fi%2Faddcard%2Ffail&cancel_url=https%3A%2F%2Fdemo.checkout.fi%2Faddcard%2Fcancel&success_url=https%3A%2F%2Fdemo.checkout.fi%2Faddcard%2Fsuccess&request_id=a1ea51cd-24d0-4ac5-a035-0644d971ca57&hmac=5c998d76d1ddb9f5ed3375d5ba49ec90b46f52a6177c4a8b1bbb93348a9ad1b1
+```
+
+Initial POST request is made to API endpoint with following parameters (all parameters are mandatory) :
+
+Field       | Type  | Description 
+------------|-------|-------------
+merchant    | AN    | merchant id 
+success_url | AN    | Redirection URL on succeeded action
+failure_url | AN    | Redirection URL on failure
+cancel_url  | AN    | Redirection URL on user cancel
+request_id  | UUID4 | Unique identificator for the request
+hmac        | AN    | Hash calculated from message parameters 
+
+### Sample parameters : 
+
+Parameters on the example query:
+
+* merchant : 375917
+* failure_url : https://demo.checkout.fi/addcard/fail
+* cancel_url : https://demo.checkout.fi/addcard/cancel
+* success_url : https://demo.checkout.fi/addcard/success
+* request_id : a1ea51cd-24d0-4ac5-a035-0644d971ca57
+* hmac : 5c998d76d1ddb9f5ed3375d5ba49ec90b46f52a6177c4a8b1bbb93348a9ad1b1
+
+### HMAC calculation
+
+> Parameter string ready for SHA256 hmac calculation 
+
+```text
+var macString = 'cancel_url:https://demo.checkout.fi/addcard/cancel
+failure_url:https://demo.checkout.fi/addcard/fail
+merchant:375917
+request_id:25d52044-31d5-48f3-b605-307671d668cd
+success_url:https://demo.checkout.fi/addcard/success';
+
+var hmac = HmacSHA256(macString, 'SAIPPUAKAUPPIAS');
+
+// Correct SHA256 HMAC for string above is :
+// 5c998d76d1ddb9f5ed3375d5ba49ec90b46f52a6177c4a8b1bbb93348a9ad1b1
+```
+
+Colon separated and alpabetically ordered name/value pairs are concatenated with 'new line' char (\n) and 
+SHA265 HMAC is calculated with merchants secret. 
+
+### Responses
+
+On successfull add card request the HTML-document containing the form is returned.
+
+On errors and failures the page is redirected to given failure URL with parameters. Parameters give more detailed
+information on the failure.
+
+Note: on some rare cases HTML output is shown instead. E.g. missing one of the required parameters (failure url for example)
+
+### Response parameters
+
+name          | type  | description 
+--------------|-------|------------
+co_code       | INT   | reaponse status (see detailed codes on below)
+co_request_id | UUID4 | unified request identifier
+co_status     | AN    | response status text (see detailed codes on below)
+co_token      | UUID4 | Checkout token
+hmac          | AN    | Hash calculated from co_ parameters
+
+### Status codes on redirect URL's
+
+co_code | co_status | description
+--------|-----------|-----------------------------------
+      0 |        ok | Token got, created and migrated ok
+    100 |      fail | Missing mandatory parameters
+    102 |      fail | HMAC validation failed (check merchant id)
+    103 |      fail | HMAC validation failed
+    104 |      fail | Failed creating form + detailed information
+    105 |      fail | Failed creating a form
+    150 |      fail | Missing mandatory parameters
+    151 |      fail | Invalid request-id
+    152 |      fail | Invalid request-id
+    153 |      fail | Provider token already exists, tried to create duplicate
+    154 |      fail | Callback failed + detailed information
+    
 
 ## Token migration
 
@@ -415,7 +539,7 @@ CHECKOUT_XML=<base64 encoded xml string>&CHECKOUT_MAC=<string>
 
 Calculating MD5 hash for CHECKOUT_MAC field:
 
-md5( &lt;xml_string&gt; + '+' + &lt;aggregator_merchant_secret&gt; )
+strtoupper(md5(&lt;xml_string&gt; + '+' + &lt;aggregator_merchant_secret&gt;))
 
 ! Note the plus sign between strings is part of a string not concatenating operator etc.
 
