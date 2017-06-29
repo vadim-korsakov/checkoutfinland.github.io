@@ -210,6 +210,7 @@
      */</span>
     <span class="k">public</span> <span class="k">function</span> <span class="nf">getCheckoutXML</span><span class="p">(</span><span class="nv">$data</span><span class="p">)</span>
     <span class="p">{</span>
+    <span class="p">{</span>
         <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">device</span> <span class="o">=</span> <span class="s2">"10"</span><span class="p">;</span>
         <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">sendPost</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">getCheckoutObject</span><span class="p">(</span><span class="nv">$data</span><span class="p">));</span>
     <span class="p">}</span>
@@ -282,19 +283,253 @@
 
 <h1 id="tokenization-api">Tokenization API</h1>
 
-<h2 id="card-addition-tokenization">Card addition (tokenization)</h2>
+<h2 id="add-and-tokenize-a-new-card">Add and tokenize a new card</h2>
 
-<ol>
-<li>Use the Solinor card-addition described in the <a href="https://paymenthighway.fi/dev/#examples">Solinor &ldquo;STORE A CARD&rdquo; example</a> to fetch the Solinor-<code class="prettyprint">card_token</code>.</li>
-<li>Migrate the Solinor-<code class="prettyprint">card_token</code> to a Checkout-<code class="prettyprint">card_token</code> using the <a href="http://localhost:4567/#token-migration">Token migration API</a> described below.</li>
-<li>Use the Checkout-<code class="prettyprint">card_token</code> for making payments.</li>
-</ol>
+<p>API for adding and tokenizing credit cards. Cards are automatically tokenized and migrated - the provider-token is 
+migrated with checkout&rsquo;s tokens and the checkout token is responded. API uses redirections to handle information and 
+moving between services. Requests are secured using hmac calculation using shared secret between message sender and
+receiver.</p>
+
+<p>The card adding flow has two phases :</p>
+
+<p>1 - Request for the form</p>
+
+<ul>
+<li>On succeeded request the form is shown otherwise redirected to failure URL (or error shown see more below)</li>
+</ul>
+
+<p>2 - Submit OR Cancel the form</p>
+
+<ul>
+<li>On succeeded request token is created and redirected to success URL with parameters (containg the token)</li>
+<li>On failure/error cases redirected to failure URL</li>
+<li>On cancelling the form redirected to cancel URL</li>
+</ul>
+
+<h3 id="simplified-flow-of-adding-a-card">Simplified flow of adding a card</h3>
+
+<p>See detailed flow <a href="images/add_card_flow_full.svg">here</a>.</p>
+
+<p><img src="images/add_card_flow_simplified.svg" alt="Simplified add card flow" /></p>
+
+<h3 id="api-endpoint">API endpoint</h3>
+
+<ul>
+<li><code class="prettyprint">POST</code>: https://payment.checkout.fi/token/card/add</li>
+</ul>
+
+<h3 id="test-merchant-and-secret">Test merchant and secret :</h3>
+
+<ul>
+<li>merchant id : 375917</li>
+<li>merchant secret : SAIPPUAKAUPPIAS</li>
+</ul>
+
+<h3 id="request-parameters">Request parameters</h3>
+
+<blockquote>
+<p>Sample request to initiate card add form</p>
+</blockquote>
+<pre class="highlight plaintext"><code>POST /token/card/add HTTP/1.1
+Host: payment.checkout.fi
+Connection: keep-alive
+Content-Length: 317
+Pragma: no-cache
+Cache-Control: no-cache
+Content-Type: application/x-www-form-urlencoded
+DNT: 1
+
+merchant=375917&amp;failure_url=https%3A%2F%2Fdemo.checkout.fi%2Faddcard%2Ffail&amp;cancel_url=https%3A%2F%2Fdemo.checkout.fi%2Faddcard%2Fcancel&amp;success_url=https%3A%2F%2Fdemo.checkout.fi%2Faddcard%2Fsuccess&amp;request_id=a1ea51cd-24d0-4ac5-a035-0644d971ca57&amp;hmac=5c998d76d1ddb9f5ed3375d5ba49ec90b46f52a6177c4a8b1bbb93348a9ad1b1
+</code></pre>
+<p>Initial POST request is made to API endpoint with following parameters (all parameters are mandatory) :</p>
+
+<table><thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>merchant</td>
+<td>AN</td>
+<td>merchant id</td>
+</tr>
+<tr>
+<td>success_url</td>
+<td>AN</td>
+<td>Redirection URL on succeeded action</td>
+</tr>
+<tr>
+<td>failure_url</td>
+<td>AN</td>
+<td>Redirection URL on failure</td>
+</tr>
+<tr>
+<td>cancel_url</td>
+<td>AN</td>
+<td>Redirection URL on user cancel</td>
+</tr>
+<tr>
+<td>request_id</td>
+<td>UUID4</td>
+<td>Unique identificator for the request</td>
+</tr>
+<tr>
+<td>hmac</td>
+<td>AN</td>
+<td> Hash calculated from message parameters</td>
+</tr>
+</tbody></table>
+
+<h3 id="sample-parameters">Sample parameters :</h3>
+
+<p>Parameters on the example query:</p>
+
+<ul>
+<li>merchant : 375917</li>
+<li>failure_url : https://demo.checkout.fi/addcard/fail</li>
+<li>cancel_url : https://demo.checkout.fi/addcard/cancel</li>
+<li>success_url : https://demo.checkout.fi/addcard/success</li>
+<li>request_id : a1ea51cd-24d0-4ac5-a035-0644d971ca57</li>
+<li>hmac : 5c998d76d1ddb9f5ed3375d5ba49ec90b46f52a6177c4a8b1bbb93348a9ad1b1</li>
+</ul>
+
+<h3 id="hmac-calculation">HMAC calculation</h3>
+
+<blockquote>
+<p>Parameter string ready for SHA256 hmac calculation </p>
+</blockquote>
+<pre class="highlight plaintext"><code>var macString = 'cancel_url:https://demo.checkout.fi/addcard/cancel
+failure_url:https://demo.checkout.fi/addcard/fail
+merchant:375917
+request_id:25d52044-31d5-48f3-b605-307671d668cd
+success_url:https://demo.checkout.fi/addcard/success';
+
+var hmac = HmacSHA256(macString, 'SAIPPUAKAUPPIAS');
+
+// Correct SHA256 HMAC for string above is :
+// 5c998d76d1ddb9f5ed3375d5ba49ec90b46f52a6177c4a8b1bbb93348a9ad1b1
+</code></pre>
+<p>Colon separated and alpabetically ordered name/value pairs are concatenated with &lsquo;new line&rsquo; char (\n) and 
+SHA265 HMAC is calculated with merchants secret. </p>
+
+<h3 id="responses">Responses</h3>
+
+<p>On successfull add card request the HTML-document containing the form is returned.</p>
+
+<p>On errors and failures the page is redirected to given failure URL with parameters. Parameters give more detailed
+information on the failure.</p>
+
+<p>Note: on some rare cases HTML output is shown instead. E.g. missing one of the required parameters (failure url for example)</p>
+
+<h3 id="response-parameters">Response parameters</h3>
+
+<table><thead>
+<tr>
+<th>name</th>
+<th>type</th>
+<th>description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>co_code</td>
+<td>INT</td>
+<td>reaponse status (see detailed codes on below)</td>
+</tr>
+<tr>
+<td>co_request_id</td>
+<td>UUID4</td>
+<td>unified request identifier</td>
+</tr>
+<tr>
+<td>co_status</td>
+<td>AN</td>
+<td>response status text (see detailed codes on below)</td>
+</tr>
+<tr>
+<td>co_token</td>
+<td>UUID4</td>
+<td> Checkout token</td>
+</tr>
+<tr>
+<td>hmac</td>
+<td>AN</td>
+<td>Hash calculated from co_ parameters</td>
+</tr>
+</tbody></table>
+
+<h3 id="status-codes-on-redirect-url-39-s">Status codes on redirect URL&rsquo;s</h3>
+
+<table><thead>
+<tr>
+<th>co_code</th>
+<th>co_status</th>
+<th>description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>0</td>
+<td>ok</td>
+<td>Token got, created and migrated ok</td>
+</tr>
+<tr>
+<td>100</td>
+<td>fail</td>
+<td>Missing mandatory parameters</td>
+</tr>
+<tr>
+<td>102</td>
+<td>fail</td>
+<td>HMAC validation failed (check merchant id)</td>
+</tr>
+<tr>
+<td>103</td>
+<td>fail</td>
+<td>HMAC validation failed</td>
+</tr>
+<tr>
+<td>104</td>
+<td>fail</td>
+<td>Failed creating form + detailed information</td>
+</tr>
+<tr>
+<td>105</td>
+<td>fail</td>
+<td>Failed creating a form</td>
+</tr>
+<tr>
+<td>150</td>
+<td>fail</td>
+<td>Missing mandatory parameters</td>
+</tr>
+<tr>
+<td>151</td>
+<td>fail</td>
+<td>Invalid request-id</td>
+</tr>
+<tr>
+<td>152</td>
+<td>fail</td>
+<td>Invalid request-id</td>
+</tr>
+<tr>
+<td>153</td>
+<td>fail</td>
+<td>Provider token already exists, tried to create duplicate</td>
+</tr>
+<tr>
+<td>154</td>
+<td>fail</td>
+<td>Callback failed + detailed information</td>
+</tr>
+</tbody></table>
 
 <h2 id="token-migration">Token migration</h2>
 
 <p>Will convert an external token (for example Solinor token) to a Checkout-token, which can then be used for making payments in Checkout Finland Payment API.</p>
 
-<p>If token has already been migrated earlier, statusCode &lsquo;201&rsquo; and Checkout-token will be returned.</p>
+<p>If token has already been migrated earlier, statusCode &#39;201&rsquo; and Checkout-token will be returned.</p>
 <pre class="highlight plaintext"><code>POST /token/migrate HTTP/1.1
 Host: payment.checkout.fi
 Content-Type: application/x-www-form-urlencoded
@@ -859,7 +1094,7 @@ CHECKOUT_XML=&lt;base64 encoded xml string&gt;&amp;CHECKOUT_MAC=&lt;string&gt;
 
 <p>Calculating MD5 hash for CHECKOUT_MAC field:</p>
 
-<p>md5( &lt;xml_string&gt; + &rsquo;+&rsquo; + &lt;aggregator_merchant_secret&gt; )</p>
+<p>strtoupper(md5(&lt;xml_string&gt; + &rsquo;+&rsquo; + &lt;aggregator_merchant_secret&gt;))</p>
 
 <p>! Note the plus sign between strings is part of a string not concatenating operator etc.</p>
 
