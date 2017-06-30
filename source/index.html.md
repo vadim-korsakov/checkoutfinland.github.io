@@ -297,6 +297,7 @@ hmac          | AN    | Hash calculated from co_ parameters
 co_code | co_status | description
 --------|-----------|-----------------------------------
       0 |        ok | Token got, created and migrated ok
+      1 |    cancel | User cancelled the process
     100 |      fail | Missing mandatory parameters
     102 |      fail | HMAC validation failed (check merchant id)
     103 |      fail | HMAC validation failed
@@ -307,7 +308,10 @@ co_code | co_status | description
     152 |      fail | Invalid request-id
     153 |      fail | Provider token already exists, tried to create duplicate
     154 |      fail | Callback failed + detailed information
-    
+    154 |      fail | Unknown error
+    156 |      fail | Callback failed + detailed information
+    157 |      fail | Callback failed + detailed information
+    160 |      fail | Failed migrating token
 
 ## Token migration
 
