@@ -15,12 +15,17 @@ alt Submit form
     deactivate payment.checkout.fi
   else Failure
     activate Payment Highway
-    Payment Highway -x Client: 303 : Redirect client failure
-    deactivate Payment Highway
+    Payment Highway -->>- payment.checkout.fi: 303 : Redirect CO failure
+    activate payment.checkout.fi
+    payment.checkout.fi -x Client: 302 : Redirect client failure
+    deactivate payment.checkout.fi
   end
   else Cancel form
 Client ->> Payment Highway: GET : Cancel form
     activate Payment Highway
-    Payment Highway -x Client: 303 : Redirect client cancel
-    deactivate Payment Highway
+    Payment Highway -->>- payment.checkout.fi: 303 : Redirect CO cancel
+    activate payment.checkout.fi
+    payment.checkout.fi -x Client: 302 : Redirect client cancel
+    deactivate payment.checkout.fi
+
   end
