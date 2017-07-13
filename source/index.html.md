@@ -156,7 +156,7 @@ Test credentials
 
 Please note that not all payment methods support testing. The payment methods are enabled that support testing payments. There might be some features that are not working as they are intended to work in the testing side due to limitations to external integrations.
 
-The whole test code is available at: [http://demo1.checkout.fi/xml2.txt](http://demo1.checkout.fi/xml2.txt).
+The whole test code is available at: [https://gist.github.com/jrasanen/2a293e7d87443e33184295fab36c96f5](https://gist.github.com/jrasanen/2a293e7d87443e33184295fab36c96f5).
 
 # General flow
 
