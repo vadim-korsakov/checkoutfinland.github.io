@@ -210,6 +210,7 @@
      */</span>
     <span class="k">public</span> <span class="k">function</span> <span class="nf">getCheckoutXML</span><span class="p">(</span><span class="nv">$data</span><span class="p">)</span>
     <span class="p">{</span>
+    <span class="p">{</span>
         <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">device</span> <span class="o">=</span> <span class="s2">"10"</span><span class="p">;</span>
         <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">sendPost</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">getCheckoutObject</span><span class="p">(</span><span class="nv">$data</span><span class="p">));</span>
     <span class="p">}</span>
@@ -256,7 +257,7 @@
 
 <p>Please note that not all payment methods support testing. The payment methods are enabled that support testing payments. There might be some features that are not working as they are intended to work in the testing side due to limitations to external integrations.</p>
 
-<p>The whole test code is available at: <a href="http://demo1.checkout.fi/xml2.txt">http://demo1.checkout.fi/xml2.txt</a>.</p>
+<p>The whole test code is available at: <a href="https://gist.github.com/jrasanen/2a293e7d87443e33184295fab36c96f5">https://gist.github.com/jrasanen/2a293e7d87443e33184295fab36c96f5</a>.</p>
 
 <h1 id="general-flow">General flow</h1>
 
@@ -282,19 +283,278 @@
 
 <h1 id="tokenization-api">Tokenization API</h1>
 
-<h2 id="card-addition-tokenization">Card addition (tokenization)</h2>
+<h2 id="add-and-tokenize-a-new-card">Add and tokenize a new card</h2>
 
-<ol>
-<li>Use the Solinor card-addition described in the <a href="https://paymenthighway.fi/dev/#examples">Solinor &ldquo;STORE A CARD&rdquo; example</a> to fetch the Solinor-<code class="prettyprint">card_token</code>.</li>
-<li>Migrate the Solinor-<code class="prettyprint">card_token</code> to a Checkout-<code class="prettyprint">card_token</code> using the <a href="http://localhost:4567/#token-migration">Token migration API</a> described below.</li>
-<li>Use the Checkout-<code class="prettyprint">card_token</code> for making payments.</li>
-</ol>
+<p>API for adding and tokenizing credit cards. Cards are automatically tokenized and migrated - the provider-token is 
+migrated with checkout&rsquo;s tokens and the checkout token is responded. API uses redirections to handle information and 
+moving between services. Requests are secured using hmac calculation using shared secret between message sender and
+receiver.</p>
+
+<p>The card adding flow has two phases :</p>
+
+<p>1 - Request for the form</p>
+
+<ul>
+<li>On succeeded request the form is shown otherwise redirected to failure URL (or error shown see more below)</li>
+</ul>
+
+<p>2 - Submit OR Cancel the form</p>
+
+<ul>
+<li>On succeeded request token is created and redirected to success URL with parameters (containg the token)</li>
+<li>On failure/error cases redirected to failure URL</li>
+<li>On cancelling the form redirected to cancel URL</li>
+</ul>
+
+<h3 id="simplified-flow-of-adding-a-card">Simplified flow of adding a card</h3>
+
+<p>See detailed flow <a href="images/add_card_flow_full.svg">here</a>.</p>
+
+<p><img src="images/add_card_flow_simplified.svg" alt="Simplified add card flow" /></p>
+
+<h3 id="api-endpoint">API endpoint</h3>
+
+<ul>
+<li><code class="prettyprint">POST</code>: https://payment.checkout.fi/token/card/add</li>
+</ul>
+
+<h3 id="test-merchant-and-secret">Test merchant and secret :</h3>
+
+<ul>
+<li>merchant id : 375917</li>
+<li>merchant secret : SAIPPUAKAUPPIAS</li>
+</ul>
+
+<h3 id="request-parameters">Request parameters</h3>
+
+<blockquote>
+<p>Sample request to initiate card add form</p>
+</blockquote>
+<pre class="highlight plaintext"><code>POST /token/card/add HTTP/1.1
+Host: payment.checkout.fi
+Connection: keep-alive
+Content-Length: 317
+Pragma: no-cache
+Cache-Control: no-cache
+Content-Type: application/x-www-form-urlencoded
+DNT: 1
+
+merchant=375917&amp;failure_url=https%3A%2F%2Fdemo.checkout.fi%2Faddcard%2Ffail&amp;cancel_url=https%3A%2F%2Fdemo.checkout.fi%2Faddcard%2Fcancel&amp;success_url=https%3A%2F%2Fdemo.checkout.fi%2Faddcard%2Fsuccess&amp;request_id=a1ea51cd-24d0-4ac5-a035-0644d971ca57&amp;hmac=5c998d76d1ddb9f5ed3375d5ba49ec90b46f52a6177c4a8b1bbb93348a9ad1b1
+</code></pre>
+<p>Initial POST request is made to API endpoint with following parameters (all parameters are mandatory) :</p>
+
+<table><thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>merchant</td>
+<td>AN</td>
+<td>merchant id</td>
+</tr>
+<tr>
+<td>success_url</td>
+<td>AN</td>
+<td>Redirection URL on succeeded action</td>
+</tr>
+<tr>
+<td>failure_url</td>
+<td>AN</td>
+<td>Redirection URL on failure</td>
+</tr>
+<tr>
+<td>cancel_url</td>
+<td>AN</td>
+<td>Redirection URL on user cancel</td>
+</tr>
+<tr>
+<td>request_id</td>
+<td>UUID4</td>
+<td>Unique identificator for the request</td>
+</tr>
+<tr>
+<td>hmac</td>
+<td>AN</td>
+<td> Hash calculated from message parameters</td>
+</tr>
+</tbody></table>
+
+<h3 id="sample-parameters">Sample parameters :</h3>
+
+<p>Parameters on the example query:</p>
+
+<ul>
+<li>merchant : 375917</li>
+<li>failure_url : https://demo.checkout.fi/addcard/fail</li>
+<li>cancel_url : https://demo.checkout.fi/addcard/cancel</li>
+<li>success_url : https://demo.checkout.fi/addcard/success</li>
+<li>request_id : a1ea51cd-24d0-4ac5-a035-0644d971ca57</li>
+<li>hmac : 5c998d76d1ddb9f5ed3375d5ba49ec90b46f52a6177c4a8b1bbb93348a9ad1b1</li>
+</ul>
+
+<h3 id="hmac-calculation">HMAC calculation</h3>
+
+<blockquote>
+<p>Parameter string ready for SHA256 hmac calculation </p>
+</blockquote>
+<pre class="highlight plaintext"><code>var macString = 'cancel_url:https://demo.checkout.fi/addcard/cancel
+failure_url:https://demo.checkout.fi/addcard/fail
+merchant:375917
+request_id:25d52044-31d5-48f3-b605-307671d668cd
+success_url:https://demo.checkout.fi/addcard/success';
+
+var hmac = HmacSHA256(macString, 'SAIPPUAKAUPPIAS');
+
+// Correct SHA256 HMAC for string above is :
+// 5c998d76d1ddb9f5ed3375d5ba49ec90b46f52a6177c4a8b1bbb93348a9ad1b1
+</code></pre>
+<p>Colon separated and alpabetically ordered name/value pairs are concatenated with &lsquo;new line&rsquo; char (\n) and 
+SHA265 HMAC is calculated with merchants secret. </p>
+
+<h3 id="responses">Responses</h3>
+
+<p>On successfull add card request the HTML-document containing the form is returned.</p>
+
+<p>On errors and failures the page is redirected to given failure URL with parameters. Parameters give more detailed
+information on the failure.</p>
+
+<p>Note: on some rare cases HTML output is shown instead. E.g. missing one of the required parameters (failure url for example)</p>
+
+<h3 id="response-parameters">Response parameters</h3>
+
+<table><thead>
+<tr>
+<th>name</th>
+<th>type</th>
+<th>description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>co_code</td>
+<td>INT</td>
+<td>reaponse status (see detailed codes on below)</td>
+</tr>
+<tr>
+<td>co_request_id</td>
+<td>UUID4</td>
+<td>unified request identifier</td>
+</tr>
+<tr>
+<td>co_status</td>
+<td>AN</td>
+<td>response status text (see detailed codes on below)</td>
+</tr>
+<tr>
+<td>co_token</td>
+<td>UUID4</td>
+<td> Checkout token</td>
+</tr>
+<tr>
+<td>hmac</td>
+<td>AN</td>
+<td>Hash calculated from co_ parameters</td>
+</tr>
+</tbody></table>
+
+<h3 id="status-codes-on-redirect-url-39-s">Status codes on redirect URL&rsquo;s</h3>
+
+<table><thead>
+<tr>
+<th>co_code</th>
+<th>co_status</th>
+<th>description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>0</td>
+<td>ok</td>
+<td>Token got, created and migrated ok</td>
+</tr>
+<tr>
+<td>1</td>
+<td>cancel</td>
+<td>User cancelled the process</td>
+</tr>
+<tr>
+<td>100</td>
+<td>fail</td>
+<td>Missing mandatory parameters</td>
+</tr>
+<tr>
+<td>102</td>
+<td>fail</td>
+<td>HMAC validation failed (check merchant id)</td>
+</tr>
+<tr>
+<td>103</td>
+<td>fail</td>
+<td>HMAC validation failed</td>
+</tr>
+<tr>
+<td>104</td>
+<td>fail</td>
+<td>Failed creating form + detailed information</td>
+</tr>
+<tr>
+<td>105</td>
+<td>fail</td>
+<td>Failed creating a form</td>
+</tr>
+<tr>
+<td>150</td>
+<td>fail</td>
+<td>Missing mandatory parameters</td>
+</tr>
+<tr>
+<td>151</td>
+<td>fail</td>
+<td>Invalid request-id</td>
+</tr>
+<tr>
+<td>152</td>
+<td>fail</td>
+<td>Invalid request-id</td>
+</tr>
+<tr>
+<td>153</td>
+<td>fail</td>
+<td>Provider token already exists, tried to create duplicate</td>
+</tr>
+<tr>
+<td>154</td>
+<td>fail</td>
+<td>Callback failed + detailed information</td>
+</tr>
+<tr>
+<td>154</td>
+<td>fail</td>
+<td>Unknown error</td>
+</tr>
+<tr>
+<td>156</td>
+<td>fail</td>
+<td>Callback failed + detailed information</td>
+</tr>
+<tr>
+<td>157</td>
+<td>fail</td>
+<td>Callback failed + detailed information</td>
+</tr>
+<tr>
+<td>160</td>
+<td>fail</td>
+<td>Failed migrating token</td>
+</tr>
+</tbody></table>
 
 <h2 id="token-migration">Token migration</h2>
 
 <p>Will convert an external token (for example Solinor token) to a Checkout-token, which can then be used for making payments in Checkout Finland Payment API.</p>
 
-<p>If token has already been migrated earlier, statusCode &lsquo;201&rsquo; and Checkout-token will be returned.</p>
+<p>If token has already been migrated earlier, statusCode &#39;201&rsquo; and Checkout-token will be returned.</p>
 <pre class="highlight plaintext"><code>POST /token/migrate HTTP/1.1
 Host: payment.checkout.fi
 Content-Type: application/x-www-form-urlencoded
@@ -859,7 +1119,7 @@ CHECKOUT_XML=&lt;base64 encoded xml string&gt;&amp;CHECKOUT_MAC=&lt;string&gt;
 
 <p>Calculating MD5 hash for CHECKOUT_MAC field:</p>
 
-<p>md5( &lt;xml_string&gt; + &rsquo;+&rsquo; + &lt;aggregator_merchant_secret&gt; )</p>
+<p>strtoupper(md5(&lt;xml_string&gt; + &rsquo;+&rsquo; + &lt;aggregator_merchant_secret&gt;))</p>
 
 <p>! Note the plus sign between strings is part of a string not concatenating operator etc.</p>
 
@@ -889,6 +1149,7 @@ CHECKOUT_XML=&lt;base64 encoded xml string&gt;&amp;CHECKOUT_MAC=&lt;string&gt;
               <span class="nt">&lt;price</span> <span class="na">currency=</span><span class="s">"EUR"</span> <span class="na">vat=</span><span class="s">"23"</span><span class="nt">&gt;&lt;/price&gt;</span>
               <span class="nt">&lt;merchant&gt;&lt;/merchant&gt;</span>
               <span class="nt">&lt;control&gt;&lt;/control&gt;</span>
+              <span class="nt">&lt;reference&gt;&lt;/reference&gt;</span>
           <span class="nt">&lt;/item&gt;</span>
           <span class="nt">&lt;amount</span> <span class="na">currency=</span><span class="s">"EUR"</span><span class="nt">&gt;&lt;/amount&gt;</span>
       <span class="nt">&lt;/items&gt;</span>
@@ -1063,6 +1324,14 @@ CHECKOUT_XML=&lt;base64 encoded xml string&gt;&amp;CHECKOUT_MAC=&lt;string&gt;
 <td>XML</td>
 <td>XML</td>
 <td>&cross;</td>
+<td></td>
+</tr>
+<tr>
+<td>REFERENCE</td>
+<td>Item level <code class="prettyprint">Reference</code>. Used when refunding payments, must be unique if used.</td>
+<td>ABCDE1234</td>
+<td>AN</td>
+<td>(&cross;)</td>
 <td></td>
 </tr>
 </tbody></table>
@@ -2053,13 +2322,13 @@ stamp=1492599660&merchant=375917&hmac=3BB1330F9A90BBEBDB586EA58CDE70F2A1DB8870E5
 </thead><tbody>
 <tr>
 <td>Contains the base64 encoded XML.</td>
-<td>DATA</td>
+<td>data</td>
 <td>AN</td>
 <td>Yes</td>
 </tr>
 <tr>
 <td>Mac checksum of the data.</td>
-<td>MAC</td>
+<td>mac</td>
 <td>AN</td>
 <td>Yes</td>
 </tr>
@@ -2395,36 +2664,39 @@ The secret key used will be merchant-specific.
 <p>Sample &#39;payment.xml&rsquo; file</p>
 </blockquote>
 <pre class="highlight xml"><code><span class="cp">&lt;?xml version="1.0"?&gt;</span>
-<span class="nt">&lt;checkout</span> <span class="na">xmlns=</span><span class="s">"http://checkout.fi/request"</span><span class="nt">&gt;</span>
-    <span class="nt">&lt;request</span> <span class="na">type=</span><span class="s">"aggregator"</span> <span class="na">test=</span><span class="s">"false"</span><span class="nt">&gt;</span>
-        <span class="nt">&lt;aggregator&gt;</span>375917<span class="nt">&lt;/aggregator&gt;</span>
-        <span class="nt">&lt;token&gt;</span>feeba684-f35a-4c98-a846-14d0b1a02024<span class="nt">&lt;/token&gt;</span>
-        <span class="nt">&lt;version&gt;</span>0002<span class="nt">&lt;/version&gt;</span>
-        <span class="nt">&lt;stamp&gt;</span>1491913443<span class="nt">&lt;/stamp&gt;</span>
-        <span class="nt">&lt;reference&gt;</span>1123123<span class="nt">&lt;/reference&gt;</span>
-        <span class="nt">&lt;device&gt;</span>10<span class="nt">&lt;/device&gt;</span>
-        <span class="nt">&lt;content&gt;</span>1<span class="nt">&lt;/content&gt;</span>
-        <span class="nt">&lt;type&gt;</span>0<span class="nt">&lt;/type&gt;</span>
-        <span class="nt">&lt;algorithm&gt;</span>3<span class="nt">&lt;/algorithm&gt;</span>
-        <span class="nt">&lt;currency&gt;</span>EUR<span class="nt">&lt;/currency&gt;</span>
-        <span class="nt">&lt;commit&gt;</span>false<span class="nt">&lt;/commit&gt;</span>
-        <span class="nt">&lt;items&gt;</span>
-            <span class="nt">&lt;item&gt;</span>
-                <span class="nt">&lt;description/&gt;</span>
-                <span class="nt">&lt;price</span> <span class="na">currency=</span><span class="s">"EUR"</span> <span class="na">vat=</span><span class="s">"23"</span><span class="nt">&gt;</span>2500<span class="nt">&lt;/price&gt;</span>
-                <span class="nt">&lt;merchant&gt;</span>391830<span class="nt">&lt;/merchant&gt;</span>
-            <span class="nt">&lt;/item&gt;</span>
-            <span class="nt">&lt;amount</span> <span class="na">currency=</span><span class="s">"EUR"</span><span class="nt">&gt;</span>2500<span class="nt">&lt;/amount&gt;</span>
-        <span class="nt">&lt;/items&gt;</span>
-        <span class="nt">&lt;buyer&gt;</span>
-            <span class="nt">&lt;country&gt;</span>FIN<span class="nt">&lt;/country&gt;</span>
-            <span class="nt">&lt;language&gt;</span>FI<span class="nt">&lt;/language&gt;</span>
-        <span class="nt">&lt;/buyer&gt;</span>
-        <span class="nt">&lt;delivery&gt;</span>
-            <span class="nt">&lt;date&gt;</span>20110303<span class="nt">&lt;/date&gt;</span>
-        <span class="nt">&lt;/delivery&gt;</span>
-    <span class="nt">&lt;description&gt;</span>SiS tokenized payment test request : 11.04.2017 12:37:29<span class="nt">&lt;/description&gt;&lt;/request&gt;</span>
-<span class="nt">&lt;/checkout&gt;</span>
+    <span class="nt">&lt;checkout</span> <span class="na">xmlns=</span><span class="s">"http://checkout.fi/request"</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;request</span> <span class="na">type=</span><span class="s">"aggregator"</span> <span class="na">test=</span><span class="s">"false"</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;aggregator&gt;</span>375917<span class="nt">&lt;/aggregator&gt;</span>
+            <span class="nt">&lt;token&gt;</span>02343287-1e1a-4b92-8008-367e6ce35221<span class="nt">&lt;/token&gt;</span>
+            <span class="nt">&lt;version&gt;</span>0002<span class="nt">&lt;/version&gt;</span>
+            <span class="nt">&lt;stamp&gt;</span>123456789<span class="nt">&lt;/stamp&gt;</span>
+            <span class="nt">&lt;reference&gt;</span>123456<span class="nt">&lt;/reference&gt;</span>
+            <span class="nt">&lt;device&gt;</span>10<span class="nt">&lt;/device&gt;</span>
+            <span class="nt">&lt;content&gt;</span>1<span class="nt">&lt;/content&gt;</span>
+            <span class="nt">&lt;type&gt;</span>0<span class="nt">&lt;/type&gt;</span>
+            <span class="nt">&lt;algorithm&gt;</span>3<span class="nt">&lt;/algorithm&gt;</span>
+            <span class="nt">&lt;currency&gt;</span>EUR<span class="nt">&lt;/currency&gt;</span>
+            <span class="nt">&lt;commit&gt;</span>false<span class="nt">&lt;/commit&gt;</span>
+            <span class="nt">&lt;description&gt;</span>SiS tokenized payment test request<span class="nt">&lt;/description&gt;</span>
+            <span class="nt">&lt;items&gt;</span>
+                <span class="nt">&lt;item&gt;</span>
+                    <span class="nt">&lt;code/&gt;</span>
+                    <span class="nt">&lt;description&gt;</span>sub trade<span class="nt">&lt;/description&gt;</span>
+                    <span class="nt">&lt;price</span> <span class="na">currency=</span><span class="s">"EUR"</span> <span class="na">vat=</span><span class="s">"23"</span><span class="nt">&gt;</span>2500<span class="nt">&lt;/price&gt;</span>
+                    <span class="nt">&lt;merchant&gt;</span>391830<span class="nt">&lt;/merchant&gt;</span>
+                    <span class="nt">&lt;control/&gt;</span>
+                <span class="nt">&lt;/item&gt;</span>
+                <span class="nt">&lt;amount</span> <span class="na">currency=</span><span class="s">"EUR"</span><span class="nt">&gt;</span>2500<span class="nt">&lt;/amount&gt;</span>
+            <span class="nt">&lt;/items&gt;</span>
+            <span class="nt">&lt;buyer&gt;</span>
+                <span class="nt">&lt;country&gt;</span>FIN<span class="nt">&lt;/country&gt;</span>
+                <span class="nt">&lt;language&gt;</span>FI<span class="nt">&lt;/language&gt;</span>
+            <span class="nt">&lt;/buyer&gt;</span>
+            <span class="nt">&lt;delivery&gt;</span>
+                <span class="nt">&lt;date&gt;</span>20170619<span class="nt">&lt;/date&gt;</span>
+            <span class="nt">&lt;/delivery&gt;</span>
+        <span class="nt">&lt;/request&gt;</span>
+    <span class="nt">&lt;/checkout&gt;</span>
 </code></pre>
 <blockquote>
 <p>PHP used to generate valid query from XML file (above)</p>
@@ -2459,9 +2731,10 @@ The secret key used will be merchant-specific.
 </blockquote>
 <pre class="highlight plaintext"><code>Host: payment.checkout.fi
 Connection: close
-Content-Length: 1473
+Content-Length: 1567
 Content-Type: application/x-www-form-urlencoded
-CHECKOUT_XML=PD94bWwgdmVyc2lvbj0iMS4wIj8%2BCjxjaGVja291dCB4bWxucz0iaHR0cDovL2NoZWNrb3V0LmZpL3JlcXVlc3QiPgogICAgPHJlcXVlc3QgdHlwZT0iYWdncmVnYXRvciIgdGVzdD0iZmFsc2UiPgogICAgICAgIDxhZ2dyZWdhdG9yPjM3NTkxNzwvYWdncmVnYXRvcj4KICAgICAgICA8dG9rZW4%2BZmVlYmE2ODQtZjM1YS00Yzk4LWE4NDYtMTRkMGIxYTAyMDI0PC90b2tlbj4KICAgICAgICA8dmVyc2lvbj4wMDAyPC92ZXJzaW9uPgogICAgICAgIDxzdGFtcD4xNDkxOTEzNDQzPC9zdGFtcD4KICAgICAgICA8cmVmZXJlbmNlPjExMjMxMjM8L3JlZmVyZW5jZT4KICAgICAgICA8ZGV2aWNlPjEwPC9kZXZpY2U%2BCiAgICAgICAgPGNvbnRlbnQ%2BMTwvY29udGVudD4KICAgICAgICA8dHlwZT45PC90eXBlPgogICAgICAgIDxhbGdvcml0aG0%2BMzwvYWxnb3JpdGhtPgogICAgICAgIDxjdXJyZW5jeT5FVVI8L2N1cnJlbmN5PgogICAgICAgIDxjb21taXQ%2BZmFsc2U8L2NvbW1pdD4KICAgICAgICA8aXRlbXM%2BCiAgICAgICAgICAgIDxpdGVtPgogICAgICAgICAgICAgICAgPGRlc2NyaXB0aW9uLz4KICAgICAgICAgICAgICAgIDxwcmljZSBjdXJyZW5jeT0iRVVSIiB2YXQ9IjIzIj4yNTAwPC9wcmljZT4KICAgICAgICAgICAgICAgIDxtZXJjaGFudD4zOTE4MzA8L21lcmNoYW50PgogICAgICAgICAgICA8L2l0ZW0%2BCiAgICAgICAgICAgIDxhbW91bnQgY3VycmVuY3k9IkVVUiI%2BMjUwMDwvYW1vdW50PgogICAgICAgIDwvaXRlbXM%2BCiAgICAgICAgPGJ1eWVyPgogICAgICAgICAgICA8Y291bnRyeT5GSU48L2NvdW50cnk%2BCiAgICAgICAgICAgIDxsYW5ndWFnZT5GSTwvbGFuZ3VhZ2U%2BCiAgICAgICAgPC9idXllcj4KICAgICAgICA8ZGVsaXZlcnk%2BCiAgICAgICAgICAgIDxkYXRlPjIwMTEwMzAzPC9kYXRlPgogICAgICAgIDwvZGVsaXZlcnk%2BCiAgICA8ZGVzY3JpcHRpb24%2BU2lTIHRva2VuaXplZCBwYXltZW50IHRlc3QgcmVxdWVzdCA6IDExLjA0LjIwMTcgMTI6Mzc6Mjk8L2Rlc2NyaXB0aW9uPjwvcmVxdWVzdD4KPC9jaGVja291dD4K&amp;CHECKOUT_MAC=FB0145FD7FD9AC7516AD60F94C4590D4
+
+CHECKOUT_XML=PD94bWwgdmVyc2lvbj0iMS4wIj8%2BCjxjaGVja291dCB4bWxucz0iaHR0cDovL2NoZWNrb3V0LmZpL3JlcXVlc3QiPgogICAgPHJlcXVlc3QgdHlwZT0iYWdncmVnYXRvciIgdGVzdD0iZmFsc2UiPgogICAgICAgIDxhZ2dyZWdhdG9yPjM3NTkxNzwvYWdncmVnYXRvcj4KICAgICAgICA8dG9rZW4%2BMDIzNDMyODctMWUxYS00YjkyLTgwMDgtMzY3ZTZjZTM1MjIxPC90b2tlbj4KICAgICAgICA8dmVyc2lvbj4wMDAyPC92ZXJzaW9uPgogICAgICAgIDxzdGFtcD4xMjM0NTY3ODk8L3N0YW1wPgogICAgICAgIDxyZWZlcmVuY2U%2BMTIzNDU2PC9yZWZlcmVuY2U%2BCiAgICAgICAgPGRldmljZT4xMDwvZGV2aWNlPgogICAgICAgIDxjb250ZW50PjE8L2NvbnRlbnQ%2BCiAgICAgICAgPHR5cGU%2BMDwvdHlwZT4KICAgICAgICA8YWxnb3JpdGhtPjM8L2FsZ29yaXRobT4KICAgICAgICA8Y3VycmVuY3k%2BRVVSPC9jdXJyZW5jeT4KICAgICAgICA8Y29tbWl0PmZhbHNlPC9jb21taXQ%2BCiAgICAgICAgPGRlc2NyaXB0aW9uPlNpUyB0b2tlbml6ZWQgcGF5bWVudCB0ZXN0IHJlcXVlc3Q8L2Rlc2NyaXB0aW9uPgogICAgICAgIDxpdGVtcz4KICAgICAgICAgICAgPGl0ZW0%2BCiAgICAgICAgICAgICAgICA8Y29kZS8%2BCiAgICAgICAgICAgICAgICA8ZGVzY3JpcHRpb24%2Bc3ViIHRyYWRlPC9kZXNjcmlwdGlvbj4KICAgICAgICAgICAgICAgIDxwcmljZSBjdXJyZW5jeT0iRVVSIiB2YXQ9IjIzIj4yNTAwPC9wcmljZT4KICAgICAgICAgICAgICAgIDxtZXJjaGFudD4zOTE4MzA8L21lcmNoYW50PgogICAgICAgICAgICAgICAgPGNvbnRyb2wvPgogICAgICAgICAgICA8L2l0ZW0%2BCiAgICAgICAgICAgIDxhbW91bnQgY3VycmVuY3k9IkVVUiI%2BMjUwMDwvYW1vdW50PgogICAgICAgIDwvaXRlbXM%2BCiAgICAgICAgPGJ1eWVyPgogICAgICAgICAgICA8Y291bnRyeT5GSU48L2NvdW50cnk%2BCiAgICAgICAgICAgIDxsYW5ndWFnZT5GSTwvbGFuZ3VhZ2U%2BCiAgICAgICAgPC9idXllcj4KICAgICAgICA8ZGVsaXZlcnk%2BCiAgICAgICAgICAgIDxkYXRlPjIwMTcwNjE5PC9kYXRlPgogICAgICAgIDwvZGVsaXZlcnk%2BCiAgICA8L3JlcXVlc3Q%2BCjwvY2hlY2tvdXQ%2BCg%3D%3D&amp;CHECKOUT_MAC=ECC3A796D38A2050C31CD841A593488F
 </code></pre>
 <blockquote>
 <p>Respose XML</p>
