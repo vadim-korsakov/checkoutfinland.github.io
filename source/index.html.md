@@ -460,7 +460,7 @@ MD5(
 
 The response will arrive with the users browser, if the user returns to the service. If the for some reason this does not happen, Checkout will send a HTTP GET -request to the same address the browser was supposed to be redirected to, the service has to accept the incoming HTTP GET from Checkout even though it might lack cookies or a session. The message will be checked with MAC -check.
 
-Additional information on how to do the check can be found from the example file:  [http://demo1.checkout.fi/xml2.txt](http://demo1.checkout.fi/xml2.txt).
+Additional information on how to do the check can be found from the example file:  [https://gist.github.com/jrasanen/2a293e7d87443e33184295fab36c96f5](https://gist.github.com/jrasanen/2a293e7d87443e33184295fab36c96f5).
 
 | # | Description | Field | Value |
 |---|-------------|-------|-------|
@@ -478,7 +478,7 @@ Responses checksum is calculated using HMAC SHA256 the following way:
 
 Field separator is the `&`-sign.
 
-> Example of implementing the check from the demo1.checkout.fi/xml2.txt
+> Example of implementing the check from the https://gist.github.com/jrasanen/2a293e7d87443e33184295fab36c96f5
 
 ```php
 $generatedMac=strtoupper(hash_hmac("sha256","{$data['VERSION']}&{$data['STAMP']}&{$data['REFERENCE']}&{$data['PAYMENT']}&{$data['STATUS']}&{$data['ALGORITHM']}",$this->password));
