@@ -1,0 +1,31 @@
+sequenceDiagram
+
+Client ->>+ payment.checkout.fi: POST : /token/card/add
+payment.checkout.fi -->>+ Payment Highway: Get form from PH
+Payment Highway -->>- payment.checkout.fi: form
+payment.checkout.fi ->>- Client: 200 : HTML form
+
+alt Submit form
+  Client ->> Payment Highway: POST : Submit form
+  alt Success
+    activate Payment Highway
+    Payment Highway -->>- payment.checkout.fi: 303 : Redirect CO success
+    activate payment.checkout.fi
+    payment.checkout.fi -x Client: 302 : Redirect client success
+    deactivate payment.checkout.fi
+  else Failure
+    activate Payment Highway
+    Payment Highway -->>- payment.checkout.fi: 303 : Redirect CO failure
+    activate payment.checkout.fi
+    payment.checkout.fi -x Client: 302 : Redirect client failure
+    deactivate payment.checkout.fi
+  end
+  else Cancel form
+Client ->> Payment Highway: GET : Cancel form
+    activate Payment Highway
+    Payment Highway -->>- payment.checkout.fi: 303 : Redirect CO cancel
+    activate payment.checkout.fi
+    payment.checkout.fi -x Client: 302 : Redirect client cancel
+    deactivate payment.checkout.fi
+
+  end

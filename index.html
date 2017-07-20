@@ -257,7 +257,7 @@
 
 <p>Please note that not all payment methods support testing. The payment methods are enabled that support testing payments. There might be some features that are not working as they are intended to work in the testing side due to limitations to external integrations.</p>
 
-<p>The whole test code is available at: <a href="http://demo1.checkout.fi/xml2.txt">http://demo1.checkout.fi/xml2.txt</a>.</p>
+<p>The whole test code is available at: <a href="https://gist.github.com/jrasanen/2a293e7d87443e33184295fab36c96f5">https://gist.github.com/jrasanen/2a293e7d87443e33184295fab36c96f5</a>.</p>
 
 <h1 id="general-flow">General flow</h1>
 
@@ -934,7 +934,7 @@ $xml = simplexml_load_string($response);
 
 <p>The response will arrive with the users browser, if the user returns to the service. If the for some reason this does not happen, Checkout will send a HTTP GET -request to the same address the browser was supposed to be redirected to, the service has to accept the incoming HTTP GET from Checkout even though it might lack cookies or a session. The message will be checked with MAC -check.</p>
 
-<p>Additional information on how to do the check can be found from the example file:  <a href="http://demo1.checkout.fi/xml2.txt">http://demo1.checkout.fi/xml2.txt</a>.</p>
+<p>Additional information on how to do the check can be found from the example file:  <a href="https://gist.github.com/jrasanen/2a293e7d87443e33184295fab36c96f5">https://gist.github.com/jrasanen/2a293e7d87443e33184295fab36c96f5</a>.</p>
 
 <table><thead>
 <tr>
@@ -995,7 +995,7 @@ $xml = simplexml_load_string($response);
 <p>Field separator is the <code class="prettyprint">&amp;</code>-sign.</p>
 
 <blockquote>
-<p>Example of implementing the check from the demo1.checkout.fi/xml2.txt</p>
+<p>Example of implementing the check from the https://gist.github.com/jrasanen/2a293e7d87443e33184295fab36c96f5</p>
 </blockquote>
 <pre class="highlight php"><code>$generatedMac=strtoupper(hash_hmac("sha256","{$data['VERSION']}<span class="ni">&amp;{$data['STAMP']}&amp;{$data['REFERENCE']}&amp;{$data['PAYMENT']}&amp;{$data['STATUS']}&amp;{$data['ALGORITHM']}",$this-&gt;password));</span>
 </code></pre>

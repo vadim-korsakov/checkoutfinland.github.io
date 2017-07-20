@@ -1,0 +1,50 @@
+sequenceDiagram
+
+Client ->>+ payment.checkout.fi: POST : /token/card/add
+payment.checkout.fi -->>+ Payment Highway: Get form from PH
+Note right of payment.checkout.fi: Get form using CO success URL
+Payment Highway -->>- payment.checkout.fi: form
+payment.checkout.fi ->>- Client: 200 : HTML form
+
+alt Submit
+  Client ->> Payment Highway: POST : Submit form
+
+  alt Success
+    activate Payment Highway
+    Payment Highway -->> Client: 303 : Redirect PH success URL
+    Client ->> Payment Highway : GET : PH success URL
+    Payment Highway -->>- Client: 303 : Redirect CO success URL
+    Client ->> payment.checkout.fi : GET : CO success URL
+    activate payment.checkout.fi
+    Note right of payment.checkout.fi: Generate CO-token and migrate with provider token
+    payment.checkout.fi -->> Client: 302 : Redirect client success URL
+    deactivate payment.checkout.fi
+    Client -X Client: GET : Client success URL
+  else Failure
+
+    activate Payment Highway
+    Payment Highway -->> Client: 303 : Redirect PH failure URL
+    Client ->> Payment Highway : GET : PH failure URL
+    Payment Highway -->>- Client: 303 : Redirect CO failure URL
+    Client ->> payment.checkout.fi : GET : CO failure URL
+    activate payment.checkout.fi
+
+    payment.checkout.fi -->> Client: 302 : Redirect client failure URL
+    deactivate payment.checkout.fi
+    Client -X Client: GET : Client failure URL
+  end
+
+else Cancel
+  Client ->> Payment Highway: GET : Cancel form
+
+    activate Payment Highway
+    Payment Highway -->> Client: 303 : Redirect PH cancel URL
+    Client ->> Payment Highway : GET : PH cancel URL
+    Payment Highway -->>- Client: 303 : Redirect CO cancel URL
+    Client ->> payment.checkout.fi : GET : CO cancel URL
+    activate payment.checkout.fi
+
+    payment.checkout.fi -->> Client: 302 : Redirect client cancel URL
+    deactivate payment.checkout.fi
+    Client -X Client: GET : Client cancel URL
+end
