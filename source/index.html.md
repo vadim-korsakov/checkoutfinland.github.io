@@ -365,7 +365,65 @@ Status Code | Status Text
 400 | Merchant with given ID not found.
 500 | General internal server error
 
+## Fetch tokenized card information
 
+Will fetch information about a tokenized credit card, including type of card (e.g. 'Visa'), masked PAN (4 last digits) and expiry month/year.
+
+```
+POST /token/migrate/info HTTP/1.1
+Host: payment.checkout.fi
+Content-Type: application/x-www-form-urlencoded
+Cache-Control: no-cache
+Postman-Token: bf8f76a2-67f7-2725-8254-80febb0bbff9
+
+hmac=afdb811cf3a47014487e91c93414d6b3d29a13aa5aa6ec4d981fd06f17cbe287&merchant=375917&token=8ec9122d-268d-491b-aafa-357f1e3337f6
+```
+
+### HTTP Request
+
+* `POST`: https://payment.checkout.fi/token/migrate
+
+Body field     | Type  | Description                   | Notes
+---------------|-------|-------------------------------|-------
+token          | UUID4 | Checkout token received from migration |
+merchant       | N     | Merchant ID given by Checkout |
+hmac           | AN    | Calculated HMAC, [instructions](#hmac-calculation) |
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<response>
+    <statusCode>200</statusCode>
+    <statusText>Card information fetched.</statusText>
+    <cardInfo>
+        <type>Visa</type>
+        <partialPan>0024</partialPan>
+        <expireYear>2023</expireYear>
+        <expireMonth>11</expireMonth>
+    </cardInfo>
+</response>
+```
+
+### HTTP Response (HTTP 200)
+
+Body field           | Type  | Description
+-------------------- | ----- | --------------
+statusCode           | SCODE | Checkout status code, described in table below
+statusText           | AN    | status message, e.g. 'Token has already been migrated...'
+cardInfo             |       | Object including card info-fields
+cardInfo.type        | AN    | Type of credit card, e.g. 'Visa'
+cardInfo.partialPan  | AN    | Last 4 digits of credit card PAN
+cardInfo.expireYear  | N     | Credit card year of expiration
+cardInfo.expireMonth | N     | Credit card month of expiration
+
+#### Status codes & -texts
+
+Status Code | Status Text
+---- | -----------
+200  | Card information fetched.
+400  | No tokenization with given token found.
+401  | Status text will depend on error.
+500  | Failed fetching tokenization info.
+501  | Information fetching failed.
 
 # Payment API
 
