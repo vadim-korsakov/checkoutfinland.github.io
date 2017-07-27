@@ -650,6 +650,138 @@ merchant=375917&amp;provider_token=1296b3bc-407b-439b-9afd-c138e3ababa3
 </tr>
 </tbody></table>
 
+<h2 id="fetch-tokenized-card-information">Fetch tokenized card information</h2>
+
+<p>Will fetch information about a tokenized credit card, including type of card (e.g. &#39;Visa&rsquo;), masked PAN (4 last digits) and expiry month/year.</p>
+<pre class="highlight plaintext"><code>POST /token/migrate/info HTTP/1.1
+Host: payment.checkout.fi
+Content-Type: application/x-www-form-urlencoded
+Cache-Control: no-cache
+Postman-Token: bf8f76a2-67f7-2725-8254-80febb0bbff9
+
+hmac=afdb811cf3a47014487e91c93414d6b3d29a13aa5aa6ec4d981fd06f17cbe287&amp;merchant=375917&amp;token=8ec9122d-268d-491b-aafa-357f1e3337f6
+</code></pre>
+<h3 id="http-request">HTTP Request</h3>
+
+<ul>
+<li><code class="prettyprint">POST</code>: https://payment.checkout.fi/token/migrate</li>
+</ul>
+
+<table><thead>
+<tr>
+<th>Body field</th>
+<th>Type</th>
+<th>Description</th>
+<th>Notes</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>token</td>
+<td>UUID4</td>
+<td>Checkout token received from migration</td>
+<td></td>
+</tr>
+<tr>
+<td>merchant</td>
+<td>N</td>
+<td>Merchant ID given by Checkout</td>
+<td></td>
+</tr>
+<tr>
+<td>hmac</td>
+<td>AN</td>
+<td>Calculated HMAC, <a href="#hmac-calculation">instructions</a></td>
+<td></td>
+</tr>
+</tbody></table>
+<pre class="highlight xml"><code><span class="cp">&lt;?xml version="1.0" encoding="utf-8"?&gt;</span>
+<span class="nt">&lt;response&gt;</span>
+    <span class="nt">&lt;statusCode&gt;</span>200<span class="nt">&lt;/statusCode&gt;</span>
+    <span class="nt">&lt;statusText&gt;</span>Card information fetched.<span class="nt">&lt;/statusText&gt;</span>
+    <span class="nt">&lt;cardInfo&gt;</span>
+        <span class="nt">&lt;type&gt;</span>Visa<span class="nt">&lt;/type&gt;</span>
+        <span class="nt">&lt;partialPan&gt;</span>0024<span class="nt">&lt;/partialPan&gt;</span>
+        <span class="nt">&lt;expireYear&gt;</span>2023<span class="nt">&lt;/expireYear&gt;</span>
+        <span class="nt">&lt;expireMonth&gt;</span>11<span class="nt">&lt;/expireMonth&gt;</span>
+    <span class="nt">&lt;/cardInfo&gt;</span>
+<span class="nt">&lt;/response&gt;</span>
+</code></pre>
+<h3 id="http-response-http-200">HTTP Response (HTTP 200)</h3>
+
+<table><thead>
+<tr>
+<th>Body field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>statusCode</td>
+<td>SCODE</td>
+<td>Checkout status code, described in table below</td>
+</tr>
+<tr>
+<td>statusText</td>
+<td>AN</td>
+<td>status message, e.g. &#39;Token has already been migrated&hellip;&rsquo;</td>
+</tr>
+<tr>
+<td>cardInfo</td>
+<td></td>
+<td>Object including card info-fields</td>
+</tr>
+<tr>
+<td>cardInfo.type</td>
+<td>AN</td>
+<td>Type of credit card, e.g. &#39;Visa&rsquo;</td>
+</tr>
+<tr>
+<td>cardInfo.partialPan</td>
+<td>AN</td>
+<td>Last 4 digits of credit card PAN</td>
+</tr>
+<tr>
+<td>cardInfo.expireYear</td>
+<td>N</td>
+<td>Credit card year of expiration</td>
+</tr>
+<tr>
+<td>cardInfo.expireMonth</td>
+<td>N</td>
+<td>Credit card month of expiration</td>
+</tr>
+</tbody></table>
+
+<h4 id="status-codes-amp-texts">Status codes &amp; -texts</h4>
+
+<table><thead>
+<tr>
+<th>Status Code</th>
+<th>Status Text</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>200</td>
+<td>Card information fetched.</td>
+</tr>
+<tr>
+<td>400</td>
+<td>No tokenization with given token found.</td>
+</tr>
+<tr>
+<td>401</td>
+<td>Status text will depend on error.</td>
+</tr>
+<tr>
+<td>500</td>
+<td>Failed fetching tokenization info.</td>
+</tr>
+<tr>
+<td>501</td>
+<td>Information fetching failed.</td>
+</tr>
+</tbody></table>
+
 <h1 id="payment-api">Payment API</h1>
 
 <h2 id="payment">Payment</h2>
