@@ -756,17 +756,17 @@ Are these relevat to this API???
 
 ### XML-element : Buyer
 
-| Name       | Description | Value | Format | Required | Notes |
-|------------|------|-------|--------|----------|-------|
-| FIRSTNAME  | Required when using loaning services. First name of the buyer. |  "Matti" | AN 40 |  | |
-| FAMILYNAME | Required when using loaning services. Last name of the buyer. |  "Meikäläinen" | AN 40 |  | |
-| ADDRESS    | Required when using loaning services. Delivery address. |  "Maantie 123" | AN 40 |  | |
-| POSTCODE   | Required when using loaning services. Delivery post number. | "12345" | AN 14 |  | |
-| POSTOFFICE | Required when using loaning services. Delivery postal office. |  "" | AN 18 |  | |
-| COUNTRY    | Country, ISO-3166-1 alpha-3. | "FIN" | AN 3 | No | |
-| EMAIL      | Buyer email |  | AN 200 | No | |
-| PHONE      | Buyer phone number |  | AN 30 | No | |
-| LANGUAGE   | Payment language. Options currently are: "FI", "EN", "SE". | "FI" | AN 2 |  | |
+| Name         | Description | Value | Format | Required | Notes |
+|--------------|------|-------|--------|----------|-------|
+| FIRSTNAME    | Required when using loaning services. First name of the buyer. |  "Matti" | AN 40 |  | |
+| FAMILYNAME   | Required when using loaning services. Last name of the buyer. |  "Meikäläinen" | AN 40 |  | |
+| ADDRESS      | Required when using loaning services. Delivery address. |  "Maantie 123" | AN 40 |  | |
+| POSTALCODE   | Required when using loaning services. Delivery post number. | "12345" | AN 14 |  | |
+| POSTALOFFICE | Required when using loaning services. Delivery postal office. |  "" | AN 18 |  | |
+| COUNTRY      | Country, ISO-3166-1 alpha-3. | "FIN" | AN 3 | No | |
+| EMAIL        | Buyer email |  | AN 200 | No | |
+| GSM          | Buyer phone number |  | AN 30 | No | |
+| LANGUAGE     | Payment language. Options currently are: "FI", "EN", "SE". | "FI" | AN 2 |  | |
 
 ### XML-element : Delivery
 
