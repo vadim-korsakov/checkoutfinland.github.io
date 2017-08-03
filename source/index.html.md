@@ -156,7 +156,7 @@ Test credentials
 
 Please note that not all payment methods support testing. The payment methods are enabled that support testing payments. There might be some features that are not working as they are intended to work in the testing side due to limitations to external integrations.
 
-The whole test code is available at: [https://github.com/vadim-korsakov/checkoutfinland.github.io/tree/master/examples/payment-wall](https://github.com/vadim-korsakov/checkoutfinland.github.io/tree/master/examples/payment-wall).
+The whole test code is available at: [https://github.com/CheckoutFinland/checkoutfinland.github.io/tree/master/examples/payment-wall](https://github.com/CheckoutFinland/checkoutfinland.github.io/tree/master/examples/payment-wall).
 
 # General flow
 
