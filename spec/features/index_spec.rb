@@ -17,6 +17,6 @@ describe 'index', :type => :feature do
   end
 
   it ‘ensure test code is available’ do
-    expect(page).to have_content /The whole test code is available at: [https:\/\/github.com\/CheckoutFinland\/checkoutfinland.github.io\/tree\/master\/examples\/payment-wall]/
+    expect(page).to have_content /The whole test code is available at: [https:\/\/github.com\/CheckoutFinland\/checkoutfinland.github.io\/tree\/master\/examples\/payment-wall]\/
   end
 end
