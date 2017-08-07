@@ -20,3 +20,4 @@ describe 'index', :type => :feature do
     expect(page).to have_content /The whole test code is available at: [https:\/\/github.com\/CheckoutFinland\/checkoutfinland.github.io\/tree\/master\/examples\/payment-wall]/
   end
 end
+
