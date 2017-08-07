@@ -17,6 +17,6 @@ describe 'index', :type => :feature do
   end
 
   it 'no reference to old demo1 page' do
-    expect(page).to have_content /The whole test code is available at: [https:\/\/gist.github.com\/jrasanen\/2a293e7d87443e33184295fab36c96f5]/
+    expect(page).to have_content /The whole test code is available at: [https:\/\/github.com\/CheckoutFinland\/checkoutfinland.github.io\/tree\/master\/examples\/payment-wall]/
   end
 end
